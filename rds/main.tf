@@ -3,6 +3,7 @@ variable "ports" {
   default = {
     mysql = "3306"
     oracle = "1521"
+    postgres = "5432"
   }
 }
 
@@ -10,6 +11,7 @@ variable "families" {
   default = {
     mysql = "mysql5.6"
     oracle = "oracle-se2-12.1"
+    postgres = "postgres9.5"
   }
 }
 
@@ -17,6 +19,7 @@ variable "engines" {
   default = {
     mysql = "mysql"
     oracle = "oracle-se2"
+    postgres = "postgres"
   }
 }
 
@@ -24,26 +27,7 @@ variable "engine_versions" {
   default = {
     mysql = "5.6.22"
     oracle = "12.1.0.2.v2"
-  }
-}
-
-# Create RDS with Subnet and paramter group,
-resource "aws_security_group" "sg_rds" {
-  name = "sg_rds_${var.project}_${var.environment}${var.tag}"
-  description = "Security group that is needed for the RDS"
-  vpc_id = "${var.vpc_id}"
-
-  ingress {
-    from_port = "${lookup(var.ports, var.rds_type)}"
-    to_port = "${lookup(var.ports, var.rds_type)}"
-    protocol = "tcp"
-    security_groups  = ["${split(",", var.security_groups)}"]
-  }
-
-  tags {
-    Name = "${var.project}-${var.environment}${var.tag}-sg_rds"
-    Environment = "${var.environment}"
-    Project = "${var.project}"
+    postgres = "9.5.4"
   }
 }
 
@@ -70,6 +54,12 @@ resource "aws_db_parameter_group" "rds_oracle" {
   parameter = { name="db_block_checking" value="MEDIUM" }
 }
 
+resource "aws_db_parameter_group" "rds_postgres" {
+  name = "postgres-rds-${var.project}-${var.environment}${var.tag}"
+  family = "${lookup(var.families, "postgres")}"
+  description = "rds ${var.project} ${var.environment} parameter group for postgres"
+}
+
 resource "aws_db_instance" "rds" {
   identifier = "${var.project}-${var.environment}${var.tag}-rds01"
   allocated_storage = "${var.storage}"
@@ -94,5 +84,5 @@ resource "aws_db_instance" "rds" {
     Project = "${var.project}"
   }
 
-  depends_on = ["aws_db_parameter_group.rds_mysql","aws_db_parameter_group.rds_oracle"]
+  depends_on = ["aws_db_parameter_group.rds_mysql","aws_db_parameter_group.rds_oracle","aws_db_parameter_group.rds_postgres"]
 }
