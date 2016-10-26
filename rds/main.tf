@@ -96,7 +96,7 @@ resource "aws_db_instance" "rds" {
   password                = "${var.rds_password}"
   vpc_security_group_ids  = ["${aws_security_group.sg_rds.id}"]
   db_subnet_group_name    = "${aws_db_subnet_group.rds.id}"
-  parameter_group_name    = "${var.rds_type}-rds-${var.project}-${var.environment}${var.tag}"
+  parameter_group_name    = "${var.rds_parameter_group_name}"
   multi_az                = "${var.multi_az}"
   replicate_source_db     = "${var.replicate_source_db}"
   backup_retention_period = "${var.backup_retention_period}"

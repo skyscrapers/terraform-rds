@@ -80,3 +80,8 @@ variable "number" {
   description = "number of the database default 01"
   default = "01"
 }
+
+
+variable "rds_parameter_group_name" {
+  default = ""
+}
