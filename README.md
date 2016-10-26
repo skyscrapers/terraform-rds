@@ -22,7 +22,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the database (default 01)
-* [`rds_parameter_group_name`]: String(required) the parameter group that is used for the db
+* [`rds_parameter_group_name`]: String(required) the parameter group that is used for the db (supported: `mysql-rds-${var.project}-${var.environment}${var.tag}`, `oracle-rds-${var.project}-${var.environment}${var.tag}`,`postgres-rds-${var.project}-${var.environment}${var.tag}`)
 
 
 ### Output:
