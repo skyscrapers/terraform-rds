@@ -3,7 +3,6 @@ variable "vpc_id" {
 }
 
 variable "security_groups" {
-  type        = "list"
   description = "Security groups that are allowed to access the RDS on port 3306"
 }
 
