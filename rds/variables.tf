@@ -75,3 +75,8 @@ variable "tag" {
   description = "A tag used to identify an RDS in a project that has more than one RDS"
   default     = ""
 }
+
+variable "number" {
+  description = "number of the database default 01"
+  default = "01"
+}

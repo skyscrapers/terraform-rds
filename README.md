@@ -21,6 +21,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`tag`]: String(optional) tag
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
+* [`number`]: int(optional) number of the database (default 01)
 
 
 ### Output:

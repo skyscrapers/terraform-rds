@@ -105,7 +105,7 @@ resource "aws_db_instance" "rds" {
   skip_final_snapshot     = false
 
   tags {
-    Name        = "${var.project}-${var.environment}${var.tag}-rds01"
+    Name        = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
