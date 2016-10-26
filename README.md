@@ -22,6 +22,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the database (default 01)
+* [`rds_parameter_group_name`]: String(required) the parameter group that is used for the db
 
 
 ### Output:
@@ -31,15 +32,16 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 ### Example
 ```
 module "rds" {
-  source                  = "rds"
-  vpc_id                  = "${module.vpc.vpc_id}"
-  subnets                 = "${module.vpc.private_db_subnets}"
-  project                 = "${var.project}"
-  environment             = "${var.environment}"
-  size                    = "${var.rds_size}"
-  security_groups         = []
-  rds_password            = "${var.rds_password}"
-  multi_az                = "${var.rds_multiaz}"
-  backup_retention_period = "${var.rds_retention_period}"
+  source                   = "rds"
+  vpc_id                   = "${module.vpc.vpc_id}"
+  subnets                  = "${module.vpc.private_db_subnets}"
+  project                  = "${var.project}"
+  environment              = "${var.environment}"
+  size                     = "${var.rds_size}"
+  security_groups          = []
+  rds_password             = "${var.rds_password}"
+  multi_az                 = "${var.rds_multiaz}"
+  backup_retention_period  = "${var.rds_retention_period}"
+  rds_parameter_group_name = "mysql-rds-${var.project}-${var.environment}${var.tag}"
 }
 ```
