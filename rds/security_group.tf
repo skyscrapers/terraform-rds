@@ -8,7 +8,7 @@ resource "aws_security_group" "sg_rds" {
     from_port       = "${lookup(var.ports, var.rds_type)}"
     to_port         = "${lookup(var.ports, var.rds_type)}"
     protocol        = "tcp"
-    security_groups = ["${split(",", var.security_groups)}"]
+    security_groups = ["${var.security_groups}"]
   }
 
   tags {
