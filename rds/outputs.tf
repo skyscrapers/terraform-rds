@@ -9,3 +9,7 @@ output "rds_arn" {
 output "rds_sg_id" {
   value = "${aws_security_group.sg_rds.id}"
 }
+
+output "aws_db_subnet_group_id" {
+  value = "${aws_db_subnet_group.rds.id}"
+}
