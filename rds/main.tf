@@ -111,5 +111,9 @@ resource "aws_db_instance" "rds" {
     Project     = "${var.project}"
   }
 
+  lifecycle {
+    ignore_changes = ["final_snapshot_identifier"]
+  }
+
   depends_on = ["aws_db_parameter_group.rds_mysql", "aws_db_parameter_group.rds_oracle", "aws_db_parameter_group.rds_postgres"]
 }
