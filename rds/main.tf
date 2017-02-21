@@ -86,28 +86,33 @@ resource "aws_db_parameter_group" "rds_postgres" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier              = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
-  allocated_storage       = "${var.storage}"
-  engine                  = "${lookup(var.engines, var.rds_type)}"
-  engine_version          = "${lookup(var.engine_versions, var.rds_type)}"
-  instance_class          = "${var.size}"
-  storage_type            = "${var.storage_type}"
-  username                = "root"
-  password                = "${var.rds_password}"
-  vpc_security_group_ids  = ["${aws_security_group.sg_rds.id}"]
-  db_subnet_group_name    = "${aws_db_subnet_group.rds.id}"
-  parameter_group_name    = "${var.rds_parameter_group_name}"
-  multi_az                = "${var.multi_az}"
-  replicate_source_db     = "${var.replicate_source_db}"
-  backup_retention_period = "${var.backup_retention_period}"
-  storage_encrypted       = "${var.storage_encrypted}"
-  apply_immediately       = "${var.apply_immediately}"
-  skip_final_snapshot     = false
+  identifier                = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
+  allocated_storage         = "${var.storage}"
+  engine                    = "${lookup(var.engines, var.rds_type)}"
+  engine_version            = "${lookup(var.engine_versions, var.rds_type)}"
+  instance_class            = "${var.size}"
+  storage_type              = "${var.storage_type}"
+  username                  = "root"
+  password                  = "${var.rds_password}"
+  vpc_security_group_ids    = ["${aws_security_group.sg_rds.id}"]
+  db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
+  parameter_group_name      = "${var.rds_parameter_group_name}"
+  multi_az                  = "${var.multi_az}"
+  replicate_source_db       = "${var.replicate_source_db}"
+  backup_retention_period   = "${var.backup_retention_period}"
+  storage_encrypted         = "${var.storage_encrypted}"
+  apply_immediately         = "${var.apply_immediately}"
+  skip_final_snapshot       = "${var.skip_final_snapshot}"
+  final_snapshot_identifier = "${var.project}-${var.environment}${var.tag}-rds${var.number}-final-${md5(timestamp())}"
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
     Environment = "${var.environment}"
     Project     = "${var.project}"
+  }
+
+  lifecycle {
+    ignore_changes = ["final_snapshot_identifier"]
   }
 
   depends_on = ["aws_db_parameter_group.rds_mysql", "aws_db_parameter_group.rds_oracle", "aws_db_parameter_group.rds_postgres"]

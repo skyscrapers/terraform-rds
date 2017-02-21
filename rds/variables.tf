@@ -4,7 +4,7 @@ variable "vpc_id" {
 
 variable "security_groups" {
   description = "Security groups that are allowed to access the RDS on port 3306"
-  type = "list"
+  type        = "list"
 }
 
 variable "subnets" {
@@ -78,10 +78,14 @@ variable "tag" {
 
 variable "number" {
   description = "number of the database default 01"
-  default = "01"
+  default     = "01"
 }
-
 
 variable "rds_parameter_group_name" {
   default = ""
+}
+
+variable "skip_final_snapshot" {
+  description = "Skip final snapshot when destorying RDS"
+  default     = false
 }
