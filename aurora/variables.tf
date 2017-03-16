@@ -1,7 +1,3 @@
-variable "vpc_id" {
-  description = "ID of the VPC where to deploy in"
-}
-
 variable "security_groups" {
   description = "Security groups that are allowed to access the RDS on port 3306"
   type        = "list"
@@ -12,38 +8,13 @@ variable "subnets" {
   description = "Subnets to deploy in"
 }
 
-variable "storage" {
-  description = "How many GBs of space does your database need?"
-  default     = "10"
-}
-
 variable "size" {
   description = "Instance size"
   default     = "db.t2.small"
 }
 
-variable "storage_type" {
-  description = "Type of storage you want to use"
-  default     = "standard"
-}
-
-variable "rds_password" {
+variable "password" {
   description = "RDS root password"
-}
-
-variable "rds_type" {
-  description = "RDS type: mysql, oracle"
-  default     = "mysql"
-}
-
-variable "replicate_source_db" {
-  description = "RDS source to replicate from"
-  default     = ""
-}
-
-variable "multi_az" {
-  description = "Multi AZ true or false"
-  default     = true
 }
 
 variable "backup_retention_period" {
@@ -76,16 +47,17 @@ variable "tag" {
   default     = ""
 }
 
-variable "number" {
-  description = "number of the database default 01"
-  default     = "01"
-}
-
-variable "rds_parameter_group_name" {
-  default = ""
-}
-
 variable "skip_final_snapshot" {
   description = "Skip final snapshot when destroying RDS"
   default     = false
+}
+
+variable "amount_of_instances" {
+  description = "The amount of Aurora instances you need, for HA you need minumum 2"
+  default     = 1
+}
+
+variable "rds_parameter_group_name" {
+  description = "Optional parameter group you can set for the RDS cluster "
+  default = ""
 }
