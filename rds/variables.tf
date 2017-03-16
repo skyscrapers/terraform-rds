@@ -86,6 +86,6 @@ variable "rds_parameter_group_name" {
 }
 
 variable "skip_final_snapshot" {
-  description = "Skip final snapshot when destorying RDS"
+  description = "Skip final snapshot when destroying RDS"
   default     = false
 }

@@ -48,7 +48,7 @@ variable "tag" {
 }
 
 variable "skip_final_snapshot" {
-  description = "Skip final snapshot when destorying RDS"
+  description = "Skip final snapshot when destroying RDS"
   default     = false
 }
 
@@ -58,6 +58,6 @@ variable "amount_of_instances" {
 }
 
 variable "rds_parameter_group_name" {
-  description = "Optional paramter group you can set for the RDS cluster "
+  description = "Optional parameter group you can set for the RDS cluster "
   default = ""
 }

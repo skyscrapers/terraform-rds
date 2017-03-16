@@ -62,7 +62,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`skip_final_snapshot`]: bool(optional) Whether to skip creating a final snapshot when destroying the resource (default: false)
 * [`rds_parameter_group_name`]: String(required) the parameter group that is used for the db (supported: `mysql-rds-${var.project}-${var.environment}${var.tag}`, `oracle-rds-${var.project}-${var.environment}${var.tag}`,`postgres-rds-${var.project}-${var.environment}${var.tag}`)
-* [`amount_of_instances`]: Integer(optional) How many aurora instances do you need, minumum 2 are needed for HA (default: 1)
+* [`amount_of_instances`]: Integer(optional) How many aurora instances do you need, minimum 2 are needed for HA (default: 1)
 
 ### Output:
  * [`aurora_port`]: String: The port of the rds
