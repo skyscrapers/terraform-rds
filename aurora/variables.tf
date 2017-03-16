@@ -56,3 +56,8 @@ variable "amount_of_instances" {
   description = "The amount of Aurora instances you need, for HA you need minumum 2"
   default     = 1
 }
+
+variable "rds_parameter_group_name" {
+  description = "Optional paramter group you can set for the RDS cluster "
+  default = ""
+}

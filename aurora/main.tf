@@ -9,6 +9,7 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 resource "aws_rds_cluster_parameter_group" "aurora_mysql" {
+  #count = "${var.custom_rds_parameter_group_name ? 1 : 0}"
   name        = "mysql-rds-${var.project}-${var.environment}${var.tag}"
   family      = "aurora5.6"
   description = "rds ${var.project} ${var.environment} parameter group for mysql"
@@ -50,7 +51,7 @@ resource "aws_rds_cluster" "aurora" {
   vpc_security_group_ids          = ["${aws_security_group.sg_aurora.id}"]
   storage_encrypted               = "${var.storage_encrypted}"
   apply_immediately               = "${var.apply_immediately}"
-  db_cluster_parameter_group_name = "${aws_rds_cluster_parameter_group.aurora_mysql.id}"
+  db_cluster_parameter_group_name = "${var.rds_parameter_group_name == "" ? aws_rds_cluster_parameter_group.aurora_mysql.id : var.rds_parameter_group_name}"
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
