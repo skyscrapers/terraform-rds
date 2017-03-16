@@ -11,7 +11,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`storage`]: String(optional) How many GBs of space does your database need?
 * [`size`]: String(optional) RDS instance size
 * [`storage_type`]: String(optional) Type of storage you want to use
-* [`rds_password`]: String(optional) RDS root password
+* [`rds_password`]: String(required) RDS root password
 * [`rds_type`]: String(optional) RDS type: mysql or oracle (default: mysql)
 * [`replicate_source_db`]: String(optional) RDS source to replicate from
 * [`multi_az`]: bool(optional) Multi AZ for RDS master (default: true)
@@ -53,7 +53,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`security_groups`]: List(required) Security groups that are allowed to access the RDS
 * [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`size`]: String(optional) RDS instance size
-* [`password`]: String(optional) RDS root password
+* [`password`]: String(required) RDS root password
 * [`backup_retention_period`]: int(optional) How long do you want to keep RDS backups (default: 14)
 * [`apply_immediately`]: bool(optional) whether you want to Apply changes immediately (default: true)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
