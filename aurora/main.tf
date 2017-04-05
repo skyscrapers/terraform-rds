@@ -65,7 +65,7 @@ resource "aws_rds_cluster" "aurora" {
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
   count                = "${var.amount_of_instances}"
-  identifier           = "${var.project}-${var.environment}${var.tag}-aurora${count.index}"
+  identifier           = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
   cluster_identifier   = "${aws_rds_cluster.aurora.id}"
   instance_class       = "${var.size}"
   db_subnet_group_name = "${aws_db_subnet_group.aurora.id}"
@@ -73,7 +73,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   db_parameter_group_name = "${var.instance_parameter_group_name == "" ? aws_db_parameter_group.aurora_mysql.id : var.instance_parameter_group_name}"
 
   tags {
-    Name        = "${var.project}-${var.environment}${var.tag}-aurora${count.index}"
+    Name        = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
