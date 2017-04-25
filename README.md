@@ -28,6 +28,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 
 ### Output:
  * [`rds_port`]: String: The port of the rds
+ * [`rds_address`]: String: The hostname of the rds instance
  * [`rds_arn`]: String: The arn of the rds
 
 ### Example
