@@ -32,7 +32,7 @@ variable "rds_password" {
 }
 
 variable "rds_type" {
-  description = "RDS type: mysql, oracle"
+  description = "RDS type: mysql, oracle, postgres"
   default     = "mysql"
 }
 
@@ -81,8 +81,9 @@ variable "number" {
   default     = "01"
 }
 
-variable "rds_parameter_group_name" {
-  default = ""
+variable "rds_custom_parameter_group_name" {
+  description = "A custom parameter group name to attach to the RDS instance. If not provided a default one will be created"
+  default     = ""
 }
 
 variable "skip_final_snapshot" {

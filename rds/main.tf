@@ -38,6 +38,7 @@ resource "aws_db_subnet_group" "rds" {
 }
 
 resource "aws_db_parameter_group" "rds_mysql" {
+  count       = "${var.rds_type == "mysql" && length(var.rds_custom_parameter_group_name) == 0 ? 1 : 0}"
   name        = "mysql-rds-${var.project}-${var.environment}${var.tag}"
   family      = "${lookup(var.families, "mysql")}"
   description = "rds ${var.project} ${var.environment} parameter group for mysql"
@@ -68,6 +69,7 @@ resource "aws_db_parameter_group" "rds_mysql" {
 }
 
 resource "aws_db_parameter_group" "rds_oracle" {
+  count       = "${var.rds_type == "oracle" && length(var.rds_custom_parameter_group_name) == 0 ? 1 : 0}"
   name        = "oracle-rds-${var.project}-${var.environment}${var.tag}"
   family      = "${lookup(var.families, "oracle")}"
   description = "rds ${var.project} ${var.environment} parameter group for oracle"
@@ -80,6 +82,7 @@ resource "aws_db_parameter_group" "rds_oracle" {
 }
 
 resource "aws_db_parameter_group" "rds_postgres" {
+  count       = "${var.rds_type == "postgres" && length(var.rds_custom_parameter_group_name) == 0 ? 1 : 0}"
   name        = "postgres-rds-${var.project}-${var.environment}${var.tag}"
   family      = "${lookup(var.families, "postgres")}"
   description = "rds ${var.project} ${var.environment} parameter group for postgres"
@@ -96,7 +99,7 @@ resource "aws_db_instance" "rds" {
   password                  = "${var.rds_password}"
   vpc_security_group_ids    = ["${aws_security_group.sg_rds.id}"]
   db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
-  parameter_group_name      = "${var.rds_parameter_group_name}"
+  parameter_group_name      = "${length(var.rds_custom_parameter_group_name) > 0 ? var.rds_custom_parameter_group_name : join("", aws_db_parameter_group.rds_mysql.*.name, aws_db_parameter_group.rds_oracle.*.name, aws_db_parameter_group.rds_postgres.*.name)}"
   multi_az                  = "${var.multi_az}"
   replicate_source_db       = "${var.replicate_source_db}"
   backup_retention_period   = "${var.backup_retention_period}"
@@ -114,6 +117,4 @@ resource "aws_db_instance" "rds" {
   lifecycle {
     ignore_changes = ["final_snapshot_identifier"]
   }
-
-  depends_on = ["aws_db_parameter_group.rds_mysql", "aws_db_parameter_group.rds_oracle", "aws_db_parameter_group.rds_postgres"]
 }
