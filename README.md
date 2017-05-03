@@ -12,7 +12,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`size`]: String(optional) RDS instance size
 * [`storage_type`]: String(optional) Type of storage you want to use
 * [`rds_password`]: String(required) RDS root password
-* [`rds_type`]: String(optional) RDS type: mysql or oracle (default: mysql)
+* [`rds_type`]: String(optional) RDS type: `mysql`, `postgres` or `oracle` (default: `mysql`)
 * [`replicate_source_db`]: String(optional) RDS source to replicate from
 * [`multi_az`]: bool(optional) Multi AZ for RDS master (default: true)
 * [`backup_retention_period`]: int(optional) How long do you want to keep RDS backups (default: 14)
@@ -23,7 +23,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the database (default 01)
 * [`skip_final_snapshot`]: bool(optional) Whether to skip creating a final snapshot when destroying the resource (default: false)
-* [`rds_parameter_group_name`]: String(required) the parameter group that is used for the db (supported: `mysql-rds-${var.project}-${var.environment}${var.tag}`, `oracle-rds-${var.project}-${var.environment}${var.tag}`,`postgres-rds-${var.project}-${var.environment}${var.tag}`)
+* [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be created
 
 
 ### Output:
