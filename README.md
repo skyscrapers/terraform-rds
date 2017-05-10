@@ -69,6 +69,8 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 ### Output:
  * [`aurora_port`]: String: The port of the rds
  * [`aurora_sg_id`]: String: The security group ID
+ * [`endpoint`]: String: The DNS address of the RDS instance
+ * [`reader_endpoint`]: String: A read-only endpoint for the Aurora cluster, automatically load-balanced across replicas
 
 ### Example
 ```
