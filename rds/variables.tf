@@ -3,8 +3,15 @@ variable "vpc_id" {
 }
 
 variable "security_groups" {
-  description = "Security groups that are allowed to access the RDS on port 3306"
+  description = "Security groups that are allowed to access the RDS"
   type        = "list"
+  default     = []
+}
+
+variable "allowed_cidr_blocks" {
+  description = "CIDR blocks that are allowed to access the RDS"
+  type        = "list"
+  default     = []
 }
 
 variable "subnets" {

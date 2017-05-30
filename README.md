@@ -6,7 +6,8 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 
 ### Available variables:
 * [`vpc_id`]: String(required): ID of the VPC where to deploy in
-* [`security_groups`]: List(required) Security groups that are allowed to access the RDS
+* [`security_groups`]: List(optional) Security groups that are allowed to access the RDS
+* [`allowed_cidr_blocks`]: List(optional) CIDR blocks that are allowed to access the RDS
 * [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`storage`]: String(optional) How many GBs of space does your database need?
 * [`size`]: String(optional) RDS instance size
