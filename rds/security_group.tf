@@ -22,6 +22,7 @@ resource "aws_security_group_rule" "rds_sg_in" {
 }
 
 resource "aws_security_group_rule" "rds_cidr_in" {
+  count             = "${length(var.allowed_cidr_blocks) == 0 ? 0 : 1}"
   security_group_id = "${aws_security_group.sg_rds.id}"
   type              = "ingress"
   from_port         = "${lookup(var.ports, var.rds_type)}"
