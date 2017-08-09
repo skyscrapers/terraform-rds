@@ -97,3 +97,6 @@ variable "skip_final_snapshot" {
   description = "Skip final snapshot when destroying RDS"
   default     = false
 }
+variable "availability_zone" {
+  default = ""
+}
