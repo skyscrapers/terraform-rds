@@ -95,7 +95,7 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 * [`vpc_id`]: String(required): ID of the VPC where to deploy in
 * [`security_groups`]: List(optional) Security groups that are allowed to access the RDS
 * [`allowed_cidr_blocks`]: List(optional) CIDR blocks that are allowed to access the RDS
-* [`subnets`]: List(optional) Subnets to deploy the RDS in if no db_subnet_group_name is passed as parameter
+* [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`size`]: String(optional) RDS instance size
 * [`engine`]: String(required) RDS type: `mysql`, `postgres` or `oracle`
 * [`replicate_source_db`]: String(required) RDS source to replicate from. NOTE: this must be the ARN of the instance, otherwise you cannot specify the
@@ -104,7 +104,6 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the replica (default 01)
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
-* [`db_subnet_group_name`]: string(optional) The subnet group name where you want to pass the instance in
 
 ### Output:
  * [`rds_address`]: String: The hostname of the rds instance
@@ -123,7 +122,7 @@ module "rds" {
   replicate_source_db = "${var.rds_arn}"
   availability_zone   = "${var.availability_zone}"
   vpc_id              = "${var.vpc_id}"
-  db_subnet_group_name= "${var.aws_db_subnet_group_id}"
+  subnets             = "${var.subnets}"
 
 }
 ```

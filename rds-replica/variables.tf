@@ -24,7 +24,6 @@ variable "allowed_cidr_blocks" {
 variable "subnets" {
   type        = "list"
   description = "Subnets to deploy in"
-  default     = []
 }
 
 variable "size" {
@@ -53,9 +52,5 @@ variable "number" {
 }
 
 variable "availability_zone" {
-  default = ""
-}
-
-variable "db_subnet_group_name" {
   default = ""
 }
