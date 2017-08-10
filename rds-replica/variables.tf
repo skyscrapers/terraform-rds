@@ -7,8 +7,7 @@ variable "project" {
   default     = ""
 }
 
-variable "engine" {
-}
+variable "engine" {}
 
 variable "security_groups" {
   description = "Security groups that are allowed to access the RDS"
@@ -22,19 +21,15 @@ variable "allowed_cidr_blocks" {
   default     = []
 }
 
-# variable "subnets" {
-#   type        = "list"
-#   description = "Subnets to deploy in"
-# }
+variable "subnets" {
+  type        = "list"
+  description = "Subnets to deploy in"
+  default     = []
+}
 
 variable "size" {
   description = "Instance size"
   default     = "db.t2.small"
-}
-
-variable "rds_type" {
-  description = "RDS type: mysql, oracle, postgres"
-  default     = "mysql"
 }
 
 variable "replicate_source_db" {
@@ -62,4 +57,5 @@ variable "availability_zone" {
 }
 
 variable "db_subnet_group_name" {
+  default = ""
 }
