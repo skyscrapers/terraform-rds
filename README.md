@@ -25,7 +25,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`number`]: int(optional) number of the database (default 01)
 * [`skip_final_snapshot`]: bool(optional) Whether to skip creating a final snapshot when destroying the resource (default: false)
 * [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be created
-
+* [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 
 ### Output:
  * [`rds_port`]: String: The port of the rds
@@ -85,5 +85,44 @@ module "aurora" {
   rds_parameter_group_name = "${aws_db_parameter_group.rds_custom_parameter_group.name}"
 
   security_groups          = []
+}
+```
+
+## RDS-REPLICA
+Creates an RDS read replica instance,the replica security_group and a subnet_group if not passed as parameter
+
+### Available variables:
+* [`vpc_id`]: String(required): ID of the VPC where to deploy in
+* [`security_groups`]: List(optional) Security groups that are allowed to access the RDS
+* [`allowed_cidr_blocks`]: List(optional) CIDR blocks that are allowed to access the RDS
+* [`subnets`]: List(required) Subnets to deploy the RDS in
+* [`size`]: String(optional) RDS instance size
+* [`engine`]: String(required) RDS type: `mysql`, `postgres` or `oracle`
+* [`replicate_source_db`]: String(required) RDS source to replicate from. NOTE: this must be the ARN of the instance, otherwise you cannot specify the db_subnet_group_name
+* [`name`]: String(optional) the name of the replica
+* [`project`]: String(required) the name of the project this RDS belongs to
+* [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
+* [`number`]: int(optional) number of the replica (default 01)
+* [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
+
+### Output:
+ * [`rds_address`]: String: The hostname of the rds instance
+ * [`rds_arn`]: String: The arn of the rds
+ * [`rds_sg_id`]: String: The security group created
+
+### Example
+```
+module "rds" {
+  source              = "rds-replica"
+  engine              = "postgres"
+  project             = "batch"
+  size                = "db.t2.small"
+  name                = "venues"
+  security_groups     = ["${var.sg_bastion_id}"]
+  replicate_source_db = "${var.rds_arn}"
+  availability_zone   = "${var.availability_zone}"
+  vpc_id              = "${var.vpc_id}"
+  subnets             = "${var.subnets}"
+
 }
 ```

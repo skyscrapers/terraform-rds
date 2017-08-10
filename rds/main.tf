@@ -107,6 +107,7 @@ resource "aws_db_instance" "rds" {
   apply_immediately         = "${var.apply_immediately}"
   skip_final_snapshot       = "${var.skip_final_snapshot}"
   final_snapshot_identifier = "${var.project}-${var.environment}${var.tag}-rds${var.number}-final-${md5(timestamp())}"
+  availability_zone         = "${var.availability_zone}"
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
