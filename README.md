@@ -98,7 +98,7 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 * [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`size`]: String(optional) RDS instance size
 * [`engine`]: String(required) RDS type: `mysql`, `postgres` or `oracle`
-* [`replicate_source_db`]: String(required) RDS source to replicate from. NOTE: this must be the ARN of the instance, otherwise you cannot specify the
+* [`replicate_source_db`]: String(required) RDS source to replicate from. NOTE: this must be the ARN of the instance, otherwise you cannot specify the db_subnet_group_name
 * [`name`]: String(optional) the name of the replica
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
