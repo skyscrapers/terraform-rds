@@ -1,5 +1,5 @@
 resource "aws_db_subnet_group" "rds" {
-  count       = "${var.db_subnet_group_name == "" ? 1:0}"
+  count       = "${length(var.subnets)>0 ? 1:0}"
   name        = "replica-${var.environment}${var.name}-rds"
   description = "The group of subnets"
   subnet_ids  = ["${var.subnets}"]
