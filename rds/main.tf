@@ -108,6 +108,7 @@ resource "aws_db_instance" "rds" {
   skip_final_snapshot       = "${var.skip_final_snapshot}"
   final_snapshot_identifier = "${var.project}-${var.environment}${var.tag}-rds${var.number}-final-${md5(timestamp())}"
   availability_zone         = "${var.availability_zone}"
+  snapshot_identifier       = "${var.snapshot_identifier}"
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
