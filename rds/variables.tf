@@ -105,3 +105,7 @@ variable "availability_zone" {
 variable "snapshot_identifier" {
   default = ""
 }
+
+variable "username" {
+  default = "root"
+}

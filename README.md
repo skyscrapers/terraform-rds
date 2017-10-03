@@ -27,6 +27,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be created
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`snapshot_identifier`]: string(optional) Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05.
+* [`username`]: string(optional) The admin username of the database (default:root)
 
 ### Output:
  * [`rds_port`]: String: The port of the rds
@@ -67,6 +68,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`cluster_parameter_group_name`]: String(optional) the parameter group that is used for the cluster (default: The default aurora cluster group)
 * [`instance_parameter_group_name`]: String(optional) the parameter group that is used for the instances of the cluster (default: aurora-rds-${var.project}-${var.environment}${var.tag})
 * [`amount_of_instances`]: Integer(optional) How many aurora instances do you need, minimum 2 are needed for HA (default: 1)
+* [`username`]: string(optional) The admin username of the database (default:root)
 
 ### Output:
  * [`aurora_port`]: String: The port of the rds

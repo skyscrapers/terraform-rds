@@ -66,3 +66,7 @@ variable "instance_parameter_group_name" {
   description = "Optional parameter group you can set for the RDS instances inside an Aurora cluster "
   default = ""
 }
+
+variable "username" {
+  default = "root"
+}

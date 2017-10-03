@@ -95,7 +95,7 @@ resource "aws_db_instance" "rds" {
   engine_version            = "${lookup(var.engine_versions, var.rds_type)}"
   instance_class            = "${var.size}"
   storage_type              = "${var.storage_type}"
-  username                  = "root"
+  username                  = "${var.username}"
   password                  = "${var.rds_password}"
   vpc_security_group_ids    = ["${aws_security_group.sg_rds.id}"]
   db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
