@@ -38,8 +38,8 @@ locals {
 }
 
 resource "aws_db_subnet_group" "rds" {
-  name_prefix = "${var.project}-${var.environment}${var.tag}-"
-  description = "RDS subnet group"
+  name        = "${var.project}-${var.environment}${var.tag}-rds"
+  description = "Our main group of subnets"
   subnet_ids  = ["${var.subnets}"]
 }
 
