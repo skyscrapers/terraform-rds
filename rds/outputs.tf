@@ -1,5 +1,5 @@
 output "rds_port" {
-  value = "${lookup(var.ports, var.rds_type)}"
+  value = "${local.port}"
 }
 
 output "rds_address" {
