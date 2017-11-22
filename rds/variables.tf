@@ -38,9 +38,19 @@ variable "rds_password" {
   description = "RDS root password"
 }
 
-variable "rds_type" {
-  description = "RDS type: mysql, oracle, postgres"
+variable "engine" {
+  description = "RDS engine: mysql, oracle, postgres. Defaults to mysql"
   default     = "mysql"
+}
+
+variable "engine_version" {
+  description = "Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL."
+  default     = "5.7.17"
+}
+
+variable "default_parameter_group_family" {
+  description = "Parameter group family for the default parameter group, according to the chosen engine and engine version. Will be omitted if `rds_custom_parameter_group_name` is provided. Defaults to mysql5.7"
+  default     = "mysql5.7"
 }
 
 variable "replicate_source_db" {
@@ -99,9 +109,11 @@ variable "skip_final_snapshot" {
 }
 
 variable "availability_zone" {
-  default = ""
+  description = "The availability zone where you want to launch your instance in"
+  default     = ""
 }
 
 variable "snapshot_identifier" {
-  default = ""
+  description = "Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05."
+  default     = ""
 }
