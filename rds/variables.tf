@@ -31,7 +31,7 @@ variable "size" {
 
 variable "storage_type" {
   description = "Type of storage you want to use"
-  default     = "standard"
+  default     = "gp2"
 }
 
 variable "rds_password" {

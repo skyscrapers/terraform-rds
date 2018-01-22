@@ -11,7 +11,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`storage`]: String(optional) How many GBs of space does your database need?
 * [`size`]: String(optional) RDS instance size
-* [`storage_type`]: String(optional) Type of storage you want to use
+* [`storage_type`]: String(optional) Type of storage you want to use (default: `gp2`)
 * [`rds_password`]: String(required) RDS root password
 * [`engine`]: String(optional) RDS engine: `mysql`, `postgres` or `oracle` (default: `mysql`)
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.7.17` - for MySQL)
