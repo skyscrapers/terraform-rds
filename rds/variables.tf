@@ -38,6 +38,11 @@ variable "rds_password" {
   description = "RDS root password"
 }
 
+variable "rds_username" {
+  description = "RDS root user"
+  default = "root"
+}
+
 variable "engine" {
   description = "RDS engine: mysql, oracle, postgres. Defaults to mysql"
   default     = "mysql"
