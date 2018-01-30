@@ -13,6 +13,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`size`]: String(optional) RDS instance size
 * [`storage_type`]: String(optional) Type of storage you want to use (default: `gp2`)
 * [`rds_password`]: String(required) RDS root password
+* [`rds_username`]: String(optional) RDS root user (default: `root`)
 * [`engine`]: String(optional) RDS engine: `mysql`, `postgres` or `oracle` (default: `mysql`)
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.7.17` - for MySQL)
 * [`default_parameter_group_family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. Will be omitted if `rds_custom_parameter_group_name` is provided (default: `mysql5.7`)
@@ -59,6 +60,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`subnets`]: List(required) Subnets to deploy the RDS in
 * [`size`]: String(optional) RDS instance size
 * [`password`]: String(required) RDS root password
+* [`rds_username`]: String(optional) RDS root user (default: `root`)
 * [`backup_retention_period`]: int(optional) How long do you want to keep RDS backups (default: 14)
 * [`apply_immediately`]: bool(optional) whether you want to Apply changes immediately (default: true)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)

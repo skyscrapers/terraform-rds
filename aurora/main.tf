@@ -40,8 +40,8 @@ resource "aws_db_parameter_group" "aurora_mysql" {
 
 resource "aws_rds_cluster" "aurora" {
   cluster_identifier              = "${var.project}-${var.environment}${var.tag}-aurora"
-  master_username                 = "root"
-  master_password                 = "${var.password}"
+  master_username                 = "${var.master_username}"
+  master_password                 = "${var.rds_username}"
   backup_retention_period         = "${var.backup_retention_period}"
   skip_final_snapshot             = "${var.skip_final_snapshot}"
   final_snapshot_identifier       = "${var.project}-${var.environment}${var.tag}-aurora-final-${md5(timestamp())}"
