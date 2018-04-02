@@ -68,5 +68,11 @@ variable "instance_parameter_group_name" {
 }
 
 variable "engine" {
+  description = "Optional parameter to set the Aurora engine "
   default = "aurora"
+}
+
+variable "engine_version" {
+  description = "Optional parameter to set the Aurora engine version"
+  default = "5.6.10a"
 }

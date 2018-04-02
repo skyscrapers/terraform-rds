@@ -72,7 +72,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   apply_immediately       = "${var.apply_immediately}"
   db_parameter_group_name = "${var.instance_parameter_group_name == "" ? aws_db_parameter_group.aurora_mysql.id : var.instance_parameter_group_name}"
   engine                  = "${var.engine}"
-
+  engine_version          = "${var.engine_version}"
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
     Environment = "${var.environment}"
