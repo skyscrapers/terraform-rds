@@ -51,6 +51,8 @@ resource "aws_rds_cluster" "aurora" {
   storage_encrypted               = "${var.storage_encrypted}"
   apply_immediately               = "${var.apply_immediately}"
   db_cluster_parameter_group_name = "${var.cluster_parameter_group_name}"
+  engine                          = "${var.engine}"
+  engine_version                  = "${var.engine_version}"
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
