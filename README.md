@@ -69,6 +69,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`cluster_parameter_group_name`]: String(optional) the parameter group that is used for the cluster (default: The default aurora cluster group)
 * [`instance_parameter_group_name`]: String(optional) the parameter group that is used for the instances of the cluster (default: aurora-rds-${var.project}-${var.environment}${var.tag})
 * [`amount_of_instances`]: Integer(optional) How many aurora instances do you need, minimum 2 are needed for HA (default: 1)
+* [`engine`]: String(optional) Aurora engine: `aurora`, `aurora-postgresql` or `aurora-mysql` (default: `aurora`)
 
 ### Output:
  * [`aurora_port`]: String: The port of the rds

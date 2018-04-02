@@ -5,6 +5,7 @@ variable "ports" {
     postgres = "5432"
   }
 }
+
 # Create RDS with Subnet and paramter group,
 resource "aws_security_group" "sg_rds" {
   name        = "sg_rds_${var.project}_${var.environment}${var.name}"

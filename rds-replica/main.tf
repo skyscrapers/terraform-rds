@@ -18,7 +18,8 @@ resource "aws_db_instance" "rds" {
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
+
   lifecycle {
-    ignore_changes = ["final_snapshot_identifier","replicate_source_db"]
+    ignore_changes = ["final_snapshot_identifier", "replicate_source_db"]
   }
 }
