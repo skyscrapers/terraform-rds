@@ -64,10 +64,20 @@ variable "amount_of_instances" {
 
 variable "cluster_parameter_group_name" {
   description = "Optional parameter group you can set for the RDS Aurora cluster "
-  default = ""
+  default     = ""
 }
 
 variable "instance_parameter_group_name" {
   description = "Optional parameter group you can set for the RDS instances inside an Aurora cluster "
-  default = ""
+  default     = ""
+}
+
+variable "engine" {
+  description = "Optional parameter to set the Aurora engine "
+  default = "aurora"
+}
+
+variable "engine_version" {
+  description = "Optional parameter to set the Aurora engine version"
+  default = "5.6.10a"
 }
