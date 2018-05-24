@@ -17,6 +17,11 @@ variable "password" {
   description = "RDS root password"
 }
 
+variable "rds_username" {
+  description = "RDS root user"
+  default = "root"
+}
+
 variable "backup_retention_period" {
   description = "How long do you want to keep RDS backups"
   default     = "14"
