@@ -9,6 +9,7 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 resource "aws_db_parameter_group" "aurora_mysql" {
+  count       = "${length(var.instance_parameter_group_name) == 0 ? 1 : 0}"
   name        = "aurora-rds-${var.project}-${var.environment}${var.tag}"
   family      = "aurora5.6"
   description = "aurora ${var.project} ${var.environment} parameter group for mysql"
