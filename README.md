@@ -73,7 +73,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`amount_of_instances`]: Integer(optional) How many aurora instances do you need, minimum 2 are needed for HA (default: 1)
 * [`engine`]: String(optional) Aurora engine: `aurora`, `aurora-postgresql` or `aurora-mysql` (default: `aurora`)
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.6.10a` - for MySQL)
-
+* [`family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. (default: `aurora5.6` - for MySQL)
 ### Output:
  * [`aurora_port`]: String: The port of the rds
  * [`aurora_sg_id`]: String: The security group ID
