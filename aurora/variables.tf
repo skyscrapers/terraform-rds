@@ -81,3 +81,7 @@ variable "engine_version" {
   description = "Optional parameter to set the Aurora engine version"
   default = "5.6.10a"
 }
+
+variable "family" {
+  default = "aurora5.6"
+}
