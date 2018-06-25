@@ -1,11 +1,11 @@
 # Create RDS with Subnet and paramter group,
 resource "aws_security_group" "sg_rds" {
-  name        = "sg_rds_${var.project}_${var.environment}${var.tag}"
+  name        = "${length(var.name) ==0 ? "${var.project}-${var.environment}${var.tag}" : var.name}-rds"
   description = "Security group that is needed for the RDS"
   vpc_id      = "${var.vpc_id}"
 
   tags {
-    Name        = "${var.project}-${var.environment}${var.tag}-sg_rds"
+    Name        = "${length(var.name) ==0 ? "${var.project}-${var.environment}${var.tag}" : var.name}-rds"
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }

@@ -38,21 +38,21 @@ locals {
 }
 
 resource "aws_db_subnet_group" "rds" {
-  name        = "${var.project}-${var.environment}${var.tag}-rds"
+  name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds" : var.name}"
   description = "Our main group of subnets"
   subnet_ids  = ["${var.subnets}"]
 }
 
 resource "aws_db_parameter_group" "rds" {
   count       = "${length(var.rds_custom_parameter_group_name) == 0 ? 1 : 0}"
-  name_prefix = "${var.engine}-${var.project}-${var.environment}${var.tag}-"
+  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : var.name}-"
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
   parameter   = "${var.default_db_parameters[var.engine]}"
 }
 
 resource "aws_db_instance" "rds" {
-  identifier                = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
+  identifier                = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}"
   allocated_storage         = "${var.storage}"
   engine                    = "${var.engine}"
   engine_version            = "${var.engine_version}"
@@ -74,7 +74,7 @@ resource "aws_db_instance" "rds" {
   snapshot_identifier       = "${var.snapshot_identifier}"
 
   tags {
-    Name        = "${var.project}-${var.environment}${var.tag}-rds${var.number}"
+    Name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}"
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
