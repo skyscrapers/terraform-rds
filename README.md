@@ -30,6 +30,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be created
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`snapshot_identifier`]: string(optional) Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05.
+* [`name`]: string(optional) name of the resourced (default to <project>-<environment><tag>-rds<number>)
 
 ### Output:
  * [`rds_port`]: String: The port of the rds
