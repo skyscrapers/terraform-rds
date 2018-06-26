@@ -12,6 +12,7 @@ resource "aws_db_instance" "rds" {
   replicate_source_db       = "${var.replicate_source_db}"
   final_snapshot_identifier = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-replica-final-${md5(timestamp())}"
   db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
+  storage_encrypted         = "${var.storage_encrypted}"
 
   tags {
     tag        = "${length(var.name)==0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}-replica" : var.name}"

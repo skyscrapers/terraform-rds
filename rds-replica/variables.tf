@@ -59,3 +59,8 @@ variable "name" {
   description = "An optional custom name to give to the module's resources"
   default = ""
 }
+
+variable "storage_encrypted" {
+  description = "Encrypt RDS storage"
+  default     = true
+}

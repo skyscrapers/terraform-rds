@@ -114,6 +114,7 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 * [`number`]: int(optional) number of the replica (default 01)
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>-replica)
+* [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
 
 ### Output:
  * [`rds_address`]: String: The hostname of the rds instance
