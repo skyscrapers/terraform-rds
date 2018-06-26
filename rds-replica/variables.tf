@@ -41,8 +41,8 @@ variable "environment" {
   default     = "production"
 }
 
-variable "name" {
-  description = "A name used to identify an RDS in a project that has more than one RDS"
+variable "tag" {
+  description = "A tag used to identify an RDS in a project that has more than one RDS"
   default     = ""
 }
 
@@ -52,5 +52,10 @@ variable "number" {
 }
 
 variable "availability_zone" {
+  default = ""
+}
+
+variable "name" {
+  description = "An optional custom name to give to the module's resources"
   default = ""
 }
