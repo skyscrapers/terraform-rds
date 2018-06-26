@@ -69,7 +69,7 @@ resource "aws_db_instance" "rds" {
   storage_encrypted         = "${var.storage_encrypted}"
   apply_immediately         = "${var.apply_immediately}"
   skip_final_snapshot       = "${var.skip_final_snapshot}"
-  final_snapshot_identifier = "${var.project}-${var.environment}${var.tag}-rds${var.number}-final-${md5(timestamp())}"
+  final_snapshot_identifier = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
   availability_zone         = "${var.availability_zone}"
   snapshot_identifier       = "${var.snapshot_identifier}"
 
