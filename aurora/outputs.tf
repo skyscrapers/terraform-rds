@@ -1,5 +1,5 @@
 output "aurora_port" {
-  value = "3306"
+  value = "${local.port}"
 }
 
 output "aurora_sg_id" {
