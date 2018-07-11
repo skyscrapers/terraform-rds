@@ -40,7 +40,7 @@ variable "rds_password" {
 
 variable "rds_username" {
   description = "RDS root user"
-  default = "root"
+  default     = "root"
 }
 
 variable "engine" {

@@ -19,7 +19,7 @@ variable "password" {
 
 variable "rds_username" {
   description = "RDS root user"
-  default = "root"
+  default     = "root"
 }
 
 variable "backup_retention_period" {
@@ -74,14 +74,21 @@ variable "instance_parameter_group_name" {
 
 variable "engine" {
   description = "Optional parameter to set the Aurora engine "
-  default = "aurora"
+  default     = "aurora"
 }
 
 variable "engine_version" {
   description = "Optional parameter to set the Aurora engine version"
-  default = "5.6.10a"
+  default     = "5.6.10a"
 }
 
 variable "family" {
   default = "aurora5.6"
+}
+
+variable "default_ports" {
+  default = {
+    aurora            = "3306"
+    aurora-postgresql = "5432"
+  }
 }
