@@ -8,7 +8,7 @@ variable "ports" {
 
 # Create RDS with Subnet and paramter group,
 resource "aws_security_group" "sg_rds" {
-  name        = "sg_rds_${var.project}_${var.environment}${var.name}"
+  name        = "sg_rds_replica_${var.project}_${var.environment}${var.name}"
   description = "Security group that is needed for the RDS"
   vpc_id      = "${var.vpc_id}"
 
