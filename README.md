@@ -16,7 +16,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`rds_username`]: String(optional) RDS root user (default: `root`)
 * [`engine`]: String(optional) RDS engine: `mysql`, `postgres` or `oracle` (default: `mysql`)
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.7.17` - for MySQL)
-* [`default_parameter_group_family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. Will be omitted if `rds_custom_parameter_group_name` is provided (default: `mysql5.7`)
+* [`default_parameter_group_family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to `mysql5.7`
 * [`replicate_source_db`]: String(optional) RDS source to replicate from
 * [`multi_az`]: bool(optional) Multi AZ for RDS master (default: true)
 * [`backup_retention_period`]: int(optional) How long do you want to keep RDS backups (default: 14)
@@ -27,10 +27,10 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the database (default 01)
 * [`skip_final_snapshot`]: bool(optional) Whether to skip creating a final snapshot when destroying the resource (default: false)
-* [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be created
+* [`rds_custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided a default one will be used
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`snapshot_identifier`]: string(optional) Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05.
-* [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>)
+* [`name`]: String(optional) Name of the resources (default to <project>-<environment><tag>-rds<number>)
 
 ### Output:
  * [`rds_port`]: String: The port of the rds

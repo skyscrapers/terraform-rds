@@ -54,7 +54,7 @@ variable "engine_version" {
 }
 
 variable "default_parameter_group_family" {
-  description = "Parameter group family for the default parameter group, according to the chosen engine and engine version. Will be omitted if `rds_custom_parameter_group_name` is provided. Defaults to mysql5.7"
+  description = "Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to mysql5.7"
   default     = "mysql5.7"
 }
 
@@ -104,7 +104,7 @@ variable "number" {
 }
 
 variable "rds_custom_parameter_group_name" {
-  description = "A custom parameter group name to attach to the RDS instance. If not provided a default one will be created"
+  description = "A custom parameter group name to attach to the RDS instance. If not provided a default one will be used"
   default     = ""
 }
 

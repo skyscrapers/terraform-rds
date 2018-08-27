@@ -44,8 +44,7 @@ resource "aws_db_subnet_group" "rds" {
 }
 
 resource "aws_db_parameter_group" "rds" {
-  count       = "${length(var.rds_custom_parameter_group_name) == 0 ? 1 : 0}"
-  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : var.name}-"
+  name_prefix = "${length(var.name) == 0 ? "default-${var.engine}-${var.project}-${var.environment}${var.tag}" : "default-${var.name}"}-"
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
   parameter   = "${var.default_db_parameters[var.engine]}"
@@ -62,7 +61,7 @@ resource "aws_db_instance" "rds" {
   password                  = "${var.rds_password}"
   vpc_security_group_ids    = ["${aws_security_group.sg_rds.id}"]
   db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
-  parameter_group_name      = "${length(var.rds_custom_parameter_group_name) > 0 ? var.rds_custom_parameter_group_name : aws_db_parameter_group.rds.name}"
+  parameter_group_name      = "${var.rds_custom_parameter_group_name == "" ? aws_db_parameter_group.rds.id : var.rds_custom_parameter_group_name}"
   multi_az                  = "${var.multi_az}"
   replicate_source_db       = "${var.replicate_source_db}"
   backup_retention_period   = "${var.backup_retention_period}"
