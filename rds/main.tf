@@ -44,7 +44,7 @@ resource "aws_db_subnet_group" "rds" {
 }
 
 resource "aws_db_parameter_group" "rds" {
-  name_prefix = "${length(var.name) == 0 ? "default-${var.engine}-${var.project}-${var.environment}${var.tag}" : "default-${var.name}"}-"
+  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : "${var.name}"}-"
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
   parameter   = "${var.default_db_parameters[var.engine]}"
