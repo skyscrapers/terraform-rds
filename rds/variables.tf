@@ -58,11 +58,6 @@ variable "default_parameter_group_family" {
   default     = "mysql5.7"
 }
 
-variable "replicate_source_db" {
-  description = "RDS source to replicate from"
-  default     = ""
-}
-
 variable "multi_az" {
   description = "Multi AZ true or false"
   default     = true
