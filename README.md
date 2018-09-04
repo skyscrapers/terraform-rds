@@ -17,7 +17,6 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`engine`]: String(optional) RDS engine: `mysql`, `postgres` or `oracle` (default: `mysql`)
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.7.17` - for MySQL)
 * [`default_parameter_group_family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to `mysql5.7`
-* [`replicate_source_db`]: String(optional) RDS source to replicate from
 * [`multi_az`]: bool(optional) Multi AZ for RDS master (default: true)
 * [`backup_retention_period`]: int(optional) How long do you want to keep RDS backups (default: 14)
 * [`apply_immediately`]: bool(optional) whether you want to Apply changes immediately (default: true)

@@ -10,7 +10,6 @@ resource "aws_db_instance" "rds" {
   instance_class            = "${var.size}"
   vpc_security_group_ids    = ["${aws_security_group.sg_rds.id}"]
   replicate_source_db       = "${var.replicate_source_db}"
-  final_snapshot_identifier = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-replica-final-${md5(timestamp())}"
   db_subnet_group_name      = "${aws_db_subnet_group.rds.id}"
   storage_encrypted         = "${var.storage_encrypted}"
 
@@ -21,6 +20,6 @@ resource "aws_db_instance" "rds" {
   }
 
   lifecycle {
-    ignore_changes = ["final_snapshot_identifier", "replicate_source_db"]
+    ignore_changes = ["replicate_source_db"]
   }
 }
