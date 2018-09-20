@@ -29,7 +29,7 @@ resource "aws_iam_role" "iam_for_lambda" {
 EOF
 }
 
-resource "aws_iam_role_policy" "rds_lambda_copy" {
+resource "aws_iam_policy" "rds_lambda_copy" {
   name = "rds_lambda_copy"
   policy = <<EOF
 {
@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
     policy_arn = "${aws_iam_policy.rds_lambda_copy.arn}"
 }
 
-resource "aws_iam_role_policy" "rds_lambda_create_snapshot" {
+resource "aws_iam_policy" "rds_lambda_create_snapshot" {
   name = "rds_lambda_create_snapshot"
   policy = <<EOF
 {
