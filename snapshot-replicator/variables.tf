@@ -12,3 +12,7 @@ variable "db_instances" {
 variable "kms_key_id" {
   default = ""
 }
+
+variable "provider" {
+  default = ""
+}
