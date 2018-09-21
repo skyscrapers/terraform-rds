@@ -42,7 +42,7 @@ def lambda_handler(event, context):
                 SourceDBSnapshotIdentifier=source_snap_arn,
                 TargetDBSnapshotIdentifier=target_snap_id,
                 SourceRegion=SOURCE_REGION,
-                KmsKeyId='arn:aws:kms:eu-central-1:353795632189:key/5750f70a-2bd2-4e55-8f2e-6f0dbe570f44',
+                KmsKeyId='arn:aws:kms:eu-central-1:353795632189:key/14f47fc7-a9f1-4889-90fd-e10660bb0c9b',
                 CopyTags = True)
                 print(response)
             except botocore.exceptions.ClientError as e:

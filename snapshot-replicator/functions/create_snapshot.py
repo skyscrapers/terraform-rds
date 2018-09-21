@@ -2,12 +2,13 @@ import boto3
 import botocore  
 import datetime  
 import re
+import os
 import datetime
 
-SOURCE_REGION = os.environ['SOURCE_REGION']  
+#SOURCE_REGION = os.environ['SOURCE_REGION']
+SOURCE_REGION = "eu-west-1"  
 iam = boto3.client('iam')  
-instances = os.environ['DB_INSTANCES']
-
+instances = ["frisket-production-api-rds01"]
 print('Loading function')
 
 def lambda_handler(event, context):  
