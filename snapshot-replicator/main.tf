@@ -229,6 +229,25 @@ resource "aws_lambda_function" "rds_create_snapshot" {
   }
 }
 
+resource "aws_lambda_function" "remove_snapshot_retention" {
+  function_name = "remove_snapshot_retention"
+  role          = "${aws_iam_role.iam_for_lambda.arn}"
+  handler       = "remove_snapshots.lambda_handler"
+
+  filename         = "${local.filename}"
+  source_code_hash = "${base64sha256(file("${local.filename}"))}"
+
+  runtime = "python2.7"
+  timeout = "120"
+
+  environment {
+    variables = {
+      DESTINATION_REGION = "${var.aws_destination_region}"
+      DB_INSTANCES       = "${var.db_instances}"
+    }
+  }
+}
+
 resource "aws_sns_topic" "rds-backup-events" {
   name = "rds-backup-events"
 }
@@ -264,18 +283,20 @@ resource "aws_cloudwatch_event_rule" "every_6_hours" {
   description         = "Fires every 6 hours"
   schedule_expression = "rate(6 hours)"
 }
+resource "aws_cloudwatch_event_rule" "every_24_hours" {
+  name                = "every_24_hours"
+  description         = "Fires every 24 hours"
+  schedule_expression = "rate(24 hours)"
+}
 
 resource "aws_cloudwatch_event_target" "activate_lambda_cron" {
   rule      = "${aws_cloudwatch_event_rule.every_6_hours.name}"
   target_id = "rds-backup"
   arn       = "${aws_lambda_function.rds_create_snapshot.arn}"
-  # role_arn  = "${aws_iam_role.states_execution_role.arn}"
+}
+resource "aws_cloudwatch_event_target" "activate_lambda_removal_cron" {
+  rule      = "${aws_cloudwatch_event_rule.every_24_hours.name}"
+  target_id = "rds-retention-removal"
+  arn       = "${aws_lambda_function.remove_snapshot_retention.arn}"
 }
 
-# resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_foo" {
-#     statement_id = "AllowExecutionFromCloudWatch"
-#     action = "lambda:InvokeFunction"
-#     function_name = "${aws_lambda_function.check_foo.function_name}"
-#     principal = "events.amazonaws.com"
-#     source_arn = "${aws_cloudwatch_event_rule.every_five_minutes.arn}"
-# }
