@@ -7,7 +7,8 @@ variable "aws_destination_region" {
 }
 
 variable "db_instances" {
-  default = ""
+  type    = "list"
+  default = []
 }
 
 variable "kms_key_id" {
@@ -15,5 +16,9 @@ variable "kms_key_id" {
 }
 
 variable "provider" {
+  default = ""
+}
+
+variable "retention" {
   default = ""
 }
