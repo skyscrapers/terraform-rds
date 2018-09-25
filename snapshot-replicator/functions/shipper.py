@@ -1,13 +1,13 @@
-import boto3  
-import botocore  
+import boto3   
 import datetime  
 import re
-import datetime
+import os
 
-SOURCE_REGION = 'eu-west-1'  
-TARGET_REGION = 'eu-central-1'  
+SOURCE_REGION = os.environ['SOURCE_REGION']
+TARGET_REGION = os.environ['TARGET_REGION']
+KMS_KEY_ID = os.environ['KMS_KEY_ID'] 
 iam = boto3.client('iam')  
-instances = ['frisket-production-api-rds01']
+instances = os.environ['DB_INSTANCES']  
 
 print('Loading function')
 
@@ -28,7 +28,7 @@ def lambda_handler(event, context):
 
         source = boto3.client('rds', region_name=SOURCE_REGION)
 
-        for instance in instances:
+        for instance in instances.split(','):
             source_instances = source.describe_db_instances(DBInstanceIdentifier=instance)
             source_snaps = source.describe_db_snapshots(DBInstanceIdentifier=instance)['DBSnapshots']
             source_snap = sorted(source_snaps, key=byTimestamp, reverse=True)[0]['DBSnapshotIdentifier']
@@ -42,7 +42,7 @@ def lambda_handler(event, context):
                 SourceDBSnapshotIdentifier=source_snap_arn,
                 TargetDBSnapshotIdentifier=target_snap_id,
                 SourceRegion=SOURCE_REGION,
-                KmsKeyId='arn:aws:kms:eu-central-1:353795632189:key/14f47fc7-a9f1-4889-90fd-e10660bb0c9b',
+                KmsKeyId=KMS_KEY_ID,
                 CopyTags = True)
                 print(response)
             except botocore.exceptions.ClientError as e:

@@ -1,9 +1,10 @@
+#KMS key for secure copy of RDS snapshots
 resource "aws_kms_key" "dr_key" {
   provider                = "aws.eu-central-1"
   description             = "DR RDS KEY"
   deletion_window_in_days = 10
 }
-
+#Multiple IAM policies to allow the execution of lambda scripts
 resource "aws_iam_role" "iam_for_lambda" {
   name = "default_lambda"
 
@@ -113,67 +114,7 @@ resource "aws_iam_role_policy_attachment" "attach_states_policy_to_role" {
   role       = "${aws_iam_role.states_execution_role.name}"
   policy_arn = "${aws_iam_policy.states_execution_policy.arn}"
 }
-
-# resource "aws_iam_role" "aws_event_invoke_step_function_role" {
-#   name = "aws_event_invoke_step_function_role"
-
-#   assume_role_policy = <<EOF
-#   {
-#   	"Version": "2012-10-17",
-#   	"Statement": [{
-#   		"Effect": "Allow",
-#   		"Principal": {
-#   			"Service": "events.amazonaws.com"
-#   		},
-#   		"Action": "sts:AssumeRole"
-#   	}]
-#   }
-# EOF
-# }
-
-# resource "aws_iam_policy" "aws_event_invoke_step_function_policy" {
-#   name = "aws_event_invoke_step_function_policy"
-
-#   policy = <<EOF
-# {
-# 	"Version": "2012-10-17",
-# 	"Statement": [{
-# 		"Effect": "Allow",
-# 		"Action": [
-# 			"states:StartExecution"
-# 		],
-# 		"Resource": [
-# 			"arn:aws:states:*"
-# 		]
-# 	}]
-# }
-# EOF
-# }
-
-# resource "aws_iam_role_policy_attachment" "attach_aws_event_invoke_step_to_role" {
-#   role       = "${aws_iam_role.aws_event_invoke_step_function_role.name}"
-#   policy_arn = "${aws_iam_policy.aws_event_invoke_step_function_policy.arn}"
-# }
-
-# resource "aws_sfn_state_machine" "temp" {
-#   name     = "rds-backup"
-#   role_arn = "${aws_iam_role.states_execution_role.name}"
-
-#   definition = <<EOF
-# {
-#   "Comment": "Create a snapshot for a defined DB's",
-#   "StartAt": "CreateRDSSnapshot",
-#   "States": {
-#     "CreateRDSSnapshot": {
-#       "Type": "Task",
-#       "Resource": "${aws_lambda_function.rds_create_snapshot.arn}",
-#       "End": true
-#     }
-#   }
-# }
-# EOF
-# }
-
+#Create zip file with all lambda code
 data "archive_file" "create_zip" {
   type        = "zip"
   output_path = "${path.module}/shipper.zip"
@@ -189,6 +130,7 @@ locals {
   // +1 for removing the "/"
 }
 
+#Creation of lambda function to copy snapshots to remote region
 resource "aws_lambda_function" "rds_copy_snapshot" {
   function_name = "rds_copy_snapshot"
   role          = "${aws_iam_role.iam_for_lambda.arn}"
@@ -203,10 +145,13 @@ resource "aws_lambda_function" "rds_copy_snapshot" {
   environment {
     variables = {
       SOURCE_REGION = "${var.aws_source_region}"
-      DB_INSTANCES  = "${var.db_instances}"
+      TARGET_REGION = "${var.aws_destination_region}"
+      DB_INSTANCES  = "${join(",",var.db_instances)}"
+      KMS_KEY_ID    = "${aws_kms_key.dr_key.arn}"
     }
   }
 }
+#Creation of lambda function to create snapshots
 
 resource "aws_lambda_function" "rds_create_snapshot" {
   function_name = "rds_create_snapshot"
@@ -221,13 +166,12 @@ resource "aws_lambda_function" "rds_create_snapshot" {
 
   environment {
     variables = {
-      SOURCE_REGION      = "${var.aws_source_region}"
-      DESTINATION_REGION = "${var.aws_destination_region}"
-      DB_INSTANCES       = "${var.db_instances}"
-      KMS_KEY_ID         = "${aws_kms_key.dr_key.arn}"
+      SOURCE_REGION = "${var.aws_source_region}"
+      DB_INSTANCES  = "${join(",",var.db_instances)}"
     }
   }
 }
+#Creation of lambda function to remove snapshots in remote region
 
 resource "aws_lambda_function" "remove_snapshot_retention" {
   function_name = "remove_snapshot_retention"
@@ -242,16 +186,19 @@ resource "aws_lambda_function" "remove_snapshot_retention" {
 
   environment {
     variables = {
-      DESTINATION_REGION = "${var.aws_destination_region}"
-      DB_INSTANCES       = "${var.db_instances}"
+      TARGET_REGION = "${var.aws_destination_region}"
+      DB_INSTANCES  = "${join(",",var.db_instances)}"
+      RETENTION     = "${var.retention}"
     }
   }
 }
 
+#Creation of SNS topic for RDS backup events
 resource "aws_sns_topic" "rds-backup-events" {
   name = "rds-backup-events"
 }
 
+#Creation of RDS event subscription to notify the SNS topic a backup has been created
 resource "aws_db_event_subscription" "default" {
   name      = "rds-manual-snapshot"
   sns_topic = "${aws_sns_topic.rds-backup-events.arn}"
@@ -263,13 +210,14 @@ resource "aws_db_event_subscription" "default" {
     "backup",
   ]
 }
-
+#Linking the topic to trigger a lambda function
 resource "aws_sns_topic_subscription" "lambda_subscription" {
   topic_arn = "${aws_sns_topic.rds-backup-events.arn}"
   protocol  = "lambda"
   endpoint  = "${aws_lambda_function.rds_copy_snapshot.arn}"
 }
 
+#Creation of permissions to allow sns to trigger lambda function
 resource "aws_lambda_permission" "with_sns" {
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
@@ -278,11 +226,14 @@ resource "aws_lambda_permission" "with_sns" {
   source_arn    = "${aws_sns_topic.rds-backup-events.arn}"
 }
 
+#Creation of cronjobs 
+#Job for triggering backups
 resource "aws_cloudwatch_event_rule" "every_6_hours" {
   name                = "every_6_hours"
   description         = "Fires every 6 hours"
   schedule_expression = "rate(6 hours)"
 }
+#Job for cleaning up old retention
 resource "aws_cloudwatch_event_rule" "every_24_hours" {
   name                = "every_24_hours"
   description         = "Fires every 24 hours"
@@ -294,9 +245,9 @@ resource "aws_cloudwatch_event_target" "activate_lambda_cron" {
   target_id = "rds-backup"
   arn       = "${aws_lambda_function.rds_create_snapshot.arn}"
 }
+
 resource "aws_cloudwatch_event_target" "activate_lambda_removal_cron" {
   rule      = "${aws_cloudwatch_event_rule.every_24_hours.name}"
   target_id = "rds-retention-removal"
   arn       = "${aws_lambda_function.remove_snapshot_retention.arn}"
 }
-
