@@ -1,7 +1,8 @@
 # terraform-rds
-Everything for RDS related terraform
 
-## RDS
+Terraform modules to manage RDS resources
+
+## rds
 Creates a RDS instance, security_group, subnet_group and parameter_group
 
 ### Available variables:
@@ -39,19 +40,18 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 ### Example
 ```
 module "rds" {
-  source                   = "rds"
-  vpc_id                   = "${module.vpc.vpc_id}"
-  subnets                  = "${module.vpc.private_db_subnets}"
-  project                  = "${var.project}"
-  environment              = "${var.environment}"
-  size                     = "${var.rds_size}"
-  security_groups          = []
-  rds_password             = "${var.rds_password}"
-  multi_az                 = "${var.rds_multiaz}"
-  backup_retention_period  = "${var.rds_retention_period}"
-  rds_parameter_group_name = "mysql-rds-${var.project}-${var.environment}${var.tag}"
+  source          = "github.com/skyscrapers/terraform-rds//rds"
+  vpc_id          = "vpc-e123bc45"
+  subnets         = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
+  project         = "myproject"
+  environment     = "production"
+  size            = "db.t2.small"
+  security_groups = ["sg-12be345678905ebf1", "sg-1234567890aef"]
+  rds_password    = "supersecurepassword"
+  multi_az        = "false"
 }
 ```
+
 ## Aurora
 Creates a Aurora cluster + instances, security_group, subnet_group and parameter_group
 
@@ -75,6 +75,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.6.10a` - for MySQL)
 * [`family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. (default: `aurora5.6` - for MySQL)
 * [`default_ports`]: Map(optional) The default ports for aurora and aurora-postgresql. (default: `3306` and `5432`)
+
 ### Output:
  * [`aurora_port`]: String: The port of the rds
  * [`aurora_sg_id`]: String: The security group ID
@@ -84,20 +85,19 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 ### Example
 ```
 module "aurora" {
-  source                   = "aurora"
-  project                  = "${var.project}"
-  environment              = "${var.environment}"
-  password                 = "${var.rds_password}"
-  subnets                  = "${module.vpc.private_db_subnets}"
-  amount_of_instances      = 1
-  rds_parameter_group_name = "${aws_db_parameter_group.rds_custom_parameter_group.name}"
-
-  security_groups          = []
+  source              = "github.com/skyscrapers/terraform-rds//aurora"
+  project             = "myproject"
+  environment         = "production"
+  size                = "db.t2.small"
+  password            = "supersecurepassword"
+  subnets             = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
+  amount_of_instances = 1
+  security_groups     = ["sg-12be345678905ebf1", "sg-1234567890aef"]
 }
 ```
 
-## RDS-REPLICA
-Creates an RDS read replica instance,the replica security_group and a subnet_group if not passed as parameter
+## rds-replica
+Creates an RDS read replica instance, the replica `security_group` and a `subnet_group` if not passed as parameter
 
 ### Available variables:
 * [`vpc_id`]: String(required): ID of the VPC where to deploy in
@@ -111,7 +111,6 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
 * [`number`]: int(optional) number of the replica (default 01)
-* [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>-replica)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
 
@@ -123,16 +122,14 @@ Creates an RDS read replica instance,the replica security_group and a subnet_gro
 ### Example
 ```
 module "rds" {
-  source              = "rds-replica"
-  engine              = "postgres"
-  project             = "batch"
+  source              = "github.com/skyscrapers/terraform-rds//rds-replica"
+  project             = "myproject"
+  environment         = "production"
   size                = "db.t2.small"
-  name                = "venues"
-  security_groups     = ["${var.sg_bastion_id}"]
-  replicate_source_db = "${var.rds_arn}"
-  availability_zone   = "${var.availability_zone}"
-  vpc_id              = "${var.vpc_id}"
-  subnets             = "${var.subnets}"
-
+  engine              = "postgres"
+  security_groups     = ["sg-12be345678905ebf1", "sg-1234567890aef"]
+  replicate_source_db = "arn:aws:rds:eu-west-1:123456789012:db:myproject-production-something-rds01"
+  vpc_id              = "vpc-e123bc45"
+  subnets             = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
 }
 ```
