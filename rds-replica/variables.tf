@@ -51,10 +51,6 @@ variable "number" {
   default     = "01"
 }
 
-variable "availability_zone" {
-  default = ""
-}
-
 variable "name" {
   description = "An optional custom name to give to the module's resources"
   default = ""
