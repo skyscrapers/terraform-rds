@@ -24,9 +24,8 @@ variable "enable" {
 }
 
 variable "retention" {
-  default = ""
+  default = 30
 }
 
 variable "environment" {
-  default = ""
 }

@@ -9,7 +9,7 @@ resource "aws_kms_key" "dr_key" {
 #Multiple IAM policies to allow the execution of lambda scripts
 resource "aws_iam_role" "iam_for_lambda" {
   count = "${var.enable ? 1 : 0}"
-  name  = "default_lambda_${var.environment}"
+  name  = "default-lambda-${var.environment}"
 
   assume_role_policy = <<EOF
 {
@@ -29,7 +29,7 @@ EOF
 
 resource "aws_iam_policy" "rds_lambda_copy" {
   count = "${var.enable ? 1 : 0}"
-  name  = "rds_lambda_copy_${var.environment}"
+  name  = "rds-lambda-copy-${var.environment}"
 
   policy = <<EOF
 {
@@ -57,7 +57,7 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
 
 resource "aws_iam_policy" "rds_lambda_create_snapshot" {
   count = "${var.enable ? 1 : 0}"
-  name  = "rds_lambda_create_snapshot_${var.environment}"
+  name  = "rds-lambda-create-snapshot-${var.environment}"
 
   policy = <<EOF
 {
@@ -81,7 +81,7 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_create_policy_to_role" 
 
 resource "aws_iam_role" "states_execution_role" {
   count = "${var.enable ? 1 : 0}"
-  name  = "states_execution_role_${var.environment}"
+  name  = "states-execution-role-${var.environment}"
 
   assume_role_policy = <<EOF
 {
@@ -101,7 +101,7 @@ EOF
 
 resource "aws_iam_policy" "states_execution_policy" {
   count = "${var.enable ? 1 : 0}"
-  name  = "states_execution_policy_${var.environment}"
+  name  = "states-execution-policy-${var.environment}"
 
   policy = <<EOF
 {
@@ -146,7 +146,7 @@ locals {
 #Creation of lambda function to copy snapshots to remote region
 resource "aws_lambda_function" "rds_copy_snapshot" {
   count         = "${var.enable ? 1 : 0}"
-  function_name = "rds_copy_snapshot_${var.environment}"
+  function_name = "rds-copy-snapshot-${var.environment}"
   role          = "${aws_iam_role.iam_for_lambda.arn}"
   handler       = "shipper.lambda_handler"
 
@@ -170,7 +170,7 @@ resource "aws_lambda_function" "rds_copy_snapshot" {
 
 resource "aws_lambda_function" "rds_create_snapshot" {
   count         = "${var.enable ? 1 : 0}"
-  function_name = "rds_create_snapshot_${var.environment}"
+  function_name = "rds-create-snapshot-${var.environment}"
   role          = "${aws_iam_role.iam_for_lambda.arn}"
   handler       = "create_snapshot.lambda_handler"
 
@@ -192,7 +192,7 @@ resource "aws_lambda_function" "rds_create_snapshot" {
 
 resource "aws_lambda_function" "remove_snapshot_retention" {
   count         = "${var.enable ? 1 : 0}"
-  function_name = "remove_snapshot_retention_${var.environment}"
+  function_name = "remove-snapshot-retention-${var.environment}"
   role          = "${aws_iam_role.iam_for_lambda.arn}"
   handler       = "remove_snapshots.lambda_handler"
 
@@ -212,9 +212,9 @@ resource "aws_lambda_function" "remove_snapshot_retention" {
 }
 
 #Creation of SNS topic for RDS backup events
-resource "aws_sns_topic" "rds-backup-events" {
+resource "aws_sns_topic" "rds_backup_events" {
   count = "${var.enable ? 1 : 0}"
-  name  = "rds_backup_events_${var.environment}"
+  name  = "rds-backup-events-${var.environment}"
 }
 
 #Creation of RDS event subscription to notify the SNS topic a backup has been created
@@ -222,7 +222,7 @@ resource "aws_sns_topic" "rds-backup-events" {
 resource "aws_db_event_subscription" "default" {
   count     = "${var.enable ? 1 : 0}"
   name      = "rds-manual-snapshot-${var.environment}"
-  sns_topic = "${aws_sns_topic.rds-backup-events.arn}"
+  sns_topic = "${aws_sns_topic.rds_backup_events.arn}"
 
   source_type = "db-instance"
   source_ids  = ["${var.db_instances}"]
@@ -235,7 +235,7 @@ resource "aws_db_event_subscription" "default" {
 #Linking the topic to trigger a lambda function
 resource "aws_sns_topic_subscription" "lambda_subscription" {
   count     = "${var.enable ? 1 : 0}"
-  topic_arn = "${aws_sns_topic.rds-backup-events.arn}"
+  topic_arn = "${aws_sns_topic.rds_backup_events.arn}"
   protocol  = "lambda"
   endpoint  = "${aws_lambda_function.rds_copy_snapshot.arn}"
 }
@@ -247,14 +247,14 @@ resource "aws_lambda_permission" "with_sns" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.rds_copy_snapshot.arn}"
   principal     = "sns.amazonaws.com"
-  source_arn    = "${aws_sns_topic.rds-backup-events.arn}"
+  source_arn    = "${aws_sns_topic.rds_backup_events.arn}"
 }
 
 #Creation of cronjobs 
 #Job for triggering backups
 resource "aws_cloudwatch_event_rule" "every_6_hours" {
   count               = "${var.enable ? 1 : 0}"
-  name                = "every_6_hours_${var.environment}"
+  name                = "every-6-hours-${var.environment}"
   description         = "Fires every 6 hours"
   schedule_expression = "rate(6 hours)"
 }
@@ -262,7 +262,7 @@ resource "aws_cloudwatch_event_rule" "every_6_hours" {
 #Job for cleaning up old retention
 resource "aws_cloudwatch_event_rule" "every_24_hours" {
   count               = "${var.enable ? 1 : 0}"
-  name                = "every_24_hours_${var.environment}"
+  name                = "every-24-hours-${var.environment}"
   description         = "Fires every 24 hours"
   schedule_expression = "rate(24 hours)"
 }
