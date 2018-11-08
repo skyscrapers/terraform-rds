@@ -19,6 +19,9 @@ variable "provider" {
   default = ""
 }
 
+variable "enable" {
+}
+
 variable "retention" {
   default = ""
 }
