@@ -19,6 +19,13 @@ variable "provider" {
   default = ""
 }
 
+variable "enable" {
+  default = false
+}
+
 variable "retention" {
-  default = ""
+  default = 30
+}
+
+variable "environment" {
 }
