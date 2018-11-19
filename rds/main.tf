@@ -70,6 +70,7 @@ resource "aws_db_instance" "rds" {
   final_snapshot_identifier = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
   availability_zone         = "${var.availability_zone}"
   snapshot_identifier       = "${var.snapshot_identifier}"
+  monitoring_interval       = "${var.monitoring_interval}"
 
   tags {
     Name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}"

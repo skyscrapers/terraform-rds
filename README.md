@@ -31,6 +31,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 * [`availability_zone`]: string(optional) The availability zone where you want to launch your instance in
 * [`snapshot_identifier`]: string(optional) Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05.
 * [`name`]: String(optional) Name of the resources (default to <project>-<environment><tag>-rds<number>)
+* [`monitoring_interval`]: string(optional) The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. (default to 0)
 
 ### Output:
  * [`rds_port`]: String: The port of the rds
@@ -113,6 +114,7 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 * [`number`]: int(optional) number of the replica (default 01)
 * [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>-replica)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
+* [`custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance
 
 ### Output:
  * [`rds_address`]: String: The hostname of the rds instance
