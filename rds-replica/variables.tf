@@ -60,3 +60,8 @@ variable "storage_encrypted" {
   description = "Encrypt RDS storage"
   default     = true
 }
+
+variable "custom_parameter_group_name" {
+  description = "A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance"
+  default = ""
+}
