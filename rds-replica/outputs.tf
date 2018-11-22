@@ -7,5 +7,6 @@ output "rds_arn" {
 }
 
 output "rds_sg_id" {
-  value = "${aws_security_group.sg_rds.0.id}"
+  # trick to allow correct module behaviour in case number_of_replicas=0
+  value = "${element(coalescelist(aws_security_group.sg_rds.*.id,list("none")),0)}"
 }
