@@ -46,9 +46,9 @@ variable "tag" {
   default     = ""
 }
 
-variable "number" {
-  description = "number of the database default 01"
-  default     = "01"
+variable "number_of_replicas" {
+  description = "number of database repliacs default 1"
+  default     = 1
 }
 
 variable "name" {

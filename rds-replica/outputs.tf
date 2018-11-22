@@ -1,11 +1,11 @@
 output "rds_address" {
-  value = "${aws_db_instance.rds.address}"
+  value = "${aws_db_instance.rds.*.address}"
 }
 
 output "rds_arn" {
-  value = "${aws_db_instance.rds.arn}"
+  value = "${aws_db_instance.rds.*.arn}"
 }
 
 output "rds_sg_id" {
-  value = "${aws_security_group.sg_rds.id}"
+  value = "${aws_security_group.sg_rds.0.id}"
 }
