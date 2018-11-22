@@ -27,5 +27,4 @@ variable "retention" {
   default = 30
 }
 
-variable "environment" {
-}
+variable "environment" {}
