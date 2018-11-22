@@ -111,7 +111,7 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 * [`tag`]: String(optional) the tag of the replica
 * [`project`]: String(required) the name of the project this RDS belongs to
 * [`environment`]: String(required) the name of the environment these subnets belong to (prod,stag,dev)
-* [`number`]: int(optional) number of the replica (default 01)
+* [`number_of_replicas`]: int(optional) number of read replicas (default 1)
 * [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>-replica)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
 * [`custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance

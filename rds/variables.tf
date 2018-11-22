@@ -120,10 +120,10 @@ variable "snapshot_identifier" {
 
 variable "name" {
   description = "The name of the RDS instance"
-  default = ""
+  default     = ""
 }
 
 variable "monitoring_interval" {
   description = "The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60."
-  default = "0"
+  default     = "0"
 }

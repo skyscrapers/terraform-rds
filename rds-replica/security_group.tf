@@ -8,6 +8,7 @@ variable "ports" {
 
 # Create RDS with Subnet and paramter group,
 resource "aws_security_group" "sg_rds" {
+  count       = "${var.number_of_replicas > 0 ? 1 : 0}"
   name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-replica" : var.name}-sg-rds"
   description = "Security group that is needed for the RDS replica"
   vpc_id      = "${var.vpc_id}"
@@ -20,7 +21,7 @@ resource "aws_security_group" "sg_rds" {
 }
 
 resource "aws_security_group_rule" "rds_sg_in" {
-  count                    = "${length(var.security_groups)}"
+  count                    = "${var.number_of_replicas > 0 ? length(var.security_groups) : 0}"
   security_group_id        = "${aws_security_group.sg_rds.id}"
   type                     = "ingress"
   from_port                = "${lookup(var.ports, var.engine)}"

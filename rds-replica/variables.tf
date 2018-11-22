@@ -46,14 +46,14 @@ variable "tag" {
   default     = ""
 }
 
-variable "number" {
-  description = "number of the database default 01"
-  default     = "01"
+variable "number_of_replicas" {
+  description = "number of database repliacs default 1"
+  default     = 1
 }
 
 variable "name" {
   description = "An optional custom name to give to the module's resources"
-  default = ""
+  default     = ""
 }
 
 variable "storage_encrypted" {
@@ -63,5 +63,5 @@ variable "storage_encrypted" {
 
 variable "custom_parameter_group_name" {
   description = "A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance"
-  default = ""
+  default     = ""
 }
