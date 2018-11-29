@@ -1,40 +1,11 @@
-#lookup parameters for specic RDS types
-variable "default_db_parameters" {
-  default = {
-    mysql = [
-      {
-        name  = "slow_query_log"
-        value = "1"
-      },
-      {
-        name  = "long_query_time"
-        value = "1"
-      },
-      {
-        name  = "general_log"
-        value = "0"
-      },
-      {
-        name  = "log_output"
-        value = "FILE"
-      },
-    ]
-
-    postgres = []
-    oracle   = []
-  }
-}
-
-variable "default_ports" {
-  default = {
+locals {
+  default_ports = {
     mysql    = "3306"
     postgres = "5432"
     oracle   = "1521"
   }
-}
 
-locals {
-  port = "${var.default_ports[var.engine]}"
+  port = "${local.default_ports[var.engine]}"
 }
 
 resource "aws_db_subnet_group" "rds" {

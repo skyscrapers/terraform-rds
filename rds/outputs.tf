@@ -1,23 +1,29 @@
 output "rds_port" {
-  value = "${local.port}"
+  description = "The port of the RDS instance"
+  value       = "${local.port}"
 }
 
 output "rds_address" {
-  value = "${aws_db_instance.rds.address}"
+  description = "The hostname of the RDS instance"
+  value       = "${aws_db_instance.rds.address}"
 }
 
 output "rds_id" {
-  value = "${aws_db_instance.rds.id}"
+  description = "The id of the RDS instance"
+  value       = "${aws_db_instance.rds.id}"
 }
 
 output "rds_arn" {
-  value = "${aws_db_instance.rds.arn}"
+  description = "The arn of the RDS instance"
+  value       = "${aws_db_instance.rds.arn}"
 }
 
 output "rds_sg_id" {
-  value = "${aws_security_group.sg_rds.id}"
+  description = "The security group id of the RDS instance"
+  value       = "${aws_security_group.sg_rds.id}"
 }
 
 output "aws_db_subnet_group_id" {
-  value = "${aws_db_subnet_group.rds.id}"
+  description = "The subnet group id of the RDS instance"
+  value       = "${aws_db_subnet_group.rds.id}"
 }
