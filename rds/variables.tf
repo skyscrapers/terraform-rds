@@ -132,31 +132,3 @@ variable "monitoring_interval" {
   description = "The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60."
   default     = "0"
 }
-
-variable "default_db_parameters" {
-  description = "Default database parameters for each engine type"
-
-  default = {
-    mysql = [
-      {
-        name  = "slow_query_log"
-        value = "1"
-      },
-      {
-        name  = "long_query_time"
-        value = "1"
-      },
-      {
-        name  = "general_log"
-        value = "0"
-      },
-      {
-        name  = "log_output"
-        value = "FILE"
-      },
-    ]
-
-    postgres = []
-    oracle   = []
-  }
-}

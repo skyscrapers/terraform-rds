@@ -5,6 +5,30 @@ locals {
     oracle   = "1521"
   }
 
+  default_db_parameters = {
+    mysql = [
+      {
+        name  = "slow_query_log"
+        value = "1"
+      },
+      {
+        name  = "long_query_time"
+        value = "1"
+      },
+      {
+        name  = "general_log"
+        value = "0"
+      },
+      {
+        name  = "log_output"
+        value = "FILE"
+      },
+    ]
+
+    postgres = []
+    oracle   = []
+  }
+
   port = "${local.default_ports[var.engine]}"
 }
 
@@ -18,7 +42,7 @@ resource "aws_db_parameter_group" "rds" {
   name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : "${var.name}"}-"
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
-  parameter   = "${var.default_db_parameters[var.engine]}"
+  parameter   = "${local.default_db_parameters[var.engine]}"
 }
 
 resource "aws_db_instance" "rds" {

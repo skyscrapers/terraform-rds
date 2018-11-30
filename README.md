@@ -14,7 +14,6 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | apply_immediately | Apply changes immediately | string | `true` | no |
 | availability_zone | The availability zone where you want to launch your instance in | string | `` | no |
 | backup_retention_period | How long do you want to keep RDS backups | string | `14` | no |
-| default_db_parameters | Default database parameters for each engine type | string | `<map>` | no |
 | default_parameter_group_family | Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to mysql5.7 | string | `mysql5.7` | no |
 | engine | RDS engine: mysql, oracle, postgres. Defaults to mysql | string | `mysql` | no |
 | engine_version | Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL. | string | `5.7.17` | no |
