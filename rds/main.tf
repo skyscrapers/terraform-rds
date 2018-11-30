@@ -1,6 +1,11 @@
-#lookup parameters for specic RDS types
-variable "default_db_parameters" {
-  default = {
+locals {
+  default_ports = {
+    mysql    = "3306"
+    postgres = "5432"
+    oracle   = "1521"
+  }
+
+  default_db_parameters = {
     mysql = [
       {
         name  = "slow_query_log"
@@ -23,18 +28,8 @@ variable "default_db_parameters" {
     postgres = []
     oracle   = []
   }
-}
 
-variable "default_ports" {
-  default = {
-    mysql    = "3306"
-    postgres = "5432"
-    oracle   = "1521"
-  }
-}
-
-locals {
-  port = "${var.default_ports[var.engine]}"
+  port = "${local.default_ports[var.engine]}"
 }
 
 resource "aws_db_subnet_group" "rds" {
@@ -47,7 +42,7 @@ resource "aws_db_parameter_group" "rds" {
   name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : "${var.name}"}-"
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
-  parameter   = "${var.default_db_parameters[var.engine]}"
+  parameter   = "${local.default_db_parameters[var.engine]}"
 }
 
 resource "aws_db_instance" "rds" {

@@ -8,6 +8,11 @@ variable "security_groups" {
   default     = []
 }
 
+variable "security_groups_count" {
+  description = "Number of security groups provided in `security_groups` variable"
+  default     = 0
+}
+
 variable "allowed_cidr_blocks" {
   description = "CIDR blocks that are allowed to access the RDS"
   type        = "list"
@@ -49,7 +54,7 @@ variable "engine" {
 }
 
 variable "engine_version" {
-  description = "Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL."
+  description = "Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL."
   default     = "5.7.17"
 }
 

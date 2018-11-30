@@ -12,7 +12,7 @@ resource "aws_security_group" "sg_rds" {
 }
 
 resource "aws_security_group_rule" "rds_sg_in" {
-  count                    = "${length(var.security_groups)}"
+  count                    = "${var.security_groups_count}"
   security_group_id        = "${aws_security_group.sg_rds.id}"
   type                     = "ingress"
   from_port                = "${local.port}"
