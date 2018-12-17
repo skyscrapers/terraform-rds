@@ -43,6 +43,10 @@ resource "aws_db_parameter_group" "rds" {
   family      = "${var.default_parameter_group_family}"
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
   parameter   = "${local.default_db_parameters[var.engine]}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_db_instance" "rds" {

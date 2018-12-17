@@ -37,6 +37,10 @@ resource "aws_db_parameter_group" "aurora_mysql" {
 
     value = "FILE"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_rds_cluster" "aurora" {
