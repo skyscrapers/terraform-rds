@@ -17,6 +17,10 @@ resource "aws_security_group" "sg_aurora" {
     Environment = "${var.environment}"
     Project     = "${var.project}"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "sg_aurora_in" {
