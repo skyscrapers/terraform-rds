@@ -10,33 +10,35 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| allowed_cidr_blocks | CIDR blocks that are allowed to access the RDS | list | `<list>` | no |
-| apply_immediately | Apply changes immediately | string | `true` | no |
-| availability_zone | The availability zone where you want to launch your instance in | string | `` | no |
-| backup_retention_period | How long do you want to keep RDS backups | string | `14` | no |
-| default_parameter_group_family | Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to mysql5.7 | string | `mysql5.7` | no |
-| engine | RDS engine: mysql, oracle, postgres. Defaults to mysql | string | `mysql` | no |
-| engine_version | Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL. | string | `5.7.17` | no |
-| environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | string | `production` | no |
-| monitoring_interval | The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | string | `0` | no |
-| multi_az | Multi AZ true or false | string | `true` | no |
-| name | The name of the RDS instance | string | `` | no |
-| number | number of the database default 01 | string | `01` | no |
-| project | The current project | string | `` | no |
-| rds_custom_parameter_group_name | A custom parameter group name to attach to the RDS instance. If not provided a default one will be used | string | `` | no |
-| rds_password | RDS root password | string | - | yes |
-| rds_username | RDS root user | string | `root` | no |
-| security_groups | Security groups that are allowed to access the RDS | list | `<list>` | no |
-| security_groups_count | Number of security groups provided in `security_groups` variable | string | `0` | no |
-| size | Instance size | string | `db.t2.small` | no |
-| skip_final_snapshot | Skip final snapshot when destroying RDS | string | `false` | no |
-| snapshot_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `` | no |
-| storage | How many GBs of space does your database need? | string | `10` | no |
-| storage_encrypted | Encrypt RDS storage | string | `true` | no |
-| storage_type | Type of storage you want to use | string | `gp2` | no |
-| subnets | Subnets to deploy in | list | - | yes |
-| tag | A tag used to identify an RDS in a project that has more than one RDS | string | `` | no |
-| vpc_id | ID of the VPC where to deploy in | string | - | yes |
+| allowed\_cidr\_blocks | CIDR blocks that are allowed to access the RDS | list | `<list>` | no |
+| apply\_immediately | Apply changes immediately | string | `"true"` | no |
+| auto\_minor\_version\_upgrade | Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window. | string | `"true"` | no |
+| availability\_zone | The availability zone where you want to launch your instance in | string | `""` | no |
+| backup\_retention\_period | How long do you want to keep RDS backups | string | `"14"` | no |
+| default\_parameter\_group\_family | Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to mysql5.7 | string | `"mysql5.7"` | no |
+| engine | RDS engine: mysql, oracle, postgres. Defaults to mysql | string | `"mysql"` | no |
+| engine\_version | Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL. | string | `"5.7.17"` | no |
+| environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | string | `"production"` | no |
+| maintenance\_window | The window to perform maintenance in. Syntax: 'ddd:hh24:mi-ddd:hh24:mi'. See RDS Maintenance Window docs for more information. | string | `"Mon:00:00-Mon:01:00"` | no |
+| monitoring\_interval | The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60. | string | `"0"` | no |
+| multi\_az | Multi AZ true or false | string | `"true"` | no |
+| name | The name of the RDS instance | string | `""` | no |
+| number | number of the database default 01 | string | `"01"` | no |
+| project | The current project | string | `""` | no |
+| rds\_custom\_parameter\_group\_name | A custom parameter group name to attach to the RDS instance. If not provided a default one will be used | string | `""` | no |
+| rds\_password | RDS root password | string | n/a | yes |
+| rds\_username | RDS root user | string | `"root"` | no |
+| security\_groups | Security groups that are allowed to access the RDS | list | `<list>` | no |
+| security\_groups\_count | Number of security groups provided in `security_groups` variable | string | `"0"` | no |
+| size | Instance size | string | `"db.t2.small"` | no |
+| skip\_final\_snapshot | Skip final snapshot when destroying RDS | string | `"false"` | no |
+| snapshot\_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `""` | no |
+| storage | How many GBs of space does your database need? | string | `"10"` | no |
+| storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |
+| storage\_type | Type of storage you want to use | string | `"gp2"` | no |
+| subnets | Subnets to deploy in | list | n/a | yes |
+| tag | A tag used to identify an RDS in a project that has more than one RDS | string | `""` | no |
+| vpc\_id | ID of the VPC where to deploy in | string | n/a | yes |
 
 ### Output
 
