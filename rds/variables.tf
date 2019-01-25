@@ -10,7 +10,6 @@ variable "security_groups" {
 
 variable "security_groups_count" {
   description = "Number of security groups provided in `security_groups` variable"
-  default     = 0
 }
 
 variable "allowed_cidr_blocks" {
