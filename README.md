@@ -28,7 +28,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | rds\_custom\_parameter\_group\_name | A custom parameter group name to attach to the RDS instance. If not provided a default one will be used | string | `""` | no |
 | rds\_password | RDS root password | string | n/a | yes |
 | rds\_username | RDS root user | string | `"root"` | no |
-| security\_groups | Security groups that are allowed to access the RDS | list | `<list>` | yes |
+| security\_groups | Security groups that are allowed to access the RDS | list | n/a | yes |
 | security\_groups\_count | Number of security groups provided in `security_groups` variable | string | n/a | yes |
 | size | Instance size | string | `"db.t2.small"` | no |
 | skip\_final\_snapshot | Skip final snapshot when destroying RDS | string | `"false"` | no |
