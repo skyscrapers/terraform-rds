@@ -28,8 +28,8 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | rds\_custom\_parameter\_group\_name | A custom parameter group name to attach to the RDS instance. If not provided a default one will be used | string | `""` | no |
 | rds\_password | RDS root password | string | n/a | yes |
 | rds\_username | RDS root user | string | `"root"` | no |
-| security\_groups | Security groups that are allowed to access the RDS | list | `<list>` | no |
-| security\_groups\_count | Number of security groups provided in `security_groups` variable | string | `"0"` | no |
+| security\_groups | Security groups that are allowed to access the RDS | list | n/a | yes |
+| security\_groups\_count | Number of security groups provided in `security_groups` variable | string | n/a | yes |
 | size | Instance size | string | `"db.t2.small"` | no |
 | skip\_final\_snapshot | Skip final snapshot when destroying RDS | string | `"false"` | no |
 | snapshot\_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `""` | no |
