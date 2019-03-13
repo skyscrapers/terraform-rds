@@ -108,14 +108,15 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 
 ```tf
 module "aurora" {
-  source              = "github.com/skyscrapers/terraform-rds//aurora"
-  project             = "myproject"
-  environment         = "production"
-  size                = "db.t2.small"
-  password            = "supersecurepassword"
-  subnets             = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
-  amount_of_instances = 1
-  security_groups     = ["sg-12be345678905ebf1", "sg-1234567890aef"]
+  source                          = "github.com/skyscrapers/terraform-rds//aurora"
+  project                         = "myproject"
+  environment                     = "production"
+  size                            = "db.t2.small"
+  password                        = "supersecurepassword"
+  subnets                         = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
+  amount_of_instances             = 1
+  security_groups                 = ["sg-12be345678905ebf1", "sg-1234567890aef"]
+  enabled_cloudwatch_logs_exports = ["audit", "error", "slowquery"]
 }
 ```
 
