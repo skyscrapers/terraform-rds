@@ -140,3 +140,9 @@ variable "maintenance_window" {
   description = "The window to perform maintenance in. Syntax: 'ddd:hh24:mi-ddd:hh24:mi'. See RDS Maintenance Window docs for more information."
   default     = "Mon:00:00-Mon:01:00"
 }
+
+variable "enabled_cloudwatch_logs_exports" {
+  description = "List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch)."
+  type        = "list"
+  default     = []
+}
