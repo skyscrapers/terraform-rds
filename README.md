@@ -16,6 +16,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | availability\_zone | The availability zone where you want to launch your instance in | string | `""` | no |
 | backup\_retention\_period | How long do you want to keep RDS backups | string | `"14"` | no |
 | default\_parameter\_group\_family | Parameter group family for the default parameter group, according to the chosen engine and engine version. Defaults to mysql5.7 | string | `"mysql5.7"` | no |
+| enabled\_cloudwatch\_logs\_exports | List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch). Defaults to nothing. | list | `[]` | no |
 | engine | RDS engine: mysql, oracle, postgres. Defaults to mysql | string | `"mysql"` | no |
 | engine\_version | Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL. | string | `"5.7.17"` | no |
 | environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | string | `"production"` | no |
@@ -55,16 +56,17 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 
 ```tf
 module "rds" {
-  source                = "github.com/skyscrapers/terraform-rds//rds"
-  vpc_id                = "vpc-e123bc45"
-  subnets               = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
-  project               = "myproject"
-  environment           = "production"
-  size                  = "db.t2.small"
-  security_groups       = ["sg-12be345678905ebf1", "sg-1234567890aef"]
-  security_groups_count = 2
-  rds_password          = "supersecurepassword"
-  multi_az              = "false"
+  source                          = "github.com/skyscrapers/terraform-rds//rds"
+  vpc_id                          = "vpc-e123bc45"
+  subnets                         = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
+  project                         = "myproject"
+  environment                     = "production"
+  size                            = "db.t2.small"
+  security_groups                 = ["sg-12be345678905ebf1", "sg-1234567890aef"]
+  enabled_cloudwatch_logs_exports = ["audit", "error", "slowquery"]
+  security_groups_count           = 2
+  rds_password                    = "supersecurepassword"
+  multi_az                        = "false"
 }
 ```
 
@@ -93,6 +95,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 * [`engine_version`]: String(optional) Engine version to use, according to the chosen engine. You can check the available engine versions using the AWS CLI (http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html) (default: `5.6.10a` - for MySQL)
 * [`family`]: String(optional) Parameter group family for the default parameter group, according to the chosen engine and engine version. (default: `aurora5.6` - for MySQL)
 * [`default_ports`]: Map(optional) The default ports for aurora and aurora-postgresql. (default: `3306` and `5432`)
+* [`enabled_cloudwatch_logs_exports`]: List(optional) List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS Aurora documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch). (default: `[]`)
 
 ### Output
 
@@ -136,6 +139,8 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 * [`name`]: string(optional) name of the resources (default to <project>-<environment><tag>-rds<number>-replica)
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
 * [`custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance
+* [`enabled_cloudwatch_logs_exports`]: List(optional) List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch). (default: `[]`)
+
 
 ### Output
 

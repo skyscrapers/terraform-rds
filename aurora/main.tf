@@ -58,6 +58,7 @@ resource "aws_rds_cluster" "aurora" {
   db_cluster_parameter_group_name = "${var.cluster_parameter_group_name}"
   engine                          = "${var.engine}"
   engine_version                  = "${var.engine_version}"
+  enabled_cloudwatch_logs_exports = ["${var.enabled_cloudwatch_logs_exports}"]
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"

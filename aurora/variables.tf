@@ -92,3 +92,9 @@ variable "default_ports" {
     aurora-postgresql = "5432"
   }
 }
+
+variable "enabled_cloudwatch_logs_exports" {
+  description = "List of log types to enable for exporting to CloudWatch logs."
+  type        = "list"
+  default     = []
+}
