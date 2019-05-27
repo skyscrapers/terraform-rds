@@ -53,7 +53,7 @@ variable "engine" {
 
 variable "engine_version" {
   description = "Engine version to use, according to the chosen engine. You can check the available engine versions using the [AWS CLI](http://docs.aws.amazon.com/cli/latest/reference/rds/describe-db-engine-versions.html). Defaults to 5.7.17 for MySQL."
-  default     = "5.7.17"
+  default     = "5.7.25"
 }
 
 variable "default_parameter_group_family" {
