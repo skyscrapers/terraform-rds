@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 locals {
   default_ports = {
     mysql    = "3306"
@@ -24,7 +28,6 @@ locals {
         value = "FILE"
       },
     ]
-
     postgres = []
     oracle   = []
   }
@@ -39,10 +42,18 @@ resource "aws_db_subnet_group" "rds" {
 }
 
 resource "aws_db_parameter_group" "rds" {
-  name_prefix = length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : var.name
+  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : var.name}-"
   family      = var.default_parameter_group_family
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
-  parameter   = local.default_db_parameters["${var.engine}"]
+  dynamic "parameter" {
+    for_each = local.default_db_parameters[var.engine]
+    content {
+
+      apply_method = lookup(parameter.value, "apply_method", null)
+      name         = parameter.value.name
+      value        = parameter.value.value
+    }
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -66,12 +77,12 @@ resource "aws_db_instance" "rds" {
   storage_encrypted               = var.storage_encrypted
   apply_immediately               = var.apply_immediately
   skip_final_snapshot             = var.skip_final_snapshot
-  final_snapshot_identifier       = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : "${var.name}-final-${md5(timestamp())}"
+  final_snapshot_identifier       = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
   availability_zone               = var.availability_zone
   snapshot_identifier             = var.snapshot_identifier
   monitoring_interval             = var.monitoring_interval
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
-  enabled_cloudwatch_logs_exports = [var.enabled_cloudwatch_logs_exports]
+  enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
 
   tags = {
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
@@ -80,6 +91,6 @@ resource "aws_db_instance" "rds" {
   }
 
   lifecycle {
-    ignore_changes = ["final_snapshot_identifier"]
+    ignore_changes = [final_snapshot_identifier]
   }
 }

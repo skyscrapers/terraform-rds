@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -58,7 +62,7 @@ resource "aws_rds_cluster" "aurora" {
   db_cluster_parameter_group_name = var.cluster_parameter_group_name
   engine                          = var.engine
   engine_version                  = var.engine_version
-  enabled_cloudwatch_logs_exports = [var.enabled_cloudwatch_logs_exports]
+  enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
 
   tags {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
@@ -84,7 +88,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   engine                  = var.engine
   engine_version          = var.engine_version
 
-  tags {
+  tags = {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
     Environment = var.environment
     Project     = var.project

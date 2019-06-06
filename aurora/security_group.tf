@@ -12,7 +12,7 @@ resource "aws_security_group" "sg_aurora" {
   description = "Security group that is needed for the Aurora"
   vpc_id      = data.aws_subnet.subnet.vpc_id
 
-  tags {
+  tags = {
     Name        = "${var.project}-${var.environment}${var.tag}-sg_aurora"
     Environment = var.environment
     Project     = var.project

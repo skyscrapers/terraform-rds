@@ -2,7 +2,7 @@
 resource "aws_security_group" "sg_rds" {
   name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}" : "${var.name}-rds"
   description = "Security group that is needed for the RDS"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   tags = {
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}" : "${var.name}-rds"
@@ -32,5 +32,5 @@ resource "aws_security_group_rule" "rds_cidr_in" {
   from_port         = local.port
   to_port           = local.port
   protocol          = "tcp"
-  cidr_blocks       = [var.allowed_cidr_blocks]
+  cidr_blocks       = var.allowed_cidr_blocks
 }
