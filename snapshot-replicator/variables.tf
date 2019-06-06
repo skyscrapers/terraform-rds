@@ -7,7 +7,7 @@ variable "aws_destination_region" {
 }
 
 variable "db_instances" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
 
@@ -27,4 +27,6 @@ variable "retention" {
   default = 30
 }
 
-variable "environment" {}
+variable "environment" {
+}
+

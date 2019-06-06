@@ -1,10 +1,10 @@
 variable "security_groups" {
   description = "Security groups that are allowed to access the RDS on port 3306"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "subnets" {
-  type        = "list"
+  type        = list(string)
   description = "Subnets to deploy in"
 }
 
@@ -95,6 +95,6 @@ variable "default_ports" {
 
 variable "enabled_cloudwatch_logs_exports" {
   description = "List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS Aurora documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch)."
-  type        = "list"
+  type        = list(string)
   default     = []
 }

@@ -24,25 +24,32 @@ locals {
         value = "FILE"
       },
     ]
-
     postgres = []
     oracle   = []
   }
 
-  port = "${local.default_ports[var.engine]}"
+  port = local.default_ports[var.engine]
 }
 
 resource "aws_db_subnet_group" "rds" {
-  name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds" : var.name}"
+  name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds" : var.name
   description = "Our main group of subnets"
-  subnet_ids  = ["${var.subnets}"]
+  subnet_ids  = var.subnets
 }
 
 resource "aws_db_parameter_group" "rds" {
-  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : "${var.name}"}-"
-  family      = "${var.default_parameter_group_family}"
+  name_prefix = "${length(var.name) == 0 ? "${var.engine}-${var.project}-${var.environment}${var.tag}" : var.name}-"
+  family      = var.default_parameter_group_family
   description = "RDS ${var.project} ${var.environment} parameter group for ${var.engine}"
-  parameter   = "${local.default_db_parameters[var.engine]}"
+  dynamic "parameter" {
+    for_each = local.default_db_parameters[var.engine]
+    content {
+
+      apply_method = lookup(parameter.value, "apply_method", null)
+      name         = parameter.value.name
+      value        = parameter.value.value
+    }
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -50,36 +57,36 @@ resource "aws_db_parameter_group" "rds" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier                      = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}"
-  allocated_storage               = "${var.storage}"
-  engine                          = "${var.engine}"
-  engine_version                  = "${var.engine_version}"
-  instance_class                  = "${var.size}"
-  storage_type                    = "${var.storage_type}"
-  username                        = "${var.rds_username}"
-  password                        = "${var.rds_password}"
-  vpc_security_group_ids          = ["${aws_security_group.sg_rds.id}"]
-  db_subnet_group_name            = "${aws_db_subnet_group.rds.id}"
-  parameter_group_name            = "${var.rds_custom_parameter_group_name == "" ? aws_db_parameter_group.rds.id : var.rds_custom_parameter_group_name}"
-  multi_az                        = "${var.multi_az}"
-  backup_retention_period         = "${var.backup_retention_period}"
-  storage_encrypted               = "${var.storage_encrypted}"
-  apply_immediately               = "${var.apply_immediately}"
-  skip_final_snapshot             = "${var.skip_final_snapshot}"
+  identifier                      = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
+  allocated_storage               = var.storage
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  instance_class                  = var.size
+  storage_type                    = var.storage_type
+  username                        = var.rds_username
+  password                        = var.rds_password
+  vpc_security_group_ids          = [aws_security_group.sg_rds.id]
+  db_subnet_group_name            = aws_db_subnet_group.rds.id
+  parameter_group_name            = var.rds_custom_parameter_group_name == "" ? aws_db_parameter_group.rds.id : var.rds_custom_parameter_group_name
+  multi_az                        = var.multi_az
+  backup_retention_period         = var.backup_retention_period
+  storage_encrypted               = var.storage_encrypted
+  apply_immediately               = var.apply_immediately
+  skip_final_snapshot             = var.skip_final_snapshot
   final_snapshot_identifier       = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
-  availability_zone               = "${var.availability_zone}"
-  snapshot_identifier             = "${var.snapshot_identifier}"
-  monitoring_interval             = "${var.monitoring_interval}"
-  auto_minor_version_upgrade      = "${var.auto_minor_version_upgrade}"
-  enabled_cloudwatch_logs_exports = ["${var.enabled_cloudwatch_logs_exports}"]
+  availability_zone               = var.availability_zone
+  snapshot_identifier             = var.snapshot_identifier
+  monitoring_interval             = var.monitoring_interval
+  auto_minor_version_upgrade      = var.auto_minor_version_upgrade
+  enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
 
-  tags {
-    Name        = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}"
-    Environment = "${var.environment}"
-    Project     = "${var.project}"
+  tags = {
+    Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
+    Environment = var.environment
+    Project     = var.project
   }
 
   lifecycle {
-    ignore_changes = ["final_snapshot_identifier"]
+    ignore_changes = [final_snapshot_identifier]
   }
 }
