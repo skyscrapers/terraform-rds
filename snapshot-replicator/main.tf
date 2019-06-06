@@ -52,16 +52,16 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
-count      = var.enable ? 1 : 0
-role       = aws_iam_role.iam_for_lambda[0].name
-policy_arn = aws_iam_policy.rds_lambda_copy[0].arn
+  count      = var.enable ? 1 : 0
+  role       = aws_iam_role.iam_for_lambda[0].name
+  policy_arn = aws_iam_policy.rds_lambda_copy[0].arn
 }
 
 resource "aws_iam_policy" "rds_lambda_create_snapshot" {
-count = var.enable ? 1 : 0
-name  = "rds-lambda-create-snapshot-${var.environment}"
+  count = var.enable ? 1 : 0
+  name  = "rds-lambda-create-snapshot-${var.environment}"
 
-policy = <<EOF
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [{
@@ -77,16 +77,16 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "attach_lambda_create_policy_to_role" {
-count = var.enable ? 1 : 0
-role = aws_iam_role.iam_for_lambda[0].name
-policy_arn = aws_iam_policy.rds_lambda_create_snapshot[0].arn
+  count = var.enable ? 1 : 0
+  role = aws_iam_role.iam_for_lambda[0].name
+  policy_arn = aws_iam_policy.rds_lambda_create_snapshot[0].arn
 }
 
 resource "aws_iam_role" "states_execution_role" {
-count = var.enable ? 1 : 0
-name = "states-execution-role-${var.environment}"
+  count = var.enable ? 1 : 0
+  name = "states-execution-role-${var.environment}"
 
-assume_role_policy = <<EOF
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
