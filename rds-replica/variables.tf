@@ -7,22 +7,23 @@ variable "project" {
   default     = ""
 }
 
-variable "engine" {}
+variable "engine" {
+}
 
 variable "security_groups" {
   description = "Security groups that are allowed to access the RDS"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "allowed_cidr_blocks" {
   description = "CIDR blocks that are allowed to access the RDS"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "subnets" {
-  type        = "list"
+  type        = list(string)
   description = "Subnets to deploy in"
 }
 
@@ -68,6 +69,7 @@ variable "custom_parameter_group_name" {
 
 variable "enabled_cloudwatch_logs_exports" {
   description = "List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch)."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
+
