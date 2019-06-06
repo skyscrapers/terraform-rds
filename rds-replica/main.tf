@@ -1,7 +1,3 @@
-terraform {
-  required_version = ">= 0.12"
-}
-
 resource "aws_db_subnet_group" "rds" {
   count       = var.number_of_replicas > 0 ? 1 : 0
   name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds-replica" : var.name

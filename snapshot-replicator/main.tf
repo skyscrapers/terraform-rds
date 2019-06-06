@@ -1,7 +1,3 @@
-terraform {
-  required_version = ">= 0.12"
-}
-
 #KMS key for secure copy of RDS snapshots
 resource "aws_kms_key" "dr_key" {
   count                   = var.enable ? 1 : 0
