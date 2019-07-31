@@ -75,5 +75,6 @@ variable "enabled_cloudwatch_logs_exports" {
 
 variable "backup_retention_period" {
   description = "How long do you want to keep RDS Slave backups"
-  default     = "14"
+  type        = number
+  default     = 14
 }
