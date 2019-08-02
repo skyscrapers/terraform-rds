@@ -141,6 +141,7 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 * [`storage_encrypted`]: bool(optional) whether you want to Encrypt RDS storage (default: true)
 * [`custom_parameter_group_name`]: String(optional) A custom parameter group name to attach to the RDS instance. If not provided it will use the default from the master instance
 * [`enabled_cloudwatch_logs_exports`]: List(optional) List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS RDS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch). (default: `[]`)
+* [`backup_retention_period`]: int(optional) The days to retain backups for. Must be between 0 and 35.
 
 
 ### Output
