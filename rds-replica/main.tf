@@ -21,7 +21,8 @@ resource "aws_db_instance" "rds" {
   parameter_group_name            = var.custom_parameter_group_name == "" ? data.aws_db_instance.master.db_parameter_groups[0] : var.custom_parameter_group_name
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   backup_retention_period         = var.backup_retention_period
-
+  auto_minor_version_upgrade      = false
+  
   tags = {
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${count.index + 1}-replica" : var.name
     Environment = var.environment
