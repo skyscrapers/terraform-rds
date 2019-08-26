@@ -79,6 +79,7 @@ resource "aws_db_instance" "rds" {
   monitoring_interval             = var.monitoring_interval
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
+  performance_insights_enabled    = var.performance_insights_enabled
 
   tags = {
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
