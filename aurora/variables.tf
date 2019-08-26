@@ -98,3 +98,9 @@ variable "enabled_cloudwatch_logs_exports" {
   type        = list(string)
   default     = []
 }
+
+variable "performance_insights_enabled" {
+  description = "Specifies whether Performance Insights is enabled or not."
+  type        = bool
+  default     = false
+}

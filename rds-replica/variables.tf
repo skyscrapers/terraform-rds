@@ -78,3 +78,8 @@ variable "backup_retention_period" {
   type        = number
   default     = 14
 }
+
+variable "auto_minor_version_upgrade" {
+  description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window."
+  default     = true
+}

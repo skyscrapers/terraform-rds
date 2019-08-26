@@ -18,6 +18,10 @@ resource "aws_security_group" "sg_rds" {
     Environment = var.environment
     Project     = var.project
   }
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name]
+  }
 }
 
 resource "aws_security_group_rule" "rds_sg_in" {
@@ -39,4 +43,3 @@ resource "aws_security_group_rule" "rds_cidr_in" {
   protocol          = "tcp"
   cidr_blocks       = var.allowed_cidr_blocks
 }
-
