@@ -64,7 +64,6 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
 
 resource "aws_iam_user_policy_attachment" "lambda_exec_role" {
   count      = var.enable ? 1 : 0
-  provider   = aws.replica
   role       = aws_iam_role.iam_for_lambda[0].name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
 }
