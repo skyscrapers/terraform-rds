@@ -14,7 +14,7 @@ provider "aws" {
 #Multiple IAM policies to allow the execution of lambda scripts
 resource "aws_iam_role" "iam_for_lambda" {
   count = var.enable ? 1 : 0
-  name  = "default-lambda-${var.environment}"
+  name  = "rds_snapshot_lambda_${var.environment}"
 
   assume_role_policy = <<EOF
 {
@@ -60,6 +60,13 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
   count      = var.enable ? 1 : 0
   role       = aws_iam_role.iam_for_lambda[0].name
   policy_arn = aws_iam_policy.rds_snapshot_copy[0].arn
+}
+
+resource "aws_iam_user_policy_attachment" "lambda_exec_role" {
+  count      = var.enable ? 1 : 0
+  provider   = aws.replica
+  role       = aws_iam_role.iam_for_lambda[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_policy" "rds_lambda_create_snapshot" {
@@ -329,7 +336,7 @@ resource "aws_lambda_function" "rds_snapshot_cleanup_remote" {
 resource "aws_iam_role" "rds_cleanup_lambda_remote" {
   count    = var.enable ? 1 : 0
   provider = aws.replica
-  name     = "default-lambda-${var.environment}"
+  name     = "rds_snapshot_lambda_remote_${var.environment}"
 
   assume_role_policy = <<EOF
 {
@@ -373,6 +380,14 @@ resource "aws_iam_role_policy_attachment" "rds_cleanup_lambda_remote" {
   role       = aws_iam_role.rds_cleanup_lambda_remote[0].name
   policy_arn = aws_iam_policy.rds_cleanup_lambda_remote[0].arn
 }
+
+resource "aws_iam_user_policy_attachment" "lambda_exec_role_remote" {
+  count      = var.enable ? 1 : 0
+  provider   = aws.replica
+  role       = aws_iam_role.rds_cleanup_lambda_remote[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
+}
+
 
 resource "aws_cloudwatch_event_rule" "invoke_rds_cleanup_lambda_remote" {
   count               = var.enable ? 1 : 0
