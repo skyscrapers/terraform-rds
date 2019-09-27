@@ -27,18 +27,18 @@ variable "environment" {
 }
 
 variable "custom_snapshot_rate" {
-  type = number
-  default = 6
+  type        = number
+  default     = 6
   description = "Number of hours to take custom RDS snapshots every each"
 }
 
 variable "sns_topic_arn" {
-  type = string
+  type        = string
   description = "ARN of SNS topic to use for monitoring of the snapshot creation, copy, and cleanup process"
 }
 
 variable "sns_topic_remote_arn" {
-  type = string
+  type        = string
   description = "ARN of SNS topic in the destination origin to use for monitoring of the snapshot creation, copy, and cleanup process"
 }
 

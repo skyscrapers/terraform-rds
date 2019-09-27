@@ -88,7 +88,7 @@ resource "aws_cloudwatch_metric_alarm" "invoke_rds_snapshot_lambda" {
   statistic           = "Sum"
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
-  evaluation_periods  = 1 
+  evaluation_periods  = 1
   period              = 21600 # 6 hours
 
   alarm_actions = [var.sns_topic_arn]
