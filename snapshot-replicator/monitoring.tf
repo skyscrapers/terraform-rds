@@ -58,27 +58,6 @@ resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_cleanup_errors" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_cleanup_remote_errors" {
-  count               = var.enable ? 1 : 0
-  provider            = aws.replica
-  alarm_name          = "rds_snapshot_cleanup_remote_invocation_${var.environment}_errors"
-  alarm_description   = "The errors on rds_snapshot_cleanup_remote are higher than 1"
-  namespace           = "AWS/Lambda"
-  metric_name         = "Errors"
-  statistic           = "Sum"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = 1
-  evaluation_periods  = 1
-  period              = 86400 # 24 hours
-
-  alarm_actions = [var.sns_topic_remote_arn]
-  ok_actions    = [var.sns_topic_remote_arn]
-
-  dimensions = {
-    FunctionName = aws_lambda_function.rds_snapshot_cleanup_remote[0].function_name
-  }
-}
-
 resource "aws_cloudwatch_metric_alarm" "invoke_rds_snapshot_lambda" {
   count               = var.enable ? 1 : 0
   alarm_name          = "rds-snapshot-lambda-${var.environment}-failed-invocations"
@@ -116,27 +95,6 @@ resource "aws_cloudwatch_metric_alarm" "invoke_rds_cleanup_lambda" {
 
   dimensions = {
     RuleName = "invoke-rds-cleanup-lambda-${var.environment}"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "invoke_rds_cleanup_lambda_remote" {
-  count               = var.enable ? 1 : 0
-  provider            = aws.replica
-  alarm_name          = "rds-cleanup-lambda-remote-${var.environment}-failed-invocations"
-  alarm_description   = "Failed invocations for rds-cleanup-lambda-remote"
-  namespace           = "AWS/Events"
-  metric_name         = "FailedInvocations"
-  statistic           = "Sum"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = 1
-  evaluation_periods  = 1
-  period              = 86400 # 24 hours
-
-  alarm_actions = [var.sns_topic_remote_arn]
-  ok_actions    = [var.sns_topic_remote_arn]
-
-  dimensions = {
-    RuleName = "invoke-rds-cleanup-lambda-remote-${var.environment}"
   }
 }
 
