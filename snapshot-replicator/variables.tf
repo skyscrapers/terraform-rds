@@ -37,8 +37,3 @@ variable "sns_topic_arn" {
   description = "ARN of SNS topic to use for monitoring of the snapshot creation, copy, and cleanup process"
 }
 
-variable "sns_topic_remote_arn" {
-  type        = string
-  description = "ARN of SNS topic in the destination origin to use for monitoring of the snapshot creation, copy, and cleanup process"
-}
-
