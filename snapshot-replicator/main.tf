@@ -211,6 +211,7 @@ resource "aws_lambda_function" "rds_snapshot_cleanup" {
 
   environment {
     variables = {
+      SOURCE_REGION = var.aws_source_region
       TARGET_REGION = var.aws_destination_region
       DB_INSTANCES  = join(",", var.db_instances)
       RETENTION     = var.retention
@@ -293,7 +294,7 @@ resource "aws_lambda_permission" "cloudwatch_invoke_rds_snapshot_lambda" {
   count         = var.enable ? 1 : 0
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.rds_snapshot_cleanup[0].function_name
+  function_name = aws_lambda_function.rds_snapshot_create[0].function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.invoke_rds_snapshot_lambda[0].arn
 }
