@@ -15,10 +15,6 @@ variable "kms_key_id" {
   default = ""
 }
 
-variable "provider" {
-  default = ""
-}
-
 variable "enable" {
   default = false
 }
@@ -28,5 +24,16 @@ variable "retention" {
 }
 
 variable "environment" {
+}
+
+variable "custom_snapshot_rate" {
+  type        = number
+  default     = 6
+  description = "Number of hours to take custom RDS snapshots every each"
+}
+
+variable "sns_topic_arn" {
+  type        = string
+  description = "ARN of SNS topic to use for monitoring of the snapshot creation, copy, and cleanup process"
 }
 
