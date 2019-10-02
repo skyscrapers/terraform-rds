@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
   policy_arn = aws_iam_policy.rds_snapshot_copy[0].arn
 }
 
-resource "aws_iam_user_policy_attachment" "lambda_exec_role" {
+resource "aws_iam_role_policy_attachment" "lambda_exec_role" {
   count      = var.enable ? 1 : 0
   role       = aws_iam_role.iam_for_lambda[0].name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
@@ -157,8 +157,8 @@ resource "aws_lambda_function" "rds_snapshot_copy" {
   role          = aws_iam_role.iam_for_lambda[0].arn
   handler       = "shipper.lambda_handler"
 
-  filename         = "${path.module}/shipper.zip"
-  source_code_hash = filebase64sha256("${path.module}/shipper.zip")
+  filename         = data.archive_file.create_zip.output_path
+  source_code_hash = data.archive_file.create_zip.output_base64sha256
 
   runtime = "python2.7"
   timeout = "120"
@@ -181,8 +181,8 @@ resource "aws_lambda_function" "rds_snapshot_create" {
   role          = aws_iam_role.iam_for_lambda[0].arn
   handler       = "create_snapshot.lambda_handler"
 
-  filename         = "${path.module}/shipper.zip"
-  source_code_hash = filebase64sha256("${path.module}/shipper.zip")
+  filename         = data.archive_file.create_zip.output_path
+  source_code_hash = data.archive_file.create_zip.output_base64sha256
 
   runtime = "python2.7"
   timeout = "120"
@@ -203,8 +203,8 @@ resource "aws_lambda_function" "rds_snapshot_cleanup" {
   role          = aws_iam_role.iam_for_lambda[0].arn
   handler       = "remove_snapshots.lambda_handler"
 
-  filename         = "${path.module}/shipper.zip"
-  source_code_hash = filebase64sha256("${path.module}/shipper.zip")
+  filename         = data.archive_file.create_zip.output_path
+  source_code_hash = data.archive_file.create_zip.output_base64sha256
 
   runtime = "python2.7"
   timeout = "120"
