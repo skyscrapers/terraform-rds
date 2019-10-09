@@ -65,7 +65,7 @@ resource "aws_iam_role_policy_attachment" "attach_lambda_copy_policy_to_role" {
 resource "aws_iam_role_policy_attachment" "lambda_exec_role" {
   count      = var.enable ? 1 : 0
   role       = aws_iam_role.iam_for_lambda[0].name
-  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_policy" "rds_lambda_create_snapshot" {
@@ -232,11 +232,10 @@ resource "aws_db_event_subscription" "default" {
   name      = "rds-manual-snapshot-${var.environment}"
   sns_topic = aws_sns_topic.rds_backup_events[0].arn
 
-  source_type = "db-instance"
-  source_ids  = var.db_instances
+  source_type = "snapshots"
 
   event_categories = [
-    "backup",
+    "creation",
   ]
 }
 
