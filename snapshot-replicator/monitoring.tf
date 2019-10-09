@@ -1,3 +1,8 @@
+locals {
+  cw_alarm_custom_period = 3600 * var.custom_snapshot_rate
+  cw_alarm_daily_period  = 3600 * 24
+}
+
 resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_copy_errors" {
   count               = var.enable ? 1 : 0
   alarm_name          = "rds_snapshot_copy_invocation_${var.environment}_errors"
@@ -8,7 +13,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_copy_errors" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
   evaluation_periods  = 1
-  period              = 21600 # 6 hours
+  period              = local.cw_alarm_custom_period
 
   alarm_actions = [var.sns_topic_arn]
   ok_actions    = [var.sns_topic_arn]
@@ -28,7 +33,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_create_errors" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
   evaluation_periods  = 1
-  period              = 21600 # 6 hours
+  period              = local.cw_alarm_custom_period
 
   alarm_actions = [var.sns_topic_arn]
   ok_actions    = [var.sns_topic_arn]
@@ -48,7 +53,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_cleanup_errors" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
   evaluation_periods  = 1
-  period              = 86400 # 24 hours
+  period              = local.cw_alarm_daily_period
 
   alarm_actions = [var.sns_topic_arn]
   ok_actions    = [var.sns_topic_arn]
@@ -68,7 +73,7 @@ resource "aws_cloudwatch_metric_alarm" "invoke_rds_snapshot_lambda" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
   evaluation_periods  = 1
-  period              = 21600 # 6 hours
+  period              = local.cw_alarm_custom_period
 
   alarm_actions = [var.sns_topic_arn]
   ok_actions    = [var.sns_topic_arn]
@@ -88,7 +93,7 @@ resource "aws_cloudwatch_metric_alarm" "invoke_rds_cleanup_lambda" {
   comparison_operator = "GreaterThanThreshold"
   threshold           = 1
   evaluation_periods  = 1
-  period              = 86400 # 24 hours
+  period              = local.cw_alarm_daily_period
 
   alarm_actions = [var.sns_topic_arn]
   ok_actions    = [var.sns_topic_arn]
