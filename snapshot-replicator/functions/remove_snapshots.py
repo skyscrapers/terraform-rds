@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         for instance in instances.split(','):
             rds = boto3.client('rds', region_name=region)
             paginator = rds.get_paginator('describe_db_snapshots')
-            page_iterator = paginator.paginate(DBInstanceIdentifier=instance)
+            page_iterator = paginator.paginate(DBInstanceIdentifier=instance, SnapshotType='manual')
             snapshots = []
             for page in page_iterator:
                  snapshots.extend(page['DBSnapshots'])
