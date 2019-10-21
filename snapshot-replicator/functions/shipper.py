@@ -16,7 +16,7 @@ def lambda_handler(event, context):
         source_snap = event['Records'][0]['Sns']['Source']
         snapshot_details = source.describe_db_snapshots(DBSnapshotIdentifier=source_snap)['DBSnapshots'][0]
         if snapshot_detailts['DBInstanceIdentifier'] in instances.split(','):
-            source_snap_arn = snapshot_detailts['DBSnapshotArn'])
+            source_snap_arn = snapshot_detailts['DBSnapshotArn']
             target_snap_id = (re.sub('rds:', '', source_snap))
             target = boto3.client('rds', region_name=target_region)
             print('Will Copy %s to %s' % (source_snap_arn, target_snap_id))

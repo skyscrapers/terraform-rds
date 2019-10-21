@@ -232,7 +232,7 @@ resource "aws_db_event_subscription" "default" {
   name      = "rds-manual-snapshot-${var.environment}"
   sns_topic = aws_sns_topic.rds_backup_events[0].arn
 
-  source_type = "snapshots"
+  source_type = "db-snapshot"
 
   event_categories = [
     "creation",
