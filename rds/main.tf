@@ -59,6 +59,7 @@ resource "aws_db_parameter_group" "rds" {
 resource "aws_db_instance" "rds" {
   identifier                      = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
   allocated_storage               = var.storage
+  max_allocated_storage           = var.max_allocated_storage
   engine                          = var.engine
   engine_version                  = var.engine_version
   instance_class                  = var.size
