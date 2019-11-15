@@ -36,6 +36,7 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | skip\_final\_snapshot | Skip final snapshot when destroying RDS | string | `"false"` | no |
 | snapshot\_identifier | Specifies whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console, e.g: rds:production-2015-06-26-06-05. | string | `""` | no |
 | storage | How many GBs of space does your database need? | string | `"10"` | no |
+| max_allocated_storage | When configured, the upper limit to which Amazon RDS can automatically scale the storage of the DB instance. Configuring this will automatically ignore differences to allocated_storage. Must be greater than or equal to allocated_storage or 0 to disable Storage Autoscaling. | string | `"0"` | no |
 | storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |
 | storage\_type | Type of storage you want to use | string | `"gp2"` | no |
 | subnets | Subnets to deploy in | list | n/a | yes |
