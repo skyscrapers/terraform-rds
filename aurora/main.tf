@@ -59,7 +59,6 @@ resource "aws_rds_cluster" "aurora" {
   engine                          = var.engine
   engine_version                  = var.engine_version
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
-  performance_insights_enabled    = var.performance_insights_enabled
 
   tags = {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
@@ -68,17 +67,18 @@ resource "aws_rds_cluster" "aurora" {
   }
 
   lifecycle {
-    ignore_changes = ["final_snapshot_identifier"]
+    ignore_changes = [final_snapshot_identifier]
   }
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                = var.amount_of_instances
-  identifier           = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
-  cluster_identifier   = aws_rds_cluster.aurora.id
-  instance_class       = var.size
-  db_subnet_group_name = aws_db_subnet_group.aurora.id
-  apply_immediately    = var.apply_immediately
+  count                        = var.amount_of_instances
+  identifier                   = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
+  cluster_identifier           = aws_rds_cluster.aurora.id
+  instance_class               = var.size
+  db_subnet_group_name         = aws_db_subnet_group.aurora.id
+  apply_immediately            = var.apply_immediately
+  performance_insights_enabled = var.performance_insights_enabled
 
   # To set the `db_parameter_group_name` we'll concat the instance_parameter_group_name variable with the aurora_mysql resource name as one of the two will be an empty string
   db_parameter_group_name = "${var.instance_parameter_group_name}${join("", aws_db_parameter_group.aurora_mysql.*.name)}"
