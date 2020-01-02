@@ -28,3 +28,7 @@ output "aws_db_subnet_group_id" {
   value       = aws_db_subnet_group.rds.id
 }
 
+output "rds_allocated_storage" {
+  description = "The allocated storage of the RDS instance"
+  value       = aws_db_instance.rds.allocated_storage
+}

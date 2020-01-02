@@ -18,8 +18,8 @@ resource "aws_db_instance" "rds" {
   replicate_source_db             = var.replicate_source_db
   db_subnet_group_name            = aws_db_subnet_group.rds[0].id
   storage_encrypted               = var.storage_encrypted
-  allocated_storage               = var.allocated_storage
-  max_allocated_storage           = var.max_allocated_storage
+  allocated_storage               = var.allocated_storage ? data.aws_db_instance.master.rds_allocated_storage : var.allocated_storage
+  max_allocated_storage           = var.max_allocated_storage ? data.aws_db_instance.master.rds_allocated_storage : var.max_allocated_storage
   parameter_group_name            = var.custom_parameter_group_name == "" ? data.aws_db_instance.master.db_parameter_groups[0] : var.custom_parameter_group_name
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   backup_retention_period         = var.backup_retention_period

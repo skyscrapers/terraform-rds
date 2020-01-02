@@ -62,15 +62,14 @@ variable "storage_encrypted" {
   default     = true
 }
 
-variable "storage" {
+variable "allocated_storage" {
   description = "How many GBs of space does your database need?"
-  default     = "10"
+  default     = null
 }
 
 variable "max_allocated_storage" {
   description = "When configured, the upper limit to which Amazon RDS can automatically scale the storage of the DB instance. Configuring this will automatically ignore differences to allocated_storage. Must be greater than or equal to allocated_storage or 0 to disable Storage Autoscaling."
-  type        = string
-  default     = "0"
+  default     = null
 }
 
 variable "custom_parameter_group_name" {
