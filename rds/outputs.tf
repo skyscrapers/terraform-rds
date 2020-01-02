@@ -27,3 +27,4 @@ output "aws_db_subnet_group_id" {
   description = "The subnet group id of the RDS instance"
   value       = aws_db_subnet_group.rds.id
 }
+
