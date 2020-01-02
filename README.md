@@ -153,6 +153,8 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 | size | Instance size | string | `"db.t2.small"` | no |
 | storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |
 | tag | A tag used to identify an RDS in a project that has more than one RDS | string | `""` | no |
+| max\_allocated\_storage | When configured, the upper limit to which Amazon RDS can automatically scale the storage of the DB instance. Configuring this will automatically ignore differences to allocated\_storage. Must be greater than or equal to allocated\_storage or 0 to disable Storage Autoscaling. If not set the default of the master instance is set. | string | `null` | no |
+| allocated_storage | How many GBs of space does your database need? If not set the default of the master instance is set. | string | `null` | no |
 
 ### Outputs
 
