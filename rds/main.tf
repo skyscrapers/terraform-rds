@@ -64,6 +64,7 @@ resource "aws_db_instance" "rds" {
   engine_version                  = var.engine_version
   instance_class                  = var.size
   storage_type                    = var.storage_type
+  replicate_source_db             = var.replicate_source_db
   username                        = var.rds_username
   password                        = var.rds_password
   vpc_security_group_ids          = [aws_security_group.sg_rds.id]

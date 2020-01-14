@@ -42,6 +42,8 @@ Creates a RDS instance, security_group, subnet_group and parameter_group
 | storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |
 | storage\_type | Type of storage you want to use | string | `"gp2"` | no |
 | tag | A tag used to identify an RDS in a project that has more than one RDS | string | `""` | no |
+| replicate_source_db | Specifies that this resource is a Replicate database, and to use this value as the source database identifier | string | `""` | no |
+
 
 ### Outputs
 

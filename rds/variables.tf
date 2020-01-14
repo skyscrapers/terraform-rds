@@ -158,3 +158,9 @@ variable "performance_insights_enabled" {
   type        = bool
   default     = false
 }
+
+variable "replicate_source_db" {
+  description = "Specifies that this resource is a Replicate database, and to use this value as the source database identifier."
+  type        = string
+  default     = null
+}
