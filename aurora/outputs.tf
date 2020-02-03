@@ -6,7 +6,7 @@ output "aurora_sg_id" {
   value = "${aws_security_group.sg_aurora.id}"
 }
 
-output "aurora_id" {
+output "aurora_cluster_id" {
   value = "${aws_rds_cluster.aurora.id}"
 }
 
