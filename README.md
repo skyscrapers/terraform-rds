@@ -108,6 +108,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 |------|-------------|
 | aurora\_port |  |
 | aurora\_sg\_id |  |
+| aurora\_id |  |
 | endpoint |  |
 | reader\_endpoint |  |
 
