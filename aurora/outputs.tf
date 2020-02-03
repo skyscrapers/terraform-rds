@@ -17,3 +17,7 @@ output "endpoint" {
 output "reader_endpoint" {
   value = "${aws_rds_cluster.aurora.reader_endpoint}"
 }
+
+output "aurora_cluster_instances_id" {
+  value = "${aws_rds_cluster_instance.cluster_instances.*.id}"
+}

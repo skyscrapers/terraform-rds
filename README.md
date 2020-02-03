@@ -111,6 +111,7 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 | aurora\_cluster\_id |  |
 | endpoint |  |
 | reader\_endpoint |  |
+| aurora\_cluster\_instances\_id |  |
 
 ### Example
 
