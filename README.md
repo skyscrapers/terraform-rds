@@ -106,12 +106,12 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 
 | Name | Description |
 |------|-------------|
+| aurora\_cluster\_id |  |
+| aurora\_cluster\_instances\_id |  |
 | aurora\_port |  |
 | aurora\_sg\_id |  |
-| aurora\_cluster\_id |  |
 | endpoint |  |
 | reader\_endpoint |  |
-| aurora\_cluster\_instances\_id |  |
 
 ### Example
 
