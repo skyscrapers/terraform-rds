@@ -1,3 +1,11 @@
+output "aurora_cluster_id" {
+  value = "${aws_rds_cluster.aurora.id}"
+}
+
+output "aurora_cluster_instances_id" {
+  value = "${aws_rds_cluster_instance.cluster_instances.*.id}"
+}
+
 output "aurora_port" {
   value = "${local.port}"
 }
