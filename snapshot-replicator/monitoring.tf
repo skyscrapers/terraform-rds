@@ -5,7 +5,7 @@ locals {
 
 resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_copy_errors" {
   count               = var.enable ? 1 : 0
-  alarm_name          = "rds_snapshot_copy_invocation_${var.environment}_errors"
+  alarm_name          = "rds_snapshot_copy_${var.environment}_errors"
   alarm_description   = "The errors on rds_snapshot_copy are higher than 1"
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
@@ -25,7 +25,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_copy_errors" {
 
 resource "aws_cloudwatch_metric_alarm" "lambda_rds_snapshot_create_errors" {
   count               = var.enable ? 1 : 0
-  alarm_name          = "rds_snapshot_create_invocation_${var.environment}_errors"
+  alarm_name          = "rds_snapshot_create_${var.environment}_errors"
   alarm_description   = "The errors on rds_snapshot_create are higher than 1"
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
