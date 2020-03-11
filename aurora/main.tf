@@ -73,7 +73,7 @@ resource "aws_rds_cluster" "aurora" {
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
   count                        = var.amount_of_instances
-  identifier                   = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
+  identifier                   = var.rds_instance_name_overrides == null ? "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}" : var.rds_instance_name_overrides[count.index]
   cluster_identifier           = aws_rds_cluster.aurora.id
   instance_class               = var.size
   db_subnet_group_name         = aws_db_subnet_group.aurora.id

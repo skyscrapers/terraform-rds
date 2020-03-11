@@ -79,39 +79,40 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| password | RDS root password | string | n/a | yes |
-| security\_groups | Security groups that are allowed to access the RDS on port 3306 | list(string) | n/a | yes |
-| subnets | Subnets to deploy in | list(string) | n/a | yes |
-| amount\_of\_instances | The amount of Aurora instances you need, for HA you need minumum 2 | string | `"1"` | no |
-| apply\_immediately | Apply changes immediately | string | `"true"` | no |
-| backup\_retention\_period | How long do you want to keep RDS backups | string | `"14"` | no |
-| cluster\_parameter\_group\_name | Optional parameter group you can set for the RDS Aurora cluster | string | `""` | no |
-| default\_ports |  | map | `{ "aurora": "3306", "aurora-postgresql": "5432" }` | no |
-| enabled\_cloudwatch\_logs\_exports | List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the \[AWS Aurora documentation\]\(https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER\_LogAccess.html#USER\_LogAccess.Procedural.UploadtoCloudWatch\). | list(string) | `[]` | no |
-| engine | Optional parameter to set the Aurora engine | string | `"aurora"` | no |
-| engine\_version | Optional parameter to set the Aurora engine version | string | `"5.6.10a"` | no |
-| environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | string | `"production"` | no |
-| family |  | string | `"aurora5.6"` | no |
-| instance\_parameter\_group\_name | Optional parameter group you can set for the RDS instances inside an Aurora cluster | string | `""` | no |
-| performance\_insights\_enabled | Specifies whether Performance Insights is enabled or not. | bool | `"false"` | no |
-| project | The current project | string | `""` | no |
-| rds\_username | RDS root user | string | `"root"` | no |
-| size | Instance size | string | `"db.t2.small"` | no |
-| skip\_final\_snapshot | Skip final snapshot when destroying RDS | string | `"false"` | no |
-| storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |
-| tag | A tag used to identify an RDS in a project that has more than one RDS | string | `""` | no |
+|------|-------------|------|---------|:-----:|
+| amount_of_instances | The amount of Aurora instances you need, for HA you need minumum 2 | `number` | `1` | no |
+| apply_immediately | Apply changes immediately | `bool` | `true` | no |
+| backup_retention_period | How long do you want to keep RDS backups | `string` | `"14"` | no |
+| cluster_parameter_group_name | Optional parameter group you can set for the RDS Aurora cluster | `string` | `""` | no |
+| default_ports | n/a | `map` | <pre>{<br>  "aurora": "3306",<br>  "aurora-postgresql": "5432"<br>}</pre> | no |
+| enabled_cloudwatch_logs_exports | List of log types to enable for exporting to CloudWatch logs. You can check the available log types per engine in the [AWS Aurora documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch). | `list(string)` | `[]` | no |
+| engine | Optional parameter to set the Aurora engine | `string` | `"aurora"` | no |
+| engine_version | Optional parameter to set the Aurora engine version | `string` | `"5.6.10a"` | no |
+| environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | `string` | `"production"` | no |
+| family | n/a | `string` | `"aurora5.6"` | no |
+| instance_parameter_group_name | Optional parameter group you can set for the RDS instances inside an Aurora cluster | `string` | `""` | no |
+| password | RDS root password | `any` | n/a | yes |
+| performance_insights_enabled | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
+| project | The current project | `string` | `""` | no |
+| rds_instance_name_overrides | List of names to override the default RDS instance names / identifiers. | `list(string)` | n/a | yes |
+| rds_username | RDS root user | `string` | `"root"` | no |
+| security_groups | Security groups that are allowed to access the RDS on port 3306 | `list(string)` | n/a | yes |
+| size | Instance size | `string` | `"db.t2.small"` | no |
+| skip_final_snapshot | Skip final snapshot when destroying RDS | `bool` | `false` | no |
+| storage_encrypted | Encrypt RDS storage | `bool` | `true` | no |
+| subnets | Subnets to deploy in | `list(string)` | n/a | yes |
+| tag | A tag used to identify an RDS in a project that has more than one RDS | `string` | `""` | no |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| aurora\_cluster\_id |  |
-| aurora\_cluster\_instances\_id |  |
-| aurora\_port |  |
-| aurora\_sg\_id |  |
-| endpoint |  |
-| reader\_endpoint |  |
+| aurora_cluster_id | n/a |
+| aurora_cluster_instances_id | n/a |
+| aurora_port | n/a |
+| aurora_sg_id | n/a |
+| endpoint | n/a |
+| reader_endpoint | n/a |
 
 ### Example
 

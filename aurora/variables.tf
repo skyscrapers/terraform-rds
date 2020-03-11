@@ -104,3 +104,9 @@ variable "performance_insights_enabled" {
   type        = bool
   default     = false
 }
+
+variable "rds_instance_name_overrides" {
+  description = "List of names to override the default RDS instance names / identifiers."
+  type        = list(string)
+  default     = null
+}
