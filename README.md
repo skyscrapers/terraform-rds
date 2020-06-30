@@ -79,7 +79,10 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
+| password | RDS root password | `any` | n/a | yes |
+| security_groups | Security groups that are allowed to access the RDS on port 3306 | `list(string)` | n/a | yes |
+| subnets | Subnets to deploy in | `list(string)` | n/a | yes |
 | amount_of_instances | The amount of Aurora instances you need, for HA you need minumum 2 | `number` | `1` | no |
 | apply_immediately | Apply changes immediately | `bool` | `true` | no |
 | backup_retention_period | How long do you want to keep RDS backups | `string` | `"14"` | no |
@@ -91,16 +94,14 @@ Creates a Aurora cluster + instances, security_group, subnet_group and parameter
 | environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | `string` | `"production"` | no |
 | family | n/a | `string` | `"aurora5.6"` | no |
 | instance_parameter_group_name | Optional parameter group you can set for the RDS instances inside an Aurora cluster | `string` | `""` | no |
-| password | RDS root password | `any` | n/a | yes |
 | performance_insights_enabled | Specifies whether Performance Insights is enabled or not. | `bool` | `false` | no |
 | project | The current project | `string` | `""` | no |
-| rds_instance_name_overrides | List of names to override the default RDS instance names / identifiers. | `list(string)` | n/a | yes |
+| rds_instance_name_overrides | List of names to override the default RDS instance names / identifiers. | `list(string)` | `null` | no |
 | rds_username | RDS root user | `string` | `"root"` | no |
-| security_groups | Security groups that are allowed to access the RDS on port 3306 | `list(string)` | n/a | yes |
 | size | Instance size | `string` | `"db.t2.small"` | no |
 | skip_final_snapshot | Skip final snapshot when destroying RDS | `bool` | `false` | no |
+| snapshot_identifier | Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a DB cluster snapshot, or the ARN when specifying a DB snapshot | `string` | `null` | no |
 | storage_encrypted | Encrypt RDS storage | `bool` | `true` | no |
-| subnets | Subnets to deploy in | `list(string)` | n/a | yes |
 | tag | A tag used to identify an RDS in a project that has more than one RDS | `string` | `""` | no |
 
 ### Outputs

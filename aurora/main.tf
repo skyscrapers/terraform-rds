@@ -59,6 +59,7 @@ resource "aws_rds_cluster" "aurora" {
   engine                          = var.engine
   engine_version                  = var.engine_version
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
+  snapshot_identifier             = var.snapshot_identifier
 
   tags = {
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
