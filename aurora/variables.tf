@@ -110,3 +110,9 @@ variable "rds_instance_name_overrides" {
   type        = list(string)
   default     = null
 }
+
+variable "snapshot_identifier" {
+  description = "Specifies whether or not to create this cluster from a snapshot. You can use either the name or ARN when specifying a DB cluster snapshot, or the ARN when specifying a DB snapshot"
+  type        = string
+  default     = null
+}
