@@ -18,7 +18,7 @@ variable "project" {
 }
 
 variable "engine" {
-  description = "RDS engine: mysql, oracle, postgres. Defaults to mysql"
+  description = "RDS engine: MYSQL or POSTGRESQL"
 }
 
 variable "db_secret_arns" {
