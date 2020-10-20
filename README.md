@@ -193,7 +193,7 @@ Create an RDS proxy and configure IAM role to use for reading AWS Secrets to acc
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | db_instance_identifier | ID of the database instance to set as the proxy target | `any` | n/a | yes |
-| db_secret_arns | SSM Secrets ARNs to use to access the database credentials | `list` | n/a | yes |
+| db_secret_arns | AWS Secret Manager ARNs to use to access the database credentials | `list` | n/a | yes |
 | engine | RDS engine: MYSQL or POSTGRES | `any` | n/a | yes |
 | environment | The current environment | `any` | n/a | yes |
 | project | The current project | `any` | n/a | yes |

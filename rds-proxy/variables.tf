@@ -22,7 +22,7 @@ variable "engine" {
 }
 
 variable "db_secret_arns" {
-  description = "SSM Secrets ARNs to use to access the database credentials"
+  description = "AWS Secret Manager ARNs to use to access the database credentials"
   type        = list
 }
 
