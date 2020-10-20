@@ -183,3 +183,42 @@ module "rds" {
   subnets             = ["subnet-12345d67", "subnet-12345d68", "subnet-12345d69"]
 }
 ```
+
+## rds-proxy
+
+Create an RDS proxy and configure IAM role to use for reading AWS Secrets to access the database.
+
+### Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| db_instance_identifier | ID of the database instance to set as the proxy target | `any` | n/a | yes |
+| db_secret_arns | AWS Secret Manager ARNs to use to access the database credentials | `list` | n/a | yes |
+| engine | RDS engine: MYSQL or POSTGRES | `any` | n/a | yes |
+| environment | The current environment | `any` | n/a | yes |
+| project | The current project | `any` | n/a | yes |
+| security_groups | Security groups that are allowed to access the RDS | `list(string)` | n/a | yes |
+| subnets | Subnets to deploy in | `list(string)` | n/a | yes |
+| proxy_connection_timeout | The number of seconds for a proxy to wait for a connection to become available in the connection pool | `number` | `120` | no |
+| proxy_max_connection_percent | The maximum size of the connection pool for each target in a target group | `number` | `100` | no |
+
+### Outputs
+
+| Name | Description |
+|------|-------------|
+| proxy_endpoint | Endpoint of the created proxy |
+
+### Example
+
+```tf
+module "rds_proxy" {
+  source = "github.com/skyscrapers/terraform-rds//rds_proxy"
+  subnets                    = data.terraform_remote_state.networking.outputs.private_db_subnets
+  project                    = var.project
+  environment                = terraform.workspace
+  engine                     = "MYSQL"
+  security_groups            = ["sg-aaaaa", "sg-bbbb"]
+  db_instance_identifier     = module.rds_database.rds_id
+  db_secret_arns             = [aws_secretsmanager_secret.db_user_rw.arn, aws_secretsmanager_secret.db_user_ro.arn]
+}  
+```
