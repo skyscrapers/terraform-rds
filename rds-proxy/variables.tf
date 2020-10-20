@@ -11,7 +11,6 @@ variable "subnets" {
 
 variable "environment" {
   description = "The current environment"
-  default     = terraform.workspace
 }
 
 variable "project" {
@@ -25,4 +24,20 @@ variable "engine" {
 variable "db_secret_arns" {
   description = "SSM Secrets ARNs to use to access the database credentials"
   type        = list
+}
+
+variable "db_instance_identifier" {
+  description = "ID of the database instance to set as the proxy target"
+}
+
+variable "proxy_connection_timeout" {
+  description = "The number of seconds for a proxy to wait for a connection to become available in the connection pool"
+  type        = number
+  default     = 120
+}
+
+variable "proxy_max_connection_percent" {
+  description = "The maximum size of the connection pool for each target in a target group"
+  type        = number
+  default     = 100
 }
