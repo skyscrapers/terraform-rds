@@ -1,3 +1,4 @@
 output "proxy_endpoint" {
-    value = aws_db_proxy.proxy.endpoint
+  description = "Endpoint of the created proxy"
+  value       = aws_db_proxy.proxy.endpoint
 }

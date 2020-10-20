@@ -58,9 +58,9 @@ resource "aws_db_proxy" "proxy" {
 resource "aws_db_proxy_default_target_group" "default" {
   db_proxy_name = aws_db_proxy.proxy.name
   connection_pool_config {
-    connection_borrow_timeout    = var.proxy_connection_timeout
-    max_connections_percent      = var.proxy_max_connection_percent
-  }  
+    connection_borrow_timeout = var.proxy_connection_timeout
+    max_connections_percent   = var.proxy_max_connection_percent
+  }
 }
 
 resource "aws_db_proxy_target" "target" {
