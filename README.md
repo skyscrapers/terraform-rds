@@ -210,6 +210,7 @@ Create an RDS proxy and configure IAM role to use for reading AWS Secrets to acc
 
 ### Example
 
+```tf
 module "rds_proxy" {
   source = "github.com/skyscrapers/terraform-rds//rds_proxy"
   subnets                    = data.terraform_remote_state.networking.outputs.private_db_subnets
@@ -219,3 +220,5 @@ module "rds_proxy" {
   security_groups            = ["sg-aaaaa", "sg-bbbb"]
   db_instance_identifier     = module.rds_database.rds_id
   db_secret_arns             = [aws_secretsmanager_secret.db_user_rw.arn, aws_secretsmanager_secret.db_user_ro.arn]
+}  
+```
