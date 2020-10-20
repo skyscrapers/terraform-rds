@@ -22,3 +22,7 @@ variable "engine" {
   description = "RDS engine: mysql, oracle, postgres. Defaults to mysql"
 }
 
+variable "db_secret_arns" {
+  description = "SSM Secrets ARNs to use to access the database credentials"
+  type        = list
+}
