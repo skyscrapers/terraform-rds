@@ -153,6 +153,7 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 | ports |  | map | `{ "mysql": "3306", "oracle": "1521", "postgres": "5432" }` | no |
 | project | The current project | string | `""` | no |
 | replicate\_source\_db | RDS source to replicate from | string | `""` | no |
+| publicly\_accessible | Bool to control if instance is publicly accessible | `false` | no |
 | security\_groups | Security groups that are allowed to access the RDS | list(string) | `[]` | no |
 | size | Instance size | string | `"db.t2.small"` | no |
 | storage\_encrypted | Encrypt RDS storage | string | `"true"` | no |

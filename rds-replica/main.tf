@@ -16,6 +16,7 @@ resource "aws_db_instance" "rds" {
   instance_class                  = var.size
   vpc_security_group_ids          = [aws_security_group.sg_rds[0].id]
   replicate_source_db             = var.replicate_source_db
+  publicly_accessible             = var.publicly_accessible
   db_subnet_group_name            = aws_db_subnet_group.rds[0].id
   storage_encrypted               = var.storage_encrypted
   allocated_storage               = var.allocated_storage

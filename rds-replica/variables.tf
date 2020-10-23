@@ -37,6 +37,11 @@ variable "replicate_source_db" {
   default     = ""
 }
 
+variable "publicly_accessible" {
+  description = "Bool to control if instance is publicly accessible"
+  default     = "false"
+}
+
 variable "environment" {
   description = "How do you want to call your environment, this is helpful if you have more than 1 VPC."
   default     = "production"
