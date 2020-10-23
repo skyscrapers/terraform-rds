@@ -37,6 +37,11 @@ variable "replicate_source_db" {
   default     = ""
 }
 
+variable "publicly_accessible" {
+  description = "Bool to control if instance is publicly accessible"
+  default     = "false"
+}
+
 variable "environment" {
   description = "How do you want to call your environment, this is helpful if you have more than 1 VPC."
   default     = "production"
@@ -50,6 +55,11 @@ variable "tag" {
 variable "number_of_replicas" {
   description = "number of database repliacs default 1"
   default     = 1
+}
+
+variable "multi_az" {
+  description = "Multi AZ true or false"
+  default = false
 }
 
 variable "name" {
