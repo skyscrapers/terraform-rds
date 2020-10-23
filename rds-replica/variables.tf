@@ -57,6 +57,11 @@ variable "number_of_replicas" {
   default     = 1
 }
 
+variable "multi_az" {
+  description = "Multi AZ true or false"
+  default = false
+}
+
 variable "name" {
   description = "An optional custom name to give to the module's resources"
   default     = ""

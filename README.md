@@ -150,6 +150,7 @@ Creates an RDS read replica instance, the replica `security_group` and a `subnet
 | environment | How do you want to call your environment, this is helpful if you have more than 1 VPC. | string | `"production"` | no |
 | name | An optional custom name to give to the module's resources | string | `""` | no |
 | number\_of\_replicas | number of database repliacs default 1 | string | `"1"` | no |
+| multi\_az | Multi AZ true or false | bool | `false` | no |
 | ports |  | map | `{ "mysql": "3306", "oracle": "1521", "postgres": "5432" }` | no |
 | project | The current project | string | `""` | no |
 | replicate\_source\_db | RDS source to replicate from | string | `""` | no |

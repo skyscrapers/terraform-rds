@@ -14,6 +14,7 @@ resource "aws_db_instance" "rds" {
   identifier                      = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${count.index + 1}-replica" : var.name
   engine                          = var.engine
   instance_class                  = var.size
+  multi_az                        = var.multi_az
   vpc_security_group_ids          = [aws_security_group.sg_rds[0].id]
   replicate_source_db             = var.replicate_source_db
   publicly_accessible             = var.publicly_accessible
