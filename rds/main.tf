@@ -91,4 +91,10 @@ resource "aws_db_instance" "rds" {
   lifecycle {
     ignore_changes = [final_snapshot_identifier]
   }
+
+  # This prevents the rules to be deleted first on a Terraform destroy
+  # The security group rules must be deleted after the instance is destroyed, otherwise there
+  # might be database resources (e.g. mysql or postgresql databases) that won't be able to be
+  # deleted by Terraform because the client doesn't have access.
+  depends_on = [aws_security_group_rule.rds_sg_in, aws_security_group_rule.rds_cidr_in]
 }
