@@ -160,7 +160,7 @@ resource "aws_lambda_function" "rds_snapshot_copy" {
   filename         = data.archive_file.create_zip.output_path
   source_code_hash = data.archive_file.create_zip.output_base64sha256
 
-  runtime = "python2.7"
+  runtime = "python3.8"
   timeout = "120"
 
   environment {
@@ -184,7 +184,7 @@ resource "aws_lambda_function" "rds_snapshot_create" {
   filename         = data.archive_file.create_zip.output_path
   source_code_hash = data.archive_file.create_zip.output_base64sha256
 
-  runtime = "python2.7"
+  runtime = "python3.8"
   timeout = "120"
 
   environment {
@@ -206,7 +206,7 @@ resource "aws_lambda_function" "rds_snapshot_cleanup" {
   filename         = data.archive_file.create_zip.output_path
   source_code_hash = data.archive_file.create_zip.output_base64sha256
 
-  runtime = "python2.7"
+  runtime = "python3.8"
   timeout = "120"
 
   environment {

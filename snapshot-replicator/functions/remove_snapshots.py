@@ -24,10 +24,10 @@ def lambda_handler(event, context):
             for snapshot in snapshots:
                 create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
                 if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(duration)):
-                    print("Deleting snapshot id:", snapshot['DBSnapshotIdentifier'])
+                    print(("Deleting snapshot id:", snapshot['DBSnapshotIdentifier']))
                     try:
                         response = rds.delete_db_snapshot(DBSnapshotIdentifier=snapshot['DBSnapshotIdentifier'])
-                        print response
+                        print(response)
                     except botocore.exceptions.ClientError as e:
                         raise Exception("Could not issue delete command: %s" % e)
 
