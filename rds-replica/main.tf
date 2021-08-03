@@ -26,6 +26,7 @@ resource "aws_db_instance" "rds" {
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   backup_retention_period         = var.backup_retention_period
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
+  skip_final_snapshot             = true
 
   tags = {
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${count.index + 1}-replica" : var.name
