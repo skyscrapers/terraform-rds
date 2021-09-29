@@ -1,5 +1,6 @@
 locals {
-  snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  source_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  target_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:snapshot:${rds.db_instance_identifier}-*"]
 
   ### Gather the KMS keys used by the configured RDS instances
   source_kms_key_ids = compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
@@ -44,9 +45,11 @@ data "aws_iam_policy_document" "lambda_permissions" {
       "rds:CreateDBSnapshot",
       "rds:DeleteDBSnapshot",
       "rds:ModifyDBSnapshot",
-      "rds:AddTagsToResource"
+      "rds:ModifyDBSnapshotAttribute",
+      "rds:AddTagsToResource",
+      "rds:DescribeDBSnapshots"
     ]
-    resources = local.snapshot_arns
+    resources = local.source_snapshot_arns
   }
 
   statement {
@@ -98,9 +101,11 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
     effect = "Allow"
     actions = [
       "rds:CopyDBSnapshot",
-      "rds:ModifyDBSnapshot"
+      "rds:ModifyDBSnapshot",
+      "rds:DescribeDBSnapshots",
+      "rds:AddTagsToResource"
     ]
-    resources = local.snapshot_arns
+    resources = concat(local.source_snapshot_arns, local.target_snapshot_arns)
   }
 }
 
