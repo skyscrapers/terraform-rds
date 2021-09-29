@@ -70,6 +70,12 @@ resource "aws_lambda_function" "rds_cleanup_snapshots" {
       SETUP_NAME       = local.setup_name
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      filename
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "invoke_rds_cleanup_snapshots_lambda" {
@@ -115,6 +121,12 @@ resource "aws_lambda_function" "rds_replicate_snapshot" {
       TARGET_ACCOUNT_ID         = data.aws_caller_identity.target.account_id
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      filename
+    ]
+  }
 }
 
 locals {
@@ -123,6 +135,9 @@ locals {
   }]
 }
 
+#### This EventBridge event rule filters RDS snapshot creation events
+#### relevant to the configured RDS instances only, and triggers the
+#### replicate_snapshot Lambda function
 resource "aws_cloudwatch_event_rule" "invoke_rds_replicate_snapshot_lambda" {
   provider      = aws.source
   description   = "Triggers lambda function ${aws_lambda_function.rds_replicate_snapshot.function_name}"

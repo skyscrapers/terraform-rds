@@ -8,6 +8,8 @@ setup_name = os.environ['SETUP_NAME']
 
 
 def lambda_handler(event, context):
+    """Lambda entry point"""
+
     print('Lambda function start: going to create snapshots for the RDS instances ' + instances)
 
     source = boto3.client('rds')

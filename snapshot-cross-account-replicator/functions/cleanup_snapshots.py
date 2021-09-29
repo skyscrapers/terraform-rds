@@ -10,6 +10,8 @@ setup_name = os.environ['SETUP_NAME']
 
 
 def match_tags(snapshot):
+    """Checks if the snapshot was created by the current setup"""
+
     for tags in snapshot.TagList:
         if tags['Key'] == 'created_by' and tags['Value'] == setup_name:
             return True
@@ -17,6 +19,8 @@ def match_tags(snapshot):
 
 
 def process_snapshot(rds, snapshot):
+    """Processes a single snapshot to determine if it needs to be deleted"""
+
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
     if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(retention_period)) & match_tags(snapshot):
         print(("Deleting snapshot id:", snapshot['DBSnapshotIdentifier']))
@@ -28,6 +32,8 @@ def process_snapshot(rds, snapshot):
 
 
 def process_snapshots(rds):
+    """Processes the snapshots of the configured RDS instances"""
+
     for instance in instances.split(','):
         paginator = rds.get_paginator('describe_db_snapshots')
         page_iterator = paginator.paginate(
@@ -39,6 +45,8 @@ def process_snapshots(rds):
 
 
 def lambda_handler(event, context):
+    """Lambda entry point"""
+
     print('Lambda function start: going to clean up snapshots older than ' +
           retention_period + ' days for the RDS instances ' + instances)
 
@@ -48,4 +56,4 @@ def lambda_handler(event, context):
     process_snapshots(rds)
 
     # Cleanup snapshots from the target account
-    # deleteSnapshots(region=target_region)
+    # TODO deleteSnapshots(region=target_region)

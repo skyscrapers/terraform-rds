@@ -13,6 +13,8 @@ setup_name = os.environ['SETUP_NAME']
 
 
 def share_snapshot(rds, snapshot):
+    """Enables the sharing of a snapshot to the target replication AWS account"""
+
     try:
         rds.modify_db_snapshot_attribute(
             DBSnapshotIdentifier=snapshot['DBSnapshotIdentifier'],
@@ -24,6 +26,8 @@ def share_snapshot(rds, snapshot):
 
 
 def replicate_snapshot(snapshot):
+    """Assumes a role in the target AWS account and triggers a local copy of a snapshot"""
+
     sts_client = boto3.client('sts')
 
     try:
@@ -55,6 +59,8 @@ def replicate_snapshot(snapshot):
 
 
 def match_tags(snapshot):
+    """Checks if the snapshot was created by the current setup"""
+
     for tags in snapshot.TagList:
         if tags['Key'] == 'created_by' and tags['Value'] == setup_name:
             return True
@@ -62,6 +68,8 @@ def match_tags(snapshot):
 
 
 def lambda_handler(event, context):
+    """Lambda entry point"""
+
     message = event['Records'][0]['Sns']['Message']
     rds = boto3.client('rds')
     snapshot_id = json.loads(message)['Source ID']
