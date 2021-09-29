@@ -1,8 +1,6 @@
 import boto3
 import botocore
-import re
 import os
-import json
 
 target_account_id = os.environ['TARGET_ACCOUNT_ID']
 target_account_iam_role_arn = os.environ['TARGET_ACCOUNT_IAM_ROLE']
@@ -45,7 +43,7 @@ def replicate_snapshot(snapshot):
         aws_access_key_id=credentials['AccessKeyId'],
         aws_secret_access_key=credentials['SecretAccessKey'],
         aws_session_token=credentials['SessionToken'],
-        region=target_region
+        region_name=target_region
     )
 
     try:
@@ -53,7 +51,12 @@ def replicate_snapshot(snapshot):
             SourceDBSnapshotIdentifier=snapshot['DBSnapshotArn'],
             TargetDBSnapshotIdentifier=snapshot['DBSnapshotIdentifier'],
             KmsKeyId=target_account_kms_key_id,
-            CopyTags=True)
+            Tags=[
+                {
+                    'Key': 'created_by',
+                    'Value': setup_name
+                }
+            ])
     except botocore.exceptions.ClientError as e:
         raise Exception("Could not issue copy command: %s" % e)
 
@@ -61,7 +64,7 @@ def replicate_snapshot(snapshot):
 def match_tags(snapshot):
     """Checks if the snapshot was created by the current setup"""
 
-    for tags in snapshot.TagList:
+    for tags in snapshot['TagList']:
         if tags['Key'] == 'created_by' and tags['Value'] == setup_name:
             return True
     return False
@@ -70,12 +73,11 @@ def match_tags(snapshot):
 def lambda_handler(event, context):
     """Lambda entry point"""
 
-    message = event['Records'][0]['Sns']['Message']
     rds = boto3.client('rds')
-    snapshot_id = json.loads(message)['Source ID']
+    snapshot_id = event['detail']['SourceIdentifier']
     snapshot = rds.describe_db_snapshots(
         DBSnapshotIdentifier=snapshot_id)['DBSnapshots'][0]
-    if snapshot['DBInstanceIdentifier'] in instances.split(',') & match_tags(snapshot) & snapshot['Status'] == 'available':
+    if snapshot['DBInstanceIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
         print('Replicating snapshot ' +
               snapshot['DBSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
         share_snapshot(rds, snapshot)

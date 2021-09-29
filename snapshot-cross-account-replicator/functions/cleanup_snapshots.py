@@ -22,7 +22,7 @@ def process_snapshot(rds, snapshot):
     """Processes a single snapshot to determine if it needs to be deleted"""
 
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
-    if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(retention_period)) & match_tags(snapshot):
+    if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(retention_period)) and match_tags(snapshot):
         print(("Deleting snapshot id:", snapshot['DBSnapshotIdentifier']))
         try:
             rds.delete_db_snapshot(
