@@ -33,7 +33,7 @@ resource "aws_lambda_function" "rds_create_snapshots" {
 resource "aws_cloudwatch_event_rule" "invoke_rds_create_snapshots_lambda" {
   provider            = aws.source
   description         = "Triggers the lambda function ${aws_lambda_function.rds_create_snapshots.function_name}"
-  schedule_expression = "rate(${var.snapshot_interval} hours)"
+  schedule_expression = var.snapshot_schedule_expression
 }
 
 resource "aws_cloudwatch_event_target" "invoke_rds_create_snapshots_lambda" {
@@ -81,7 +81,7 @@ resource "aws_lambda_function" "rds_cleanup_snapshots" {
 resource "aws_cloudwatch_event_rule" "invoke_rds_cleanup_snapshots_lambda" {
   provider            = aws.source
   description         = "Triggers lambda function ${aws_lambda_function.rds_cleanup_snapshots.function_name}"
-  schedule_expression = "rate(24 hours)"
+  schedule_expression = "cron(0 3 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "invoke_rds_cleanup_snapshots_lambda" {
@@ -131,7 +131,7 @@ resource "aws_lambda_function" "rds_replicate_snapshot" {
 
 locals {
   event_rule_pattern = [for rds in data.aws_db_instance.rds : {
-    prefix = "${rds.db_instance_identifier}_"
+    prefix = "${rds.db_instance_identifier}-"
   }]
 }
 
@@ -145,12 +145,12 @@ resource "aws_cloudwatch_event_rule" "invoke_rds_replicate_snapshot_lambda" {
 {
   "source": ["aws.rds"],
   "detail-type": ["RDS DB Snapshot Event"],
-  "region": "${data.aws_region.source.name}",
+  "region": ["${data.aws_region.source.name}"],
   "detail": {
     "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
     "Message": ["Manual snapshot created"],
     "EventCategories": ["creation"],
-    "SourceType": "SNAPSHOT"
+    "SourceType": ["SNAPSHOT"]
   }
 }
 EOF

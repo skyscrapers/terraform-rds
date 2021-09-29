@@ -16,7 +16,7 @@ def lambda_handler(event, context):
 
     for instance in instances.split(','):
         now = datetime.datetime.now()
-        db_snapshot_name = instance + '_' + now.strftime('%Y-%m-%d-%H-%M')
+        db_snapshot_name = instance + '-' + now.strftime('%Y-%m-%d-%H-%M')
         try:
             source.create_db_snapshot(
                 DBSnapshotIdentifier=db_snapshot_name,

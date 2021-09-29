@@ -1,9 +1,8 @@
 locals {
-  snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}_*"]
+  snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
 
   ### Gather the KMS keys used by the configured RDS instances
-  source_kms_key_ids  = compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
-  source_kms_key_arns = [for key in local.source_kms_key_ids : "arn:aws:kms:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:key/${key}"]
+  source_kms_key_ids = compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
 }
 
 ## IAM resources on the source account
@@ -39,11 +38,13 @@ data "aws_iam_policy_document" "lambda_permissions" {
   }
 
   statement {
-    sid    = "AllowDeleteAndShareSnapshots"
+    sid    = "AllowCreateDeleteAndShareSnapshots"
     effect = "Allow"
     actions = [
+      "rds:CreateDBSnapshot",
       "rds:DeleteDBSnapshot",
-      "rds:ModifyDBSnapshot"
+      "rds:ModifyDBSnapshot",
+      "rds:AddTagsToResource"
     ]
     resources = local.snapshot_arns
   }
@@ -124,7 +125,7 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
       "kms:GenerateDataKey*",
       "kms:DescribeKey"
     ]
-    resources = concat(local.source_kms_key_arns, [data.aws_kms_key.target_key.arn])
+    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
   }
 
   statement {
@@ -135,7 +136,7 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
       "kms:ListGrants",
       "kms:RevokeGrant"
     ]
-    resources = concat(local.source_kms_key_arns, [data.aws_kms_key.target_key.arn])
+    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
     condition {
       test     = "Bool"
       values   = [true]
@@ -147,5 +148,5 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
 resource "aws_iam_role_policy" "target_lambda_kms" {
   provider = aws.target
   role     = aws_iam_role.target_lambda.name
-  policy   = data.aws_iam_policy_document.target_lambda_kms_permissions[0].json
+  policy   = data.aws_iam_policy_document.target_lambda_kms_permissions.json
 }

@@ -8,10 +8,10 @@ variable "rds_instance_ids" {
   type        = list(string)
 }
 
-variable "snapshot_interval" {
-  description = "Snapshot frequency in hours"
-  type        = number
-  default     = 6
+variable "snapshot_schedule_expression" {
+  description = "Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression."
+  type        = string
+  default     = "cron(0 */6 * * ? *)"
 }
 
 variable "retention_period" {
