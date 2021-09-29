@@ -33,6 +33,11 @@ data "aws_db_instance" "rds" {
   db_instance_identifier = each.key
 }
 
+data "aws_kms_key" "target_key" {
+  provider = aws.target
+  key_id   = var.target_account_kms_key_id
+}
+
 locals {
   setup_name = "rds-snapshot-cross-account-replicator-${var.name}"
 }

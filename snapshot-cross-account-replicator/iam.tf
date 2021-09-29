@@ -113,7 +113,6 @@ resource "aws_iam_role_policy" "target_lambda" {
 #### to the KMS keys used to encrypt the RDS snapshots in the source account.
 data "aws_iam_policy_document" "target_lambda_kms_permissions" {
   provider = aws.target
-  count    = length(local.source_kms_key_arns) > 0 ? 1 : 0 # Not needed if there are no kms keys
 
   statement {
     sid    = "AllowUseOfTheKey"
@@ -123,11 +122,9 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
       "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-      "kms:CreateGrant",
-      "kms:RetireGrant"
+      "kms:DescribeKey"
     ]
-    resources = local.source_kms_key_arns
+    resources = concat(local.source_kms_key_arns, [data.aws_kms_key.target_key.arn])
   }
 
   statement {
@@ -138,7 +135,7 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
       "kms:ListGrants",
       "kms:RevokeGrant"
     ]
-    resources = local.source_kms_key_arns
+    resources = concat(local.source_kms_key_arns, [data.aws_kms_key.target_key.arn])
     condition {
       test     = "Bool"
       values   = [true]
@@ -149,7 +146,6 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
 
 resource "aws_iam_role_policy" "target_lambda_kms" {
   provider = aws.target
-  count    = length(local.source_kms_key_arns) > 0 ? 1 : 0 # Not needed if there are no kms keys
   role     = aws_iam_role.target_lambda.name
   policy   = data.aws_iam_policy_document.target_lambda_kms_permissions[0].json
 }
