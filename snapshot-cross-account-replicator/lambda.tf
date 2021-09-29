@@ -22,6 +22,12 @@ resource "aws_lambda_function" "rds_create_snapshots" {
       SETUP_NAME       = local.setup_name
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      filename
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "invoke_rds_create_snapshots_lambda" {
