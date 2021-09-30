@@ -53,7 +53,10 @@ def lambda_handler(event, context):
     rds = boto3.client('rds')
 
     # Cleanup snapshots from the source account
-    process_snapshots(rds)
+    process_snapshots(rds)  # TODO: more frequently
+
+    # Cleanup snapshots from the source account intermediate region
+    # TODO process_snapshots(rds) # TODO: more frequently
 
     # Cleanup snapshots from the target account
     # TODO deleteSnapshots(region=target_region)

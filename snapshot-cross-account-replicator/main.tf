@@ -5,6 +5,7 @@ terraform {
     aws = {
       configuration_aliases = [
         aws.source,
+        aws.intermediate,
         aws.target
       ]
     }
@@ -17,6 +18,10 @@ data "aws_caller_identity" "source" {
 
 data "aws_region" "source" {
   provider = aws.source
+}
+
+data "aws_region" "intermediate" {
+  provider = aws.intermediate
 }
 
 data "aws_caller_identity" "target" {

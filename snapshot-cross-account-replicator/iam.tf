@@ -1,6 +1,7 @@
 locals {
-  source_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
-  target_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  source_snapshot_arns       = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  intermediate_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.intermediate.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  target_snapshot_arns       = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:snapshot:${rds.db_instance_identifier}-*"]
 
   ### Gather the KMS keys used by the configured RDS instances
   source_kms_key_ids = compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
@@ -47,9 +48,10 @@ data "aws_iam_policy_document" "lambda_permissions" {
       "rds:ModifyDBSnapshot",
       "rds:ModifyDBSnapshotAttribute",
       "rds:AddTagsToResource",
-      "rds:DescribeDBSnapshots"
+      "rds:DescribeDBSnapshots",
+      "rds:CopyDBSnapshot"
     ]
-    resources = local.source_snapshot_arns
+    resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
   }
 
   statement {
@@ -70,6 +72,47 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_role" {
   provider   = aws.source
   role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+#### This policy grants usage access to the Lambda function in the source account
+#### to the KMS keys used to encrypt the RDS snapshots in the target account.
+data "aws_iam_policy_document" "lambda_kms_permissions" {
+  provider = aws.source
+
+  statement {
+    sid    = "AllowUseOfTheKey"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
+  }
+
+  statement {
+    sid    = "AllowAttachmentOfPersistentResources"
+    effect = "Allow"
+    actions = [
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:RevokeGrant"
+    ]
+    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
+    condition {
+      test     = "Bool"
+      values   = [true]
+      variable = "kms:GrantIsForAWSResource"
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_kms" {
+  provider = aws.source
+  role     = aws_iam_role.lambda.name
+  policy   = data.aws_iam_policy_document.lambda_kms_permissions.json
 }
 
 ## IAM resources on the target account
@@ -105,32 +148,19 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
       "rds:DescribeDBSnapshots",
       "rds:AddTagsToResource"
     ]
-    resources = concat(local.source_snapshot_arns, local.target_snapshot_arns)
+    resources = concat(local.intermediate_snapshot_arns, local.target_snapshot_arns)
   }
-}
-
-resource "aws_iam_role_policy" "target_lambda" {
-  provider = aws.target
-  role     = aws_iam_role.target_lambda.name
-  policy   = data.aws_iam_policy_document.target_lambda_permissions.json
-}
-
-#### This policy grants usage access to the Lambda function in the target account
-#### to the KMS keys used to encrypt the RDS snapshots in the source account.
-data "aws_iam_policy_document" "target_lambda_kms_permissions" {
-  provider = aws.target
 
   statement {
     sid    = "AllowUseOfTheKey"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
-      "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
       "kms:DescribeKey"
     ]
-    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
+    resources = [data.aws_kms_key.target_key.arn]
   }
 
   statement {
@@ -141,7 +171,7 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
       "kms:ListGrants",
       "kms:RevokeGrant"
     ]
-    resources = concat(local.source_kms_key_ids, [data.aws_kms_key.target_key.arn])
+    resources = [data.aws_kms_key.target_key.arn]
     condition {
       test     = "Bool"
       values   = [true]
@@ -150,8 +180,8 @@ data "aws_iam_policy_document" "target_lambda_kms_permissions" {
   }
 }
 
-resource "aws_iam_role_policy" "target_lambda_kms" {
+resource "aws_iam_role_policy" "target_lambda" {
   provider = aws.target
   role     = aws_iam_role.target_lambda.name
-  policy   = data.aws_iam_policy_document.target_lambda_kms_permissions.json
+  policy   = data.aws_iam_policy_document.target_lambda_permissions.json
 }
