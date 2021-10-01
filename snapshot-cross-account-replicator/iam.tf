@@ -13,11 +13,12 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
   provider = aws.source
   statement {
     actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
     principals {
       type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
-    effect = "Allow"
   }
 }
 
@@ -115,17 +116,63 @@ resource "aws_iam_role_policy" "lambda_kms" {
   policy   = data.aws_iam_policy_document.lambda_kms_permissions.json
 }
 
+data "aws_iam_policy_document" "cleanup_lambda_assume_role_policy" {
+  provider = aws.source
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.target_lambda.arn]
+    }
+  }
+}
+
+
+resource "aws_iam_role" "cleanup_lambda" {
+  provider           = aws.intermediate
+  name               = "rds_snapshot_cleanup_lambda_${var.name}"
+  assume_role_policy = data.aws_iam_policy_document.cleanup_lambda_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "cleanup_lambda_permissions" {
+  provider = aws.intermediate
+
+  statement {
+    sid    = "AllowDeleteSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DeleteDBSnapshot",
+      "rds:DescribeDBSnapshots"
+    ]
+    resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
+  }
+}
+
+resource "aws_iam_role_policy" "cleanup_lambda" {
+  provider = aws.intermediate
+  role     = aws_iam_role.cleanup_lambda.name
+  policy   = data.aws_iam_policy_document.cleanup_lambda_permissions.json
+}
+
 ## IAM resources on the target account
 
 data "aws_iam_policy_document" "target_lambda_assume_role_policy" {
   provider = aws.target
   statement {
     actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
     principals {
       type        = "AWS"
       identifiers = [aws_iam_role.lambda.arn]
     }
-    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
   }
 }
 
@@ -143,6 +190,7 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
   statement {
     effect = "Allow"
     actions = [
+      "rds:DeleteDBSnapshot",
       "rds:CopyDBSnapshot",
       "rds:ModifyDBSnapshot",
       "rds:DescribeDBSnapshots",
@@ -184,4 +232,16 @@ resource "aws_iam_role_policy" "target_lambda" {
   provider = aws.target
   role     = aws_iam_role.target_lambda.name
   policy   = data.aws_iam_policy_document.target_lambda_permissions.json
+}
+
+resource "aws_iam_role_policy" "target_lambda_kms" {
+  provider = aws.target
+  role     = aws_iam_role.target_lambda.name
+  policy   = data.aws_iam_policy_document.lambda_kms_permissions.json
+}
+
+resource "aws_iam_role_policy_attachment" "target_lambda_exec_role" {
+  provider   = aws.target
+  role       = aws_iam_role.target_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
