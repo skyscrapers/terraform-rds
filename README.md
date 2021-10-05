@@ -191,7 +191,7 @@ module "rds" {
 This module creates snapshots of RDS instances based on a [configured frequency](#input\_snapshot\_schedule\_expression), and replicates them to a different region in a different AWS account.
 To achieve this it creates several Lambda functions that take care of the copy operations in the different steps.
 
-As an example, let's say we want to back up an RDS instance in AWS account `111111111111` in region `eu-west-1` to the AWS account `222222222222` in region `eu-central-1`. The whole replication process take place in 4 steps:
+As an example, let's say we want to back up an RDS instance in AWS account `111111111111` in region `eu-west-1` to the AWS account `222222222222` in region `eu-central-1`. The whole replication process takes place in 4 steps:
 
 1. A snapshot is created from the RDS instance, in the account `111111111111` in region `eu-west-1` . If the instance is KMS encrypted, the snapshot will be encrypted with the same key
 2. The initial snapshot is copied to region `eu-central-1` within the source account `111111111111`. Snapshots cannot be copied to a different AWS account and region in the same copy operation, so it needs to happen in two steps. In this step, the snapshot is re-encrypted using a [KMS key](#input\_target\_account\_kms\_key\_id) in the target AWS account and region (`222222222222` & `eu-central-1`)
