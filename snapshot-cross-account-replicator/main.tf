@@ -48,7 +48,7 @@ locals {
   lambda_default_environment_variables = {
     TARGET_ACCOUNT_ID          = data.aws_caller_identity.target.account_id
     TARGET_ACCOUNT_IAM_ROLE    = aws_iam_role.target_lambda.arn
-    SOURCE_ACCOUNT_IAM_ROLE    = aws_iam_role.cleanup_lambda.arn
+    SOURCE_ACCOUNT_IAM_ROLE    = aws_iam_role.step_4_lambda.arn
     TARGET_REGION              = data.aws_region.target.name
     TARGET_ACCOUNT_KMS_KEY_ARN = data.aws_kms_key.target_key.arn
     RDS_INSTANCE_IDS           = join(",", var.rds_instance_ids)

@@ -9,7 +9,7 @@ locals {
 
 ## IAM resources on the source account
 
-data "aws_iam_policy_document" "lambda_assume_role_policy" {
+data "aws_iam_policy_document" "source_lambda_assume_role_policy" {
   provider = aws.source
   statement {
     actions = ["sts:AssumeRole"]
@@ -22,13 +22,14 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role" "lambda" {
+## This role is to be assumed by step 1, step 2 and step 3 Lambda functions
+resource "aws_iam_role" "source_lambda" {
   provider           = aws.source
-  name               = "rds_snapshot_replicator_lambda_${var.name}"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
+  name               = "rds_snapshots_replicator_lambda_${var.name}"
+  assume_role_policy = data.aws_iam_policy_document.source_lambda_assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "lambda_permissions" {
+data "aws_iam_policy_document" "source_lambda_permissions" {
   provider = aws.source
   statement {
     sid    = "AllowCreateSnapshots"
@@ -63,15 +64,15 @@ data "aws_iam_policy_document" "lambda_permissions" {
   }
 }
 
-resource "aws_iam_role_policy" "lambda" {
+resource "aws_iam_role_policy" "source_lambda" {
   provider = aws.source
-  role     = aws_iam_role.lambda.name
-  policy   = data.aws_iam_policy_document.lambda_permissions.json
+  role     = aws_iam_role.source_lambda.name
+  policy   = data.aws_iam_policy_document.source_lambda_permissions.json
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_exec_role" {
+resource "aws_iam_role_policy_attachment" "source_lambda_exec_role" {
   provider   = aws.source
-  role       = aws_iam_role.lambda.name
+  role       = aws_iam_role.source_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
@@ -110,13 +111,13 @@ data "aws_iam_policy_document" "lambda_kms_permissions" {
   }
 }
 
-resource "aws_iam_role_policy" "lambda_kms" {
+resource "aws_iam_role_policy" "source_lambda_kms" {
   provider = aws.source
-  role     = aws_iam_role.lambda.name
+  role     = aws_iam_role.source_lambda.name
   policy   = data.aws_iam_policy_document.lambda_kms_permissions.json
 }
 
-data "aws_iam_policy_document" "cleanup_lambda_assume_role_policy" {
+data "aws_iam_policy_document" "step_4_lambda_assume_role_policy" {
   provider = aws.source
   statement {
     actions = ["sts:AssumeRole"]
@@ -129,14 +130,14 @@ data "aws_iam_policy_document" "cleanup_lambda_assume_role_policy" {
   }
 }
 
-
-resource "aws_iam_role" "cleanup_lambda" {
+## This role is to be assumed by step 4 Lambda function from the target account
+resource "aws_iam_role" "step_4_lambda" {
   provider           = aws.intermediate
-  name               = "rds_snapshot_cleanup_lambda_${var.name}"
-  assume_role_policy = data.aws_iam_policy_document.cleanup_lambda_assume_role_policy.json
+  name               = "rds_snapshots_replicator_step_4_lambda_${var.name}"
+  assume_role_policy = data.aws_iam_policy_document.step_4_lambda_assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "cleanup_lambda_permissions" {
+data "aws_iam_policy_document" "step_4_lambda_permissions" {
   provider = aws.intermediate
 
   statement {
@@ -152,8 +153,8 @@ data "aws_iam_policy_document" "cleanup_lambda_permissions" {
 
 resource "aws_iam_role_policy" "cleanup_lambda" {
   provider = aws.intermediate
-  role     = aws_iam_role.cleanup_lambda.name
-  policy   = data.aws_iam_policy_document.cleanup_lambda_permissions.json
+  role     = aws_iam_role.step_4_lambda.name
+  policy   = data.aws_iam_policy_document.step_4_lambda_permissions.json
 }
 
 ## IAM resources on the target account
@@ -166,7 +167,7 @@ data "aws_iam_policy_document" "target_lambda_assume_role_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [aws_iam_role.lambda.arn]
+      identifiers = [aws_iam_role.source_lambda.arn]
     }
 
     principals {
@@ -180,7 +181,7 @@ data "aws_iam_policy_document" "target_lambda_assume_role_policy" {
 #### to trigger a copy of the shared snapshots in the target account.
 resource "aws_iam_role" "target_lambda" {
   provider           = aws.target
-  name               = "rds_snapshot_replicator_lambda_target_${var.name}"
+  name               = "rds_snapshots_replicator_lambda_target_${var.name}"
   assume_role_policy = data.aws_iam_policy_document.target_lambda_assume_role_policy.json
 }
 
@@ -225,6 +226,13 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
       values   = [true]
       variable = "kms:GrantIsForAWSResource"
     }
+  }
+
+  statement {
+    sid       = "AllowAssumeStep4Role"
+    effect    = "Allow"
+    actions   = ["sts:AssumeRole"]
+    resources = [aws_iam_role.step_4_lambda.arn]
   }
 }
 
