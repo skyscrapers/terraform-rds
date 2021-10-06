@@ -17,7 +17,7 @@ variable "snapshot_schedule_expression" {
 variable "retention_period" {
   description = "Snapshot retention period in days"
   type        = number
-  default     = 25
+  default     = 14
 }
 
 variable "target_account_kms_key_id" {
