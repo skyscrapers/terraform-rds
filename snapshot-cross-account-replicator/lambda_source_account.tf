@@ -8,7 +8,8 @@ resource "aws_lambda_function" "step_1" {
   handler          = "lambda.create_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.8"
+  runtime          = "python3.9"
+  architectures    = ["arm64"]
   timeout          = "120"
 
   environment {
@@ -53,7 +54,8 @@ resource "aws_lambda_function" "step_2" {
   handler          = "lambda.replicate_snapshot"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.8"
+  runtime          = "python3.9"
+  architectures    = ["arm64"]
   timeout          = "120"
 
   environment {
@@ -116,7 +118,8 @@ resource "aws_lambda_function" "step_3" {
   handler          = "lambda.replicate_snapshot"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.8"
+  runtime          = "python3.9"
+  architectures    = ["arm64"]
   timeout          = "120"
 
   environment {

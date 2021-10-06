@@ -9,7 +9,8 @@ resource "aws_lambda_function" "step_4" {
   handler          = "lambda.delete_intermediate_snapshot"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.8"
+  runtime          = "python3.9"
+  architectures    = ["arm64"]
   timeout          = "120"
 
   environment {
@@ -70,7 +71,8 @@ resource "aws_lambda_function" "cleanup_snapshots" {
   handler          = "lambda.cleanup_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.8"
+  runtime          = "python3.9"
+  architectures    = ["arm64"]
   timeout          = "120"
 
   environment {
