@@ -85,11 +85,12 @@ resource "aws_sns_topic_policy" "target_region_topic" {
 }
 
 module "step_1_lambda_monitoring" {
-  source                            = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
-  lambda_function                   = aws_lambda_function.step_1.function_name
-  sns_topic_arn                     = aws_sns_topic.source_region_topic.arn
-  lambda_invocation_error_threshold = 2
-  lambda_invocation_error_period    = 600 # 10 minutes
+  source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
+  lambda_function                            = aws_lambda_function.step_1.function_name
+  sns_topic_arn                              = aws_sns_topic.source_region_topic.arn
+  lambda_invocation_error_threshold          = 2
+  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_evaluation_periods = 1
 
   providers = {
     aws = aws.source
@@ -97,11 +98,12 @@ module "step_1_lambda_monitoring" {
 }
 
 module "step_2_lambda_monitoring" {
-  source                            = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
-  lambda_function                   = aws_lambda_function.step_2.function_name
-  sns_topic_arn                     = aws_sns_topic.source_region_topic.arn
-  lambda_invocation_error_threshold = 2
-  lambda_invocation_error_period    = 600 # 10 minutes
+  source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
+  lambda_function                            = aws_lambda_function.step_2.function_name
+  sns_topic_arn                              = aws_sns_topic.source_region_topic.arn
+  lambda_invocation_error_threshold          = 2
+  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_evaluation_periods = 1
 
   providers = {
     aws = aws.source
@@ -109,11 +111,12 @@ module "step_2_lambda_monitoring" {
 }
 
 module "step_3_lambda_monitoring" {
-  source                            = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
-  lambda_function                   = aws_lambda_function.step_3.function_name
-  sns_topic_arn                     = aws_sns_topic.target_region_topic.arn
-  lambda_invocation_error_threshold = 2
-  lambda_invocation_error_period    = 600 # 10 minutes
+  source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
+  lambda_function                            = aws_lambda_function.step_3.function_name
+  sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
+  lambda_invocation_error_threshold          = 2
+  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_evaluation_periods = 1
 
   providers = {
     aws = aws.intermediate
@@ -121,11 +124,12 @@ module "step_3_lambda_monitoring" {
 }
 
 module "step_4_lambda_monitoring" {
-  source                            = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
-  lambda_function                   = aws_lambda_function.step_4.function_name
-  sns_topic_arn                     = aws_sns_topic.target_region_topic.arn
-  lambda_invocation_error_threshold = 2
-  lambda_invocation_error_period    = 600 # 10 minutes
+  source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
+  lambda_function                            = aws_lambda_function.step_4.function_name
+  sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
+  lambda_invocation_error_threshold          = 2
+  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_evaluation_periods = 1
 
   providers = {
     aws = aws.target
@@ -133,11 +137,12 @@ module "step_4_lambda_monitoring" {
 }
 
 module "cleanup_snapshots_lambda_monitoring" {
-  source                            = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
-  lambda_function                   = aws_lambda_function.cleanup_snapshots.function_name
-  sns_topic_arn                     = aws_sns_topic.target_region_topic.arn
-  lambda_invocation_error_threshold = 2
-  lambda_invocation_error_period    = 600 # 10 minutes
+  source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
+  lambda_function                            = aws_lambda_function.cleanup_snapshots.function_name
+  sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
+  lambda_invocation_error_threshold          = 2
+  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_evaluation_periods = 1
 
   providers = {
     aws = aws.target
