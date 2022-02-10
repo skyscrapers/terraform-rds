@@ -70,6 +70,95 @@ locals {
   event_rule_pattern = [for id in var.rds_instance_ids : {
     prefix = "${id}-"
   }]
+
+  invoke_step_2_lambda_event_pattern_cluster = <<EOF
+{
+  "detail-type": ["RDS DB Cluster Snapshot Event"],
+  "source": ["aws.rds"],
+  "region": ["${data.aws_region.source.name}"],
+  "detail": {
+    "EventCategories": ["backup"],
+    "SourceType": ["CLUSTER_SNAPSHOT"],
+    "Message": ["Manual cluster snapshot created"],
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "EventID": ["RDS-EVENT-0075"]
+  }
+}
+EOF
+
+  invoke_step_2_lambda_event_pattern_instance = <<EOF
+{
+  "source": ["aws.rds"],
+  "detail-type": ["RDS DB Snapshot Event"],
+  "region": ["${data.aws_region.source.name}"],
+  "detail": {
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "Message": ["Manual snapshot created"],
+    "EventCategories": ["creation"],
+    "SourceType": ["SNAPSHOT"]
+  }
+}
+EOF
+
+  invoke_step_3_lambda_event_pattern_cluster = <<EOF
+{
+  "detail-type": ["RDS DB Cluster Snapshot Event"],
+  "source": ["aws.rds"],
+  "region": ["${data.aws_region.intermediate.name}"],
+  "detail": {
+    "EventCategories": ["notification"],
+    "SourceType": ["CLUSTER_SNAPSHOT"],
+    "Message": [{"prefix": "TODO "}],
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "EventID": ["TODO"]
+  }
+}
+EOF
+
+  invoke_step_3_lambda_event_pattern_instance = <<EOF
+{
+  "source": ["aws.rds"],
+  "detail-type": ["RDS DB Snapshot Event"],
+  "region": ["${data.aws_region.intermediate.name}"],
+  "detail": {
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "Message": [{"prefix": "Finished copy of snapshot "}],
+    "EventCategories": ["notification"],
+    "SourceType": ["SNAPSHOT"],
+    "EventID": ["RDS-EVENT-0060"]
+  }
+}
+EOF
+
+  invoke_step_4_lambda_event_pattern_cluster = <<EOF
+{
+  "detail-type": ["RDS DB Cluster Snapshot Event"],
+  "source": ["aws.rds"],
+  "region": ["${data.aws_region.intermediate.name}"],
+  "detail": {
+    "EventCategories": ["notification"],
+    "SourceType": ["CLUSTER_SNAPSHOT"],
+    "Message": [{"prefix": "TODO "}],
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "EventID": ["TODO"]
+  }
+}
+EOF
+
+  invoke_step_4_lambda_event_pattern_instance = <<EOF
+{
+  "source": ["aws.rds"],
+  "detail-type": ["RDS DB Snapshot Event"],
+  "region": ["${data.aws_region.intermediate.name}"],
+  "detail": {
+    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
+    "Message": [{"prefix": "Finished copy of snapshot "}],
+    "EventCategories": ["notification"],
+    "SourceType": ["SNAPSHOT"],
+    "EventID": ["RDS-EVENT-0197"]
+  }
+}
+EOF
 }
 
 data "archive_file" "lambda_zip" {

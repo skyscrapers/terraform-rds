@@ -77,19 +77,7 @@ resource "aws_lambda_function" "step_2" {
 resource "aws_cloudwatch_event_rule" "invoke_step_2_lambda" {
   provider      = aws.source
   description   = "Triggers lambda function ${aws_lambda_function.step_2.function_name}"
-  event_pattern = <<EOF
-{
-  "source": ["aws.rds"],
-  "detail-type": ["RDS DB Snapshot Event"],
-  "region": ["${data.aws_region.source.name}"],
-  "detail": {
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "Message": ["Manual snapshot created"],
-    "EventCategories": ["creation"],
-    "SourceType": ["SNAPSHOT"]
-  }
-}
-EOF
+  event_pattern = var.is_aurora_cluster ? local.invoke_step_2_lambda_event_pattern_cluster : local.invoke_step_2_lambda_event_pattern_instance
 }
 
 resource "aws_cloudwatch_event_target" "invoke_step_2_lambda" {
@@ -140,21 +128,8 @@ resource "aws_lambda_function" "step_3" {
 resource "aws_cloudwatch_event_rule" "invoke_step_3_lambda" {
   provider      = aws.intermediate
   description   = "Triggers lambda function ${aws_lambda_function.step_3.function_name}"
-  event_pattern = <<EOF
-{
-  "source": ["aws.rds"],
-  "detail-type": ["RDS DB Snapshot Event"],
-  "region": ["${data.aws_region.intermediate.name}"],
-  "detail": {
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "Message": [{"prefix": "Finished copy of snapshot "}],
-    "EventCategories": ["notification"],
-    "SourceType": ["SNAPSHOT"],
-    "EventID": ["RDS-EVENT-0060"]
-  }
+  event_pattern = var.is_aurora_cluster ? local.invoke_step_3_lambda_event_pattern_cluster : local.invoke_step_3_lambda_event_pattern_instance
 }
-EOF
-} # TODO: event
 
 resource "aws_cloudwatch_event_target" "invoke_step_3_lambda" {
   provider = aws.intermediate

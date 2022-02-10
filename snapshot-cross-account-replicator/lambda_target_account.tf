@@ -29,21 +29,8 @@ resource "aws_lambda_function" "step_4" {
 resource "aws_cloudwatch_event_rule" "invoke_step_4_lambda" {
   provider      = aws.target
   description   = "Triggers lambda function ${aws_lambda_function.step_4.function_name}"
-  event_pattern = <<EOF
-{
-  "source": ["aws.rds"],
-  "detail-type": ["RDS DB Snapshot Event"],
-  "region": ["${data.aws_region.intermediate.name}"],
-  "detail": {
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "Message": [{"prefix": "Finished copy of snapshot "}],
-    "EventCategories": ["notification"],
-    "SourceType": ["SNAPSHOT"],
-    "EventID": ["RDS-EVENT-0197"]
-  }
+  event_pattern = var.is_aurora_cluster ? local.invoke_step_4_lambda_event_pattern_cluster : local.invoke_step_4_lambda_event_pattern_instance
 }
-EOF
-} # TODO EVENT
 
 resource "aws_cloudwatch_event_target" "invoke_step_4_lambda" {
   provider = aws.target
