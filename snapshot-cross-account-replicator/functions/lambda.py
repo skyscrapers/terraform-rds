@@ -124,13 +124,17 @@ def match_snapshot_event(rds, event):
     if is_cluster:
         snapshot = rds.describe_db_cluster_snapshots(
             DBClusterSnapshotIdentifier=snapshot_id)['DBClusterSnapshots'][0]
+        if snapshot['DBClusterInstanceIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
+            return snapshot
+        else:
+            return False
     else:
         snapshot = rds.describe_db_snapshots(
             DBSnapshotIdentifier=snapshot_id)['DBSnapshots'][0]
-    if snapshot['DBClusterIdentifier'] or snapshot['DBInstanceIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
-        return snapshot
-    else:
-        return False
+        if snapshot['DBInstanceIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
+            return snapshot
+        else:
+            return False
 
 
 def cleanup_snapshots(event, context):
