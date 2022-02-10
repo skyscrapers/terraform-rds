@@ -154,7 +154,7 @@ resource "aws_cloudwatch_event_rule" "invoke_step_3_lambda" {
   }
 }
 EOF
-}
+} # TODO: event
 
 resource "aws_cloudwatch_event_target" "invoke_step_3_lambda" {
   provider = aws.intermediate

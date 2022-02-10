@@ -43,7 +43,7 @@ resource "aws_cloudwatch_event_rule" "invoke_step_4_lambda" {
   }
 }
 EOF
-}
+} # TODO EVENT
 
 resource "aws_cloudwatch_event_target" "invoke_step_4_lambda" {
   provider = aws.target

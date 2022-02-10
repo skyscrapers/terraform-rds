@@ -33,9 +33,15 @@ data "aws_region" "target" {
   provider = aws.target
 }
 
+data "aws_rds_cluster" "rds" {
+  provider           = aws.source
+  for_each           = var.is_aurora_cluster ? toset(var.rds_instance_ids) : 0
+  cluster_identifier = each.key
+}
+
 data "aws_db_instance" "rds" {
   provider               = aws.source
-  for_each               = toset(var.rds_instance_ids)
+  for_each               = ! var.is_aurora_cluster ? toset(var.rds_instance_ids) : 0
   db_instance_identifier = each.key
 }
 
@@ -46,6 +52,7 @@ data "aws_kms_key" "target_key" {
 
 locals {
   setup_name = "rds-snapshot-cross-account-replicator-${var.name}"
+
   lambda_default_environment_variables = {
     TARGET_ACCOUNT_ID          = data.aws_caller_identity.target.account_id
     TARGET_ACCOUNT_IAM_ROLE    = aws_iam_role.target_lambda.arn
@@ -57,9 +64,11 @@ locals {
     TYPE                       = "cross-account"
     SOURCE_REGION              = data.aws_region.source.name
     RETENTION_PERIOD           = var.retention_period
+    IS_CLUSTER                 = var.is_aurora_cluster
   }
-  event_rule_pattern = [for rds in data.aws_db_instance.rds : {
-    prefix = "${rds.db_instance_identifier}-"
+
+  event_rule_pattern = [for id in var.rds_instance_ids : {
+    prefix = "${id}-"
   }]
 }
 
