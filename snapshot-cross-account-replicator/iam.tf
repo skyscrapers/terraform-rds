@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "source_lambda_permissions" {
       "rds:CreateDBSnapshot",
       "rds:Describe*",
     ]
-    resources = is_cluster ? [for rds in data.aws_rds_cluster.rds : rds.arn] : [for rds in data.aws_db_instance.rds : rds.db_instance_arn]
+    resources = var.is_aurora_cluster ? [for rds in data.aws_rds_cluster.rds : rds.arn] : [for rds in data.aws_db_instance.rds : rds.db_instance_arn]
   }
 
   statement {

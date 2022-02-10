@@ -35,13 +35,13 @@ data "aws_region" "target" {
 
 data "aws_rds_cluster" "rds" {
   provider           = aws.source
-  for_each           = var.is_aurora_cluster ? toset(var.rds_instance_ids) : 0
+  for_each           = var.is_aurora_cluster ? toset(var.rds_instance_ids) : []
   cluster_identifier = each.key
 }
 
 data "aws_db_instance" "rds" {
   provider               = aws.source
-  for_each               = ! var.is_aurora_cluster ? toset(var.rds_instance_ids) : 0
+  for_each               = ! var.is_aurora_cluster ? toset(var.rds_instance_ids) : []
   db_instance_identifier = each.key
 }
 
