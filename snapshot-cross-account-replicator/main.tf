@@ -3,7 +3,7 @@ terraform {
 
   required_providers {
     aws = {
-      version = ">= 3.61.0"
+      version = "~> 3.61"
       configuration_aliases = [
         aws.source,
         aws.intermediate,
@@ -41,7 +41,7 @@ data "aws_rds_cluster" "rds" {
 
 data "aws_db_instance" "rds" {
   provider               = aws.source
-  for_each               = ! var.is_aurora_cluster ? toset(var.rds_instance_ids) : []
+  for_each               = !var.is_aurora_cluster ? toset(var.rds_instance_ids) : []
   db_instance_identifier = each.key
 }
 

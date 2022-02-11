@@ -1,6 +1,6 @@
 locals {
   source_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
-  
+
   intermediate_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.intermediate.name}:${data.aws_caller_identity.source.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
 
   target_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
@@ -174,8 +174,8 @@ data "aws_iam_policy_document" "step_4_lambda_permissions" {
   }
 
   statement {
-    sid     = "AllowDescribeAndTagSnapshots"
-    effect  = "Allow"
+    sid    = "AllowDescribeAndTagSnapshots"
+    effect = "Allow"
     actions = [
       "rds:DescribeDBClusterSnapshots",
       "rds:DescribeDBSnapshots",
@@ -240,8 +240,8 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
   }
 
   statement {
-    sid     = "AllowDescribeSnapshots"
-    effect  = "Allow"
+    sid    = "AllowDescribeSnapshots"
+    effect = "Allow"
     actions = [
       "rds:DescribeDBClusterSnapshots",
       "rds:DescribeDBSnapshots",
