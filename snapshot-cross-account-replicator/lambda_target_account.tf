@@ -27,9 +27,10 @@ resource "aws_lambda_function" "step_4" {
 ## This event will be triggered when the final snapshot has been copied to the target account
 ## so the intermediate snapshot can be safely deleted
 resource "aws_cloudwatch_event_rule" "invoke_step_4_lambda" {
-  provider      = aws.target
-  description   = "Triggers lambda function ${aws_lambda_function.step_4.function_name}"
-  event_pattern = local.invoke_step_4_lambda_event_pattern_instance  # TODO for cluster mode
+  provider            = aws.target
+  description         = "Triggers lambda function ${aws_lambda_function.step_4.function_name}"
+  event_pattern       = ! var.is_aurora_cluster ? local.invoke_step_4_lambda_event_pattern_instance : null
+  schedule_expression = var.is_aurora_cluster ? "cron(*/30 * * * ? *)" : null
 }
 
 resource "aws_cloudwatch_event_target" "invoke_step_4_lambda" {

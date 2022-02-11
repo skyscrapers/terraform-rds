@@ -174,8 +174,8 @@ data "aws_iam_policy_document" "step_4_lambda_permissions" {
   }
 
   statement {
-    sid    = "AllowDescribeAndTagSnapshots"
-    effect = "Allow"
+    sid     = "AllowDescribeAndTagSnapshots"
+    effect  = "Allow"
     actions = [
       "rds:DescribeDBClusterSnapshots",
       "rds:DescribeDBSnapshots",
@@ -240,10 +240,14 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
   }
 
   statement {
+    sid     = "AllowDescribeSnapshots"
     effect  = "Allow"
-    actions = ["rds:DescribeDbSnapshots"]
-    ### This is needed for the cleanup lambda function to be able to describe all snapshots from an instance
-    resources = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:${var.is_aurora_cluster ? "cluster" : "db"}:${id}"]
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource"
+    ]
+    resources = ["*"]
   }
 
   statement {
