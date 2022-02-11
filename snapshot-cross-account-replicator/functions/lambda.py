@@ -338,4 +338,6 @@ def delete_intermediate_snapshot(event, context):
     else:
         snapshot = match_snapshot_event(rds, event)
         if snapshot:
+            snapshot_set_replicating_tag(
+                rds, snapshot['DBSnapshotArn'], 'finished')
             delete_snapshot(source_rds, snapshot['DBSnapshotIdentifier'])
