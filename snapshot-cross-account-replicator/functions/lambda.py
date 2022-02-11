@@ -330,6 +330,8 @@ def delete_intermediate_snapshot(event, context):
     if is_cluster:
         snapshots = match_cluster_snapshots(rds)
         for snapshot in snapshots:
+            snapshot_set_replicating_tag(
+                rds, snapshot['DBClusterSnapshotArn'], 'finished')
             delete_snapshot(
                 source_rds, snapshot['DBClusterSnapshotIdentifier'])
     # EVENT based, used for step 4 (instance)
