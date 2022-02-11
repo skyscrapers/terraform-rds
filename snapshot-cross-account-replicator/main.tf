@@ -100,21 +100,6 @@ EOF
 }
 EOF
 
-  invoke_step_3_lambda_event_pattern_cluster = <<EOF
-{
-  "detail-type": ["RDS DB Cluster Snapshot Event"],
-  "source": ["aws.rds"],
-  "region": ["${data.aws_region.intermediate.name}"],
-  "detail": {
-    "EventCategories": ["notification"],
-    "SourceType": ["CLUSTER_SNAPSHOT"],
-    "Message": [{"prefix": "TODO "}],
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "EventID": ["TODO"]
-  }
-}
-EOF
-
   invoke_step_3_lambda_event_pattern_instance = <<EOF
 {
   "source": ["aws.rds"],
@@ -126,21 +111,6 @@ EOF
     "EventCategories": ["notification"],
     "SourceType": ["SNAPSHOT"],
     "EventID": ["RDS-EVENT-0060"]
-  }
-}
-EOF
-
-  invoke_step_4_lambda_event_pattern_cluster = <<EOF
-{
-  "detail-type": ["RDS DB Cluster Snapshot Event"],
-  "source": ["aws.rds"],
-  "region": ["${data.aws_region.intermediate.name}"],
-  "detail": {
-    "EventCategories": ["notification"],
-    "SourceType": ["CLUSTER_SNAPSHOT"],
-    "Message": [{"prefix": "TODO "}],
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "EventID": ["TODO"]
   }
 }
 EOF

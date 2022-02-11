@@ -73,6 +73,10 @@ def copy_snapshot(snapshot, rds, source_region):
                     {
                         'Key': 'created_by',
                         'Value': setup_name
+                    },
+                    {
+                        'Key': 'replicating',
+                        'Value': 'false'
                     }
                 ]
             )
@@ -86,6 +90,10 @@ def copy_snapshot(snapshot, rds, source_region):
                     {
                         'Key': 'created_by',
                         'Value': setup_name
+                    },
+                    {
+                        'Key': 'replicating',
+                        'Value': 'false'
                     }
                 ]
             )
@@ -117,6 +125,20 @@ def delete_snapshot(rds, snapshot_id):
         raise Exception("Could not issue delete command: %s" % e)
 
 
+def match_snapshot_tags(tags, replication_status):
+    """Checks if the snapshot with provided tags is meant for this lambda"""
+
+    try:
+        for tag1 in tags:
+            if tag1['Key'].lower() == 'created_by' and tag1['Value'].lower() == setup_name.lower():
+                for tag2 in tags:
+                    if tag2['Key'].lower() == 'replicating' and tag2['Value'].lower() == replication_status:
+                        return True
+    except Exception:
+        return False
+
+    return False
+
 def match_snapshot_event(rds, event):
     """Checks if the provided event is meant for this lambda"""
 
@@ -124,7 +146,7 @@ def match_snapshot_event(rds, event):
     if is_cluster:
         snapshot = rds.describe_db_cluster_snapshots(
             DBClusterSnapshotIdentifier=snapshot_id)['DBClusterSnapshots'][0]
-        if snapshot['DBClusterInstanceIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
+        if snapshot['DBClusterIdentifier'] in instances.split(',') and match_tags(snapshot) and snapshot['Status'] == 'available':
             return snapshot
         else:
             return False
@@ -135,6 +157,20 @@ def match_snapshot_event(rds, event):
             return snapshot
         else:
             return False
+
+
+def snapshot_set_replicating_tag(rds, snapshot_arn, value):
+    """Sets replicating=true Tag on snapshot"""
+
+    rds.add_tags_to_resource(
+        ResourceName=snapshot_arn,
+        Tags=[
+            {
+                'Key': 'replicating',
+                'Value': value
+            }
+        ]
+    )
 
 
 def cleanup_snapshots(event, context):
@@ -173,37 +209,70 @@ def cleanup_snapshots(event, context):
 
 def replicate_snapshot(event, context):
     """Lambda entry point for the cross-region and cross-account replication"""
+    # This gets run in step 2 (cross-region) and step 3 (cross-account)
 
     rds = boto3.client('rds')
-    snapshot = match_snapshot_event(rds, event)
-    if snapshot:
-        if replication_type == 'cross-region':
-            if is_cluster:
-                print('Replicating snapshot ' +
-                      snapshot['DBClusterSnapshotIdentifier'] + ' to region ' + target_region)
-            else:
-                print('Replicating snapshot ' +
-                      snapshot['DBSnapshotIdentifier'] + ' to region ' + target_region)
-            target_region_rds = boto3.client('rds', region_name=target_region)
-            copy_snapshot(snapshot, target_region_rds, source_region)
-        elif replication_type == 'cross-account':
-            if is_cluster:
-                print('Replicating snapshot ' +
-                      snapshot['DBClusterSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
-            else:
+
+    # CRON based, search & replicate all matching snapshots
+    # Needed for the cross-account replication in cluster mode (step 3), because AWS
+    # doesn't public a cluster finished snapshot event
+    if is_cluster and replication_type == 'cross-account':
+        paginator = rds.get_paginator('describe_db_cluster_snapshots')
+        page_iterator = paginator.paginate(
+            SnapshotType='manual',
+            IncludeShared=False,
+            IncludePublic=False
+        )
+
+        for page in page_iterator:
+            for snapshot in page['DBClusterSnapshots']:
+                snapshot_taglist = rds.list_tags_for_resource(
+                    ResourceName=snapshot['DBClusterSnapshotArn'])
+
+                if snapshot['Status'].lower() == 'available' and match_snapshot_tags(snapshot_taglist['TagList'], "false"):
+                    snapshot_set_replicating_tag(
+                        rds, snapshot['DBClusterSnapshotArn'], 'true')
+                    print('Replicating snapshot ' +
+                          snapshot['DBClusterSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
+                    share_snapshot(rds, snapshot)
+                    target_account_rds = get_assumed_role_rds_client(
+                        target_account_iam_role_arn, target_region)
+                    copy_snapshot(
+                        snapshot, target_account_rds, target_region)
+                    source_region_rds = boto3.client(
+                        'rds', region_name=source_region)
+                    # Delete initial snapshot in source account, source region
+                    delete_snapshot(source_region_rds,
+                                    snapshot['DBClusterSnapshotIdentifier'])
+
+    # EVENT based, used for step 2 (instance and cluster) and step 3 (instance)
+    else:
+        snapshot = match_snapshot_event(rds, event)
+        if snapshot:
+            if replication_type == 'cross-region':
+                if is_cluster:
+                    print('Replicating snapshot ' +
+                          snapshot['DBClusterSnapshotIdentifier'] + ' to region ' + target_region)
+                else:
+                    print('Replicating snapshot ' +
+                          snapshot['DBSnapshotIdentifier'] + ' to region ' + target_region)
+                target_region_rds = boto3.client(
+                    'rds', region_name=target_region)
+                copy_snapshot(snapshot, target_region_rds, source_region)
+            elif replication_type == 'cross-account':
+                snapshot_set_replicating_tag(
+                    rds, snapshot['DBSnapshotArn'], 'true')
                 print('Replicating snapshot ' +
                       snapshot['DBSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
-            share_snapshot(rds, snapshot)
-            target_account_rds = get_assumed_role_rds_client(
-                target_account_iam_role_arn, target_region)
-            copy_snapshot(snapshot, target_account_rds, target_region)
-            source_region_rds = boto3.client('rds', region_name=source_region)
-            if is_cluster:
+                share_snapshot(rds, snapshot)
+                target_account_rds = get_assumed_role_rds_client(
+                    target_account_iam_role_arn, target_region)
+                copy_snapshot(snapshot, target_account_rds, target_region)
+                source_region_rds = boto3.client(
+                    'rds', region_name=source_region)
+                # Delete initial snapshot in source account, source region
                 delete_snapshot(source_region_rds,
                                 snapshot['DBSnapshotIdentifier'])
-            else:
-                delete_snapshot(source_region_rds,
-                                snapshot['DBClusterSnapshotIdentifier'])
 
 
 def create_snapshots(event, context):
@@ -225,7 +294,7 @@ def create_snapshots(event, context):
                         {
                             'Key': 'created_by',
                             'Value': setup_name
-                        }
+                        },
                     ])
             else:
                 source_rds.create_db_snapshot(

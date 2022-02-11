@@ -29,7 +29,7 @@ resource "aws_lambda_function" "step_4" {
 resource "aws_cloudwatch_event_rule" "invoke_step_4_lambda" {
   provider      = aws.target
   description   = "Triggers lambda function ${aws_lambda_function.step_4.function_name}"
-  event_pattern = var.is_aurora_cluster ? local.invoke_step_4_lambda_event_pattern_cluster : local.invoke_step_4_lambda_event_pattern_instance
+  event_pattern = local.invoke_step_4_lambda_event_pattern_instance  # TODO for cluster mode
 }
 
 resource "aws_cloudwatch_event_target" "invoke_step_4_lambda" {

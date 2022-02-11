@@ -123,12 +123,14 @@ resource "aws_lambda_function" "step_3" {
   }
 }
 
-#### This EventBridge event rule filters RDS snapshot copy events
-#### relevant to the configured RDS instances only
+#### This EventBridge event rule either filters RDS snapshot copy events
+#### relevant to the configured RDS instances only (for instances)
+#### OR in case of cluster trigger on a CRON schedule evry 30 min
 resource "aws_cloudwatch_event_rule" "invoke_step_3_lambda" {
-  provider      = aws.intermediate
-  description   = "Triggers lambda function ${aws_lambda_function.step_3.function_name}"
-  event_pattern = var.is_aurora_cluster ? local.invoke_step_3_lambda_event_pattern_cluster : local.invoke_step_3_lambda_event_pattern_instance
+  provider            = aws.intermediate
+  description         = "Triggers lambda function ${aws_lambda_function.step_3.function_name}"
+  event_pattern       = ! var.is_aurora_cluster ? local.invoke_step_3_lambda_event_pattern_instance : null
+  schedule_expression = var.is_aurora_cluster ? "cron(*/30 * * * ? *)" : null
 }
 
 resource "aws_cloudwatch_event_target" "invoke_step_3_lambda" {

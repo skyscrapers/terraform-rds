@@ -66,6 +66,18 @@ data "aws_iam_policy_document" "source_lambda_permissions" {
   }
 
   statement {
+    sid    = "AllowDescribeAndTagSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource",
+      "rds:AddTagsToResource"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid       = "AllowAssumeRoleInTargetAccount"
     effect    = "Allow"
     actions   = ["sts:AssumeRole"]
@@ -159,6 +171,18 @@ data "aws_iam_policy_document" "step_4_lambda_permissions" {
       "rds:DescribeDBSnapshots"
     ]
     resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
+  }
+
+  statement {
+    sid    = "AllowDescribeAndTagSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource",
+      "rds:AddTagsToResource"
+    ]
+    resources = ["*"]
   }
 }
 
