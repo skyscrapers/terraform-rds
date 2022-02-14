@@ -1,10 +1,12 @@
 locals {
-  source_snapshot_arns       = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
-  intermediate_snapshot_arns = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.intermediate.name}:${data.aws_caller_identity.source.account_id}:snapshot:${rds.db_instance_identifier}-*"]
-  target_snapshot_arns       = [for rds in data.aws_db_instance.rds : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:snapshot:${rds.db_instance_identifier}-*"]
+  source_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.source.name}:${data.aws_caller_identity.source.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
+
+  intermediate_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.intermediate.name}:${data.aws_caller_identity.source.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
+
+  target_snapshot_arns = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:${var.is_aurora_cluster ? "cluster-" : ""}snapshot:${id}-*"]
 
   ### Gather the KMS keys used by the configured RDS instances
-  source_kms_key_ids = compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
+  source_kms_key_ids = var.is_aurora_cluster ? compact([for rds in data.aws_rds_cluster.rds : rds.kms_key_id]) : compact([for rds in data.aws_db_instance.rds : rds.kms_key_id])
 }
 
 ## IAM resources on the source account
@@ -35,25 +37,44 @@ data "aws_iam_policy_document" "source_lambda_permissions" {
     sid    = "AllowCreateSnapshots"
     effect = "Allow"
     actions = [
+      "rds:CreateDBClusterSnapshot",
       "rds:CreateDBSnapshot",
       "rds:Describe*",
     ]
-    resources = [for rds in data.aws_db_instance.rds : rds.db_instance_arn]
+    resources = var.is_aurora_cluster ? [for rds in data.aws_rds_cluster.rds : rds.arn] : [for rds in data.aws_db_instance.rds : rds.db_instance_arn]
   }
 
   statement {
     sid    = "AllowCreateDeleteAndShareSnapshots"
     effect = "Allow"
     actions = [
+      "rds:CreateDBClusterSnapshot",
+      "rds:DeleteDBClusterSnapshot",
+      "rds:ModifyDBClusterSnapshot",
+      "rds:ModifyDBClusterSnapshotAttribute",
+      "rds:DescribeDBClusterSnapshots",
+      "rds:CopyDBClusterSnapshot",
       "rds:CreateDBSnapshot",
       "rds:DeleteDBSnapshot",
       "rds:ModifyDBSnapshot",
       "rds:ModifyDBSnapshotAttribute",
-      "rds:AddTagsToResource",
       "rds:DescribeDBSnapshots",
-      "rds:CopyDBSnapshot"
+      "rds:CopyDBSnapshot",
+      "rds:AddTagsToResource"
     ]
     resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
+  }
+
+  statement {
+    sid    = "AllowDescribeAndTagSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource",
+      "rds:AddTagsToResource"
+    ]
+    resources = ["*"]
   }
 
   statement {
@@ -144,10 +165,24 @@ data "aws_iam_policy_document" "step_4_lambda_permissions" {
     sid    = "AllowDeleteSnapshots"
     effect = "Allow"
     actions = [
+      "rds:DeleteDBClusterSnapshot",
+      "rds:DescribeDBClusterSnapshots",
       "rds:DeleteDBSnapshot",
       "rds:DescribeDBSnapshots"
     ]
     resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
+  }
+
+  statement {
+    sid    = "AllowDescribeAndTagSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource",
+      "rds:AddTagsToResource"
+    ]
+    resources = ["*"]
   }
 }
 
@@ -191,6 +226,10 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
   statement {
     effect = "Allow"
     actions = [
+      "rds:DeleteDBClusterSnapshot",
+      "rds:CopyDBClusterSnapshot",
+      "rds:ModifyDBClusterSnapshot",
+      "rds:DescribeDBClusterSnapshots",
       "rds:DeleteDBSnapshot",
       "rds:CopyDBSnapshot",
       "rds:ModifyDBSnapshot",
@@ -201,10 +240,14 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
   }
 
   statement {
-    effect  = "Allow"
-    actions = ["rds:DescribeDbSnapshots"]
-    ### This is needed for the cleanup lambda function to be able to describe all snapshots from an instance
-    resources = [for id in var.rds_instance_ids : "arn:aws:rds:${data.aws_region.target.name}:${data.aws_caller_identity.target.account_id}:db:${id}"]
+    sid    = "AllowDescribeSnapshots"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterSnapshots",
+      "rds:DescribeDBSnapshots",
+      "rds:ListTagsForResource"
+    ]
+    resources = ["*"]
   }
 
   statement {

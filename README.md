@@ -205,30 +205,86 @@ For monitoring, the module creates two SNS topics where CloudWatch will post ale
 
 Take into account that for the copy operation and re-encryption process to work properly, the policy of the [provided KMS key](#input\_target\_account\_kms\_key\_id) in the target account needs to allow usage access to the root user of the source account. IAM policies to further grant access to the Lambda functions will be created within the module. [Check this AWS documentation page](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ShareSnapshot.html#USER_ShareSnapshot.Encrypted.KeyPolicy) to know more about how encrpyted snapshots can be shared between different accounts.
 
+### Example
+
+```terraform
+data "aws_caller_identity" "source" {
+  provider = aws.source
+}
+
+module "rds_replication" {
+  source = "github.com/skyscrapers/terraform-rds//snapshot-cross-account-replicator?ref=6.1.0"
+
+  name                         = "AuroraReplicator"
+  is_aurora_cluster            = true
+  rds_instance_ids             = var.rds_cluster_ids
+  snapshot_schedule_expression = "cron(0 */12 * * ? *)"
+  retention_period             = 4
+  target_account_kms_key_id    = aws_kms_key.rds_target.id
+
+  providers = {
+    aws.source       = aws.source
+    aws.intermediate = aws.intermediate
+    aws.target       = aws.target
+  }
+}
+
+resource "aws_kms_key" "rds_target" {
+  provider = aws.target
+
+  description = "KMS key used to encrypt RDS"
+  policy      = data.aws_iam_policy_document.rds_replication_key.json
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+data "aws_iam_policy_document" "rds_replication_key" {
+  provider = aws.target
+
+  statement {
+    sid       = "Enable IAM policies in source & target accounts"
+    effect    = "Allow"
+    actions   = ["kms:*"]
+    resources = ["*"]
+
+    principals {
+      type             = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.source.account_id}:root",
+        "arn:aws:iam::${var.target_aws_account}:root"
+      ]
+    }
+  }
+}
+```
+
 ### Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | ~> 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement_aws) | ~> 3.61 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
-| <a name="provider_aws.intermediate"></a> [aws.intermediate](#provider\_aws.intermediate) | n/a |
-| <a name="provider_aws.source"></a> [aws.source](#provider\_aws.source) | n/a |
-| <a name="provider_aws.target"></a> [aws.target](#provider\_aws.target) | n/a |
+| <a name="provider_archive"></a> [archive](#provider_archive) | n/a |
+| <a name="provider_aws.intermediate"></a> [aws.intermediate](#provider_aws.intermediate) | ~> 3.61 |
+| <a name="provider_aws.source"></a> [aws.source](#provider_aws.source) | ~> 3.61 |
+| <a name="provider_aws.target"></a> [aws.target](#provider_aws.target) | ~> 3.61 |
 
 ### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cleanup_snapshots_lambda_monitoring"></a> [cleanup\_snapshots\_lambda\_monitoring](#module\_cleanup\_snapshots\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_1_lambda_monitoring"></a> [step\_1\_lambda\_monitoring](#module\_step\_1\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_2_lambda_monitoring"></a> [step\_2\_lambda\_monitoring](#module\_step\_2\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_3_lambda_monitoring"></a> [step\_3\_lambda\_monitoring](#module\_step\_3\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_4_lambda_monitoring"></a> [step\_4\_lambda\_monitoring](#module\_step\_4\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_cleanup_snapshots_lambda_monitoring"></a> [cleanup_snapshots_lambda_monitoring](#module_cleanup_snapshots_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_1_lambda_monitoring"></a> [step_1_lambda_monitoring](#module_step_1_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_2_lambda_monitoring"></a> [step_2_lambda_monitoring](#module_step_2_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_3_lambda_monitoring"></a> [step_3_lambda_monitoring](#module_step_3_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_4_lambda_monitoring"></a> [step_4_lambda_monitoring](#module_step_4_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
 
 ### Resources
 
@@ -266,6 +322,8 @@ Take into account that for the copy operation and re-encryption process to work 
 | [aws_lambda_permission.invoke_step_4_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_sns_topic.source_region_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic.target_region_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_policy.source_region_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
+| [aws_sns_topic_policy.target_region_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
 | [archive_file.lambda_zip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_caller_identity.target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -273,11 +331,14 @@ Take into account that for the copy operation and re-encryption process to work 
 | [aws_iam_policy_document.lambda_kms_permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.source_lambda_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.source_lambda_permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.source_retion_sns_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.step_4_lambda_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.step_4_lambda_permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.target_lambda_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.target_lambda_permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.target_retion_sns_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_kms_key.target_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
+| [aws_rds_cluster.rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/rds_cluster) | data source |
 | [aws_region.intermediate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_region.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_region.target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -286,18 +347,19 @@ Take into account that for the copy operation and re-encryption process to work 
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_name"></a> [name](#input\_name) | Name of the setup | `string` | n/a | yes |
-| <a name="input_rds_instance_ids"></a> [rds\_instance\_ids](#input\_rds\_instance\_ids) | List of IDs of the RDS instances to back up | `list(string)` | n/a | yes |
-| <a name="input_target_account_kms_key_id"></a> [target\_account\_kms\_key\_id](#input\_target\_account\_kms\_key\_id) | KMS key to use to encrypt replicated RDS snapshots in the target AWS account | `string` | n/a | yes |
-| <a name="input_retention_period"></a> [retention\_period](#input\_retention\_period) | Snapshot retention period in days | `number` | `14` | no |
-| <a name="input_snapshot_schedule_expression"></a> [snapshot\_schedule\_expression](#input\_snapshot\_schedule\_expression) | Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression. | `string` | `"cron(0 */6 * * ? *)"` | no |
+| <a name="input_name"></a> [name](#input_name) | Name of the setup | `string` | n/a | yes |
+| <a name="input_rds_instance_ids"></a> [rds_instance_ids](#input_rds_instance_ids) | List of IDs of the RDS instances to back up. If using Aurora, provide the cluster IDs instead | `list(string)` | n/a | yes |
+| <a name="input_target_account_kms_key_id"></a> [target_account_kms_key_id](#input_target_account_kms_key_id) | KMS key to use to encrypt replicated RDS snapshots in the target AWS account | `string` | n/a | yes |
+| <a name="input_is_aurora_cluster"></a> [is_aurora_cluster](#input_is_aurora_cluster) | Whether we're backing up Aurora clusters instead of RDS instances | `bool` | `false` | no |
+| <a name="input_retention_period"></a> [retention_period](#input_retention_period) | Snapshot retention period in days | `number` | `14` | no |
+| <a name="input_snapshot_schedule_expression"></a> [snapshot_schedule_expression](#input_snapshot_schedule_expression) | Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression. | `string` | `"cron(0 */6 * * ? *)"` | no |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_source_region_sns_topic_arn"></a> [source\_region\_sns\_topic\_arn](#output\_source\_region\_sns\_topic\_arn) | SNS topic ARN for the lambdas in the source region |
-| <a name="output_target_region_sns_topic_arn"></a> [target\_region\_sns\_topic\_arn](#output\_target\_region\_sns\_topic\_arn) | SNS topic ARN for the lambdas in the target region |
+| <a name="output_source_region_sns_topic_arn"></a> [source_region_sns_topic_arn](#output_source_region_sns_topic_arn) | SNS topic ARN for the lambdas in the source region |
+| <a name="output_target_region_sns_topic_arn"></a> [target_region_sns_topic_arn](#output_target_region_sns_topic_arn) | SNS topic ARN for the lambdas in the target region |
 
 ## rds-proxy
 
