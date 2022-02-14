@@ -258,7 +258,7 @@ def replicate_snapshot(event, context):
 
     # CRON based, search & replicate all matching snapshots
     # Needed for the cross-account replication in cluster mode (step 3), because AWS
-    # doesn't public a cluster finished snapshot event
+    # doesn't publish a cluster finished snapshot event
     if is_cluster and replication_type == 'cross-account':
         snapshots = match_cluster_snapshots(rds)
         for snapshot in snapshots:
