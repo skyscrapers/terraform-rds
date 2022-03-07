@@ -82,11 +82,13 @@ resource "aws_db_instance" "rds" {
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   performance_insights_enabled    = var.performance_insights_enabled
 
-  tags = {
+  tags = merge({
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
     Environment = var.environment
     Project     = var.project
-  }
+    },
+    var.tags
+  )
 
   lifecycle {
     ignore_changes = [final_snapshot_identifier]

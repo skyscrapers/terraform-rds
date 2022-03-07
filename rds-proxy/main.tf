@@ -48,11 +48,13 @@ resource "aws_db_proxy" "proxy" {
     }
   }
 
-  tags = {
+  tags = merge({
     Name        = "${var.project}-${var.environment}-rds-proxy"
     Environment = var.environment
     Project     = var.project
-  }
+    },
+    var.tags
+  )
 }
 
 resource "aws_db_proxy_default_target_group" "default" {

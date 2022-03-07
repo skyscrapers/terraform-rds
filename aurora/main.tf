@@ -61,11 +61,13 @@ resource "aws_rds_cluster" "aurora" {
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   snapshot_identifier             = var.snapshot_identifier
 
-  tags = {
+  tags = merge({
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
     Environment = var.environment
     Project     = var.project
-  }
+    },
+    var.tags
+  )
 
   lifecycle {
     ignore_changes = [final_snapshot_identifier]

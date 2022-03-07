@@ -41,3 +41,9 @@ variable "proxy_max_connection_percent" {
   type        = number
   default     = 100
 }
+
+variable "tags" {
+  description = "A mapping of extra tags to assign to the resource"
+  type        = map(string)
+  default     = {}
+}
