@@ -117,7 +117,7 @@ variable "snapshot_identifier" {
   default     = null
 }
 
-variable "tags" {
+variable "extra_tags" {
   description = "A mapping of extra tags to assign to the resource"
   type        = map(string)
   default     = {}

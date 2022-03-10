@@ -66,7 +66,7 @@ resource "aws_rds_cluster" "aurora" {
     Environment = var.environment
     Project     = var.project
     },
-    var.tags
+    var.extra_tags
   )
 
   lifecycle {

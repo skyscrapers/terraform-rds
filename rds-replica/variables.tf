@@ -104,7 +104,7 @@ variable "auto_minor_version_upgrade" {
   default     = true
 }
 
-variable "tags" {
+variable "extra_tags" {
   description = "A mapping of extra tags to assign to the resource"
   type        = map(string)
   default     = {}

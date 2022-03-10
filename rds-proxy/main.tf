@@ -53,7 +53,7 @@ resource "aws_db_proxy" "proxy" {
     Environment = var.environment
     Project     = var.project
     },
-    var.tags
+    var.extra_tags
   )
 }
 
