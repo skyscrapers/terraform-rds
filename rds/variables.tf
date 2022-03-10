@@ -158,3 +158,9 @@ variable "performance_insights_enabled" {
   type        = bool
   default     = false
 }
+
+variable "extra_tags" {
+  description = "A mapping of extra tags to assign to the resource"
+  type        = map(string)
+  default     = {}
+}

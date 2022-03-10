@@ -103,3 +103,9 @@ variable "auto_minor_version_upgrade" {
   description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window."
   default     = true
 }
+
+variable "extra_tags" {
+  description = "A mapping of extra tags to assign to the resource"
+  type        = map(string)
+  default     = {}
+}

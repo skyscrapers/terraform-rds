@@ -116,3 +116,9 @@ variable "snapshot_identifier" {
   type        = string
   default     = null
 }
+
+variable "extra_tags" {
+  description = "A mapping of extra tags to assign to the resource"
+  type        = map(string)
+  default     = {}
+}

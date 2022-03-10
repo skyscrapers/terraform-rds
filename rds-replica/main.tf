@@ -28,11 +28,13 @@ resource "aws_db_instance" "rds" {
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   skip_final_snapshot             = true
 
-  tags = {
+  tags = merge({
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${count.index + 1}-replica" : var.name
     Environment = var.environment
     Project     = var.project
-  }
+  },
+    var.extra_tags
+  )
 
   lifecycle {
     ignore_changes = [replicate_source_db]
