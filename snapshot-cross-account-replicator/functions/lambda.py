@@ -13,7 +13,7 @@ setup_name = os.environ['SETUP_NAME']
 replication_type = os.environ['TYPE']
 source_region = os.environ['SOURCE_REGION']
 retention_period = os.environ['RETENTION_PERIOD']
-is_cluster = os.environ['IS_CLUSTER']
+is_cluster = os.environ['IS_CLUSTER'] == 'true'
 
 
 def share_snapshot(rds, snapshot):
