@@ -64,7 +64,7 @@ locals {
     TYPE                       = "cross-account"
     SOURCE_REGION              = data.aws_region.source.name
     RETENTION_PERIOD           = var.retention_period
-    IS_CLUSTER                 = var.is_aurora_cluster
+    IS_CLUSTER                 = tostring(var.is_aurora_cluster)
   }
 
   event_rule_pattern = [for id in var.rds_instance_ids : {
