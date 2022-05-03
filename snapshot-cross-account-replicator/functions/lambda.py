@@ -130,11 +130,11 @@ def delete_old_snapshot(rds, snapshot):
     """Removes snapshots alder than retention_period"""
 
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
-    if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(retention_period)) and match_tags(snapshot):
+    if create_ts < (datetime.datetime.now() - datetime.timedelta(days=int(retention_period))) and match_tags(snapshot, 'finished'):
         if is_cluster:
-            delete_snapshot(rds, snapshot['DBSnapshotIdentifier'])
-        else:
             delete_snapshot(rds, snapshot['DBClusterSnapshotIdentifier'])
+        else:
+            delete_snapshot(rds, snapshot['DBSnapshotIdentifier'])
 
 
 def delete_snapshot(rds, snapshot_id):
@@ -225,29 +225,21 @@ def cleanup_snapshots(event, context):
 def replicate_snapshot_cross_account(rds, snapshot):
     """Replicates (share&copy) a snapshot across accounts"""
 
-    if is_cluster:
-        snapshot_set_replicating_tag(
-            rds, snapshot['DBClusterSnapshotArn'], 'true')
-        print('Replicating snapshot ' +
-              snapshot['DBClusterSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
-    else:
-        snapshot_set_replicating_tag(
-            rds, snapshot['DBSnapshotArn'], 'true')
-        print('Replicating snapshot ' +
-              snapshot['DBSnapshotIdentifier'] + ' to AWS account ' + target_account_id)
+    snapshot_arn = snapshot['DBClusterSnapshotArn'] if is_cluster else snapshot['DBSnapshotArn']
+    snapshot_id = snapshot['DBClusterSnapshotIdentifier'] if is_cluster else snapshot['DBSnapshotIdentifier']
 
+    # Delete initial snapshot in source account, source region
+    source_region_rds = boto3.client('rds', region_name=source_region)
+    delete_snapshot(source_region_rds, snapshot_id)
+
+    print('Replicating snapshot ' + snapshot_id +
+          ' to AWS account ' + target_account_id)
+
+    snapshot_set_replicating_tag(rds, snapshot_arn, 'true')
     share_snapshot(rds, snapshot)
     target_account_rds = get_assumed_role_rds_client(
         target_account_iam_role_arn, target_region)
     copy_snapshot(snapshot, target_account_rds, target_region)
-    source_region_rds = boto3.client('rds', region_name=source_region)
-
-    # Delete initial snapshot in source account, source region
-    if is_cluster:
-        delete_snapshot(source_region_rds,
-                        snapshot['DBClusterSnapshotIdentifier'])
-    else:
-        delete_snapshot(source_region_rds, snapshot['DBSnapshotIdentifier'])
 
 
 def replicate_snapshot(event, context):
