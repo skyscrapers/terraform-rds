@@ -30,3 +30,9 @@ variable "target_account_kms_key_id" {
   description = "KMS key to use to encrypt replicated RDS snapshots in the target AWS account"
   type        = string
 }
+
+variable "lambda_monitoring_metric_period" {
+  description = "The metric period to use for the Lambdas CloudWatch alerts for monitoring. This should be equal or higher than the snapshoting period"
+  type        = number
+  default     = 21600 # 6 hours
+}

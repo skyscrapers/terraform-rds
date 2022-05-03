@@ -89,7 +89,7 @@ module "step_1_lambda_monitoring" {
   lambda_function                            = aws_lambda_function.step_1.function_name
   sns_topic_arn                              = aws_sns_topic.source_region_topic.arn
   lambda_invocation_error_threshold          = 2
-  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
 
   providers = {
@@ -102,7 +102,7 @@ module "step_2_lambda_monitoring" {
   lambda_function                            = aws_lambda_function.step_2.function_name
   sns_topic_arn                              = aws_sns_topic.source_region_topic.arn
   lambda_invocation_error_threshold          = 2
-  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
 
   providers = {
@@ -115,7 +115,7 @@ module "step_3_lambda_monitoring" {
   lambda_function                            = aws_lambda_function.step_3.function_name
   sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
   lambda_invocation_error_threshold          = 2
-  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
 
   providers = {
@@ -128,7 +128,7 @@ module "step_4_lambda_monitoring" {
   lambda_function                            = aws_lambda_function.step_4.function_name
   sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
   lambda_invocation_error_threshold          = 2
-  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
 
   providers = {
@@ -141,7 +141,7 @@ module "cleanup_snapshots_lambda_monitoring" {
   lambda_function                            = aws_lambda_function.cleanup_snapshots.function_name
   sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
   lambda_invocation_error_threshold          = 2
-  lambda_invocation_error_period             = 300 # 5 minutes
+  lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
 
   providers = {
