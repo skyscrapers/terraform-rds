@@ -15,12 +15,6 @@ resource "aws_lambda_function" "step_1" {
   environment {
     variables = local.lambda_default_environment_variables
   }
-
-  lifecycle {
-    ignore_changes = [
-      filename
-    ]
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "invoke_step_1_lambda" {
@@ -62,12 +56,6 @@ resource "aws_lambda_function" "step_2" {
     variables = merge(local.lambda_default_environment_variables, {
       TYPE = "cross-region"
     })
-  }
-
-  lifecycle {
-    ignore_changes = [
-      filename
-    ]
   }
 }
 
@@ -114,12 +102,6 @@ resource "aws_lambda_function" "step_3" {
     variables = merge(local.lambda_default_environment_variables, {
       TYPE = "cross-account"
     })
-  }
-
-  lifecycle {
-    ignore_changes = [
-      filename
-    ]
   }
 }
 

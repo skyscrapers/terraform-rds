@@ -16,12 +16,6 @@ resource "aws_lambda_function" "step_4" {
   environment {
     variables = local.lambda_default_environment_variables
   }
-
-  lifecycle {
-    ignore_changes = [
-      filename
-    ]
-  }
 }
 
 ## This event will be triggered when the final snapshot has been copied to the target account
@@ -65,12 +59,6 @@ resource "aws_lambda_function" "cleanup_snapshots" {
 
   environment {
     variables = local.lambda_default_environment_variables
-  }
-
-  lifecycle {
-    ignore_changes = [
-      filename
-    ]
   }
 }
 

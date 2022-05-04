@@ -264,27 +264,27 @@ data "aws_iam_policy_document" "rds_replication_key" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | ~> 1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement_aws) | ~> 3.61 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.61 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider_archive) | n/a |
-| <a name="provider_aws.intermediate"></a> [aws.intermediate](#provider_aws.intermediate) | ~> 3.61 |
-| <a name="provider_aws.source"></a> [aws.source](#provider_aws.source) | ~> 3.61 |
-| <a name="provider_aws.target"></a> [aws.target](#provider_aws.target) | ~> 3.61 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
+| <a name="provider_aws.intermediate"></a> [aws.intermediate](#provider\_aws.intermediate) | ~> 3.61 |
+| <a name="provider_aws.source"></a> [aws.source](#provider\_aws.source) | ~> 3.61 |
+| <a name="provider_aws.target"></a> [aws.target](#provider\_aws.target) | ~> 3.61 |
 
 ### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cleanup_snapshots_lambda_monitoring"></a> [cleanup_snapshots_lambda_monitoring](#module_cleanup_snapshots_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_1_lambda_monitoring"></a> [step_1_lambda_monitoring](#module_step_1_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_2_lambda_monitoring"></a> [step_2_lambda_monitoring](#module_step_2_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_3_lambda_monitoring"></a> [step_3_lambda_monitoring](#module_step_3_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
-| <a name="module_step_4_lambda_monitoring"></a> [step_4_lambda_monitoring](#module_step_4_lambda_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_cleanup_snapshots_lambda_monitoring"></a> [cleanup\_snapshots\_lambda\_monitoring](#module\_cleanup\_snapshots\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_1_lambda_monitoring"></a> [step\_1\_lambda\_monitoring](#module\_step\_1\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_2_lambda_monitoring"></a> [step\_2\_lambda\_monitoring](#module\_step\_2\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_3_lambda_monitoring"></a> [step\_3\_lambda\_monitoring](#module\_step\_3\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
+| <a name="module_step_4_lambda_monitoring"></a> [step\_4\_lambda\_monitoring](#module\_step\_4\_lambda\_monitoring) | github.com/skyscrapers/terraform-cloudwatch//lambda_function | 2.0.1 |
 
 ### Resources
 
@@ -347,19 +347,20 @@ data "aws_iam_policy_document" "rds_replication_key" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_name"></a> [name](#input_name) | Name of the setup | `string` | n/a | yes |
-| <a name="input_rds_instance_ids"></a> [rds_instance_ids](#input_rds_instance_ids) | List of IDs of the RDS instances to back up. If using Aurora, provide the cluster IDs instead | `list(string)` | n/a | yes |
-| <a name="input_target_account_kms_key_id"></a> [target_account_kms_key_id](#input_target_account_kms_key_id) | KMS key to use to encrypt replicated RDS snapshots in the target AWS account | `string` | n/a | yes |
-| <a name="input_is_aurora_cluster"></a> [is_aurora_cluster](#input_is_aurora_cluster) | Whether we're backing up Aurora clusters instead of RDS instances | `bool` | `false` | no |
-| <a name="input_retention_period"></a> [retention_period](#input_retention_period) | Snapshot retention period in days | `number` | `14` | no |
-| <a name="input_snapshot_schedule_expression"></a> [snapshot_schedule_expression](#input_snapshot_schedule_expression) | Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression. | `string` | `"cron(0 */6 * * ? *)"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the setup | `string` | n/a | yes |
+| <a name="input_rds_instance_ids"></a> [rds\_instance\_ids](#input\_rds\_instance\_ids) | List of IDs of the RDS instances to back up. If using Aurora, provide the cluster IDs instead | `list(string)` | n/a | yes |
+| <a name="input_target_account_kms_key_id"></a> [target\_account\_kms\_key\_id](#input\_target\_account\_kms\_key\_id) | KMS key to use to encrypt replicated RDS snapshots in the target AWS account | `string` | n/a | yes |
+| <a name="input_is_aurora_cluster"></a> [is\_aurora\_cluster](#input\_is\_aurora\_cluster) | Whether we're backing up Aurora clusters instead of RDS instances | `bool` | `false` | no |
+| <a name="input_lambda_monitoring_metric_period"></a> [lambda\_monitoring\_metric\_period](#input\_lambda\_monitoring\_metric\_period) | The metric period to use for the Lambdas CloudWatch alerts for monitoring. This should be equal or higher than the snapshoting period | `number` | `21600` | no |
+| <a name="input_retention_period"></a> [retention\_period](#input\_retention\_period) | Snapshot retention period in days | `number` | `14` | no |
+| <a name="input_snapshot_schedule_expression"></a> [snapshot\_schedule\_expression](#input\_snapshot\_schedule\_expression) | Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression. | `string` | `"cron(0 */6 * * ? *)"` | no |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_source_region_sns_topic_arn"></a> [source_region_sns_topic_arn](#output_source_region_sns_topic_arn) | SNS topic ARN for the lambdas in the source region |
-| <a name="output_target_region_sns_topic_arn"></a> [target_region_sns_topic_arn](#output_target_region_sns_topic_arn) | SNS topic ARN for the lambdas in the target region |
+| <a name="output_source_region_sns_topic_arn"></a> [source\_region\_sns\_topic\_arn](#output\_source\_region\_sns\_topic\_arn) | SNS topic ARN for the lambdas in the source region |
+| <a name="output_target_region_sns_topic_arn"></a> [target\_region\_sns\_topic\_arn](#output\_target\_region\_sns\_topic\_arn) | SNS topic ARN for the lambdas in the target region |
 
 ## rds-proxy
 
