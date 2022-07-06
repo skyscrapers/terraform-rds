@@ -87,6 +87,12 @@ variable "storage_encrypted" {
   default     = true
 }
 
+variable "storage_kms_key_id" {
+  description = "Custom KMS key to use to encrypt the storage. Will use the AWS key if left null (default)"
+  type        = string
+  default     = null
+}
+
 variable "environment" {
   description = "How do you want to call your environment, this is helpful if you have more than 1 VPC."
   default     = "production"
@@ -157,6 +163,12 @@ variable "performance_insights_enabled" {
   description = "Specifies whether Performance Insights is enabled or not."
   type        = bool
   default     = false
+}
+
+variable "performance_insights_kms_key_id" {
+  description = "Custom KMS key to use to encrypt the performance insights data"
+  type        = string
+  default     = null
 }
 
 variable "extra_tags" {
