@@ -72,7 +72,7 @@ resource "aws_db_instance" "rds" {
   multi_az                        = var.multi_az
   backup_retention_period         = var.backup_retention_period
   storage_encrypted               = var.storage_encrypted
-  storage_kms_key_id              = var.storage_kms_key_id
+  kms_key_id                      = var.storage_kms_key_id
   apply_immediately               = var.apply_immediately
   skip_final_snapshot             = var.skip_final_snapshot
   final_snapshot_identifier       = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
