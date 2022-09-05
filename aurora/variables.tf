@@ -13,6 +13,18 @@ variable "size" {
   default     = "db.t2.small"
 }
 
+variable "instance_size_override" {
+  description = "Provide different instance sizes for each individual aurora instance in the cluster. The size of the list must be equal to `var.amount_of_instances`. If ommitted or set to [], this module will use `var.size` for all the instances in the cluster."
+  type        = list(string)
+  default     = []
+}
+
+variable "instance_promotion_tiers" {
+  description = "Set promotion tier for each instance in the cluster. The size of the list must be equal to `var.amount_of_instances`. If ommitted or set to [], the default of 0 will be used."
+  type        = list(number)
+  default     = []
+}
+
 variable "password" {
   description = "RDS root password"
 }
