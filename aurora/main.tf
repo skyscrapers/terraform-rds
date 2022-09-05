@@ -78,7 +78,8 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   count                        = var.amount_of_instances
   identifier                   = var.rds_instance_name_overrides == null ? "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}" : var.rds_instance_name_overrides[count.index]
   cluster_identifier           = aws_rds_cluster.aurora.id
-  instance_class               = var.size
+  instance_class               = length(var.instance_size_override) > 0 ? var.instance_size_override[count.index] : var.size
+  promotion_tier               = length(var.instance_promotion_tiers) > 0 ? var.instance_promotion_tiers[count.index] : null
   db_subnet_group_name         = aws_db_subnet_group.aurora.id
   apply_immediately            = var.apply_immediately
   performance_insights_enabled = var.performance_insights_enabled
