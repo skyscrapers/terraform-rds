@@ -171,6 +171,11 @@ variable "performance_insights_kms_key_id" {
   default     = null
 }
 
+variable "performance_insights_retention_period" {
+  description = "Amount of time in days to retain Performance Insights data. Valid values are 7, 731 (2 years) or a multiple of 31. When specifying performance_insights_retention_period"
+  default     = 7
+}
+
 variable "extra_tags" {
   description = "A mapping of extra tags to assign to the resource"
   type        = map(string)
