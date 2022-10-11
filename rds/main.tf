@@ -57,32 +57,33 @@ resource "aws_db_parameter_group" "rds" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier                      = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
-  allocated_storage               = var.storage
-  max_allocated_storage           = var.max_allocated_storage
-  engine                          = var.engine
-  engine_version                  = var.engine_version
-  instance_class                  = var.size
-  storage_type                    = var.storage_type
-  username                        = var.rds_username
-  password                        = var.rds_password
-  vpc_security_group_ids          = [aws_security_group.sg_rds.id]
-  db_subnet_group_name            = aws_db_subnet_group.rds.id
-  parameter_group_name            = var.rds_custom_parameter_group_name == "" ? aws_db_parameter_group.rds.id : var.rds_custom_parameter_group_name
-  multi_az                        = var.multi_az
-  backup_retention_period         = var.backup_retention_period
-  storage_encrypted               = var.storage_encrypted
-  kms_key_id                      = var.storage_kms_key_id
-  apply_immediately               = var.apply_immediately
-  skip_final_snapshot             = var.skip_final_snapshot
-  final_snapshot_identifier       = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
-  availability_zone               = var.availability_zone
-  snapshot_identifier             = var.snapshot_identifier
-  monitoring_interval             = var.monitoring_interval
-  auto_minor_version_upgrade      = var.auto_minor_version_upgrade
-  enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
-  performance_insights_enabled    = var.performance_insights_enabled
-  performance_insights_kms_key_id = var.performance_insights_kms_key_id
+  identifier                            = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
+  allocated_storage                     = var.storage
+  max_allocated_storage                 = var.max_allocated_storage
+  engine                                = var.engine
+  engine_version                        = var.engine_version
+  instance_class                        = var.size
+  storage_type                          = var.storage_type
+  username                              = var.rds_username
+  password                              = var.rds_password
+  vpc_security_group_ids                = [aws_security_group.sg_rds.id]
+  db_subnet_group_name                  = aws_db_subnet_group.rds.id
+  parameter_group_name                  = var.rds_custom_parameter_group_name == "" ? aws_db_parameter_group.rds.id : var.rds_custom_parameter_group_name
+  multi_az                              = var.multi_az
+  backup_retention_period               = var.backup_retention_period
+  storage_encrypted                     = var.storage_encrypted
+  kms_key_id                            = var.storage_kms_key_id
+  apply_immediately                     = var.apply_immediately
+  skip_final_snapshot                   = var.skip_final_snapshot
+  final_snapshot_identifier             = "${length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name}-final-${md5(timestamp())}"
+  availability_zone                     = var.availability_zone
+  snapshot_identifier                   = var.snapshot_identifier
+  monitoring_interval                   = var.monitoring_interval
+  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  enabled_cloudwatch_logs_exports       = var.enabled_cloudwatch_logs_exports
+  performance_insights_enabled          = var.performance_insights_enabled
+  performance_insights_retention_period = var.performance_insights_retention_period
+  performance_insights_kms_key_id       = var.performance_insights_kms_key_id
 
   tags = merge({
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name
