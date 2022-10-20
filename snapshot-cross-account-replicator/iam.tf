@@ -33,6 +33,7 @@ resource "aws_iam_role" "source_lambda" {
 
 data "aws_iam_policy_document" "source_lambda_permissions" {
   provider = aws.source
+
   statement {
     sid    = "AllowCreateSnapshots"
     effect = "Allow"
@@ -138,60 +139,6 @@ resource "aws_iam_role_policy" "source_lambda_kms" {
   policy   = data.aws_iam_policy_document.lambda_kms_permissions.json
 }
 
-data "aws_iam_policy_document" "step_4_lambda_assume_role_policy" {
-  provider = aws.source
-  statement {
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = [aws_iam_role.target_lambda.arn]
-    }
-  }
-}
-
-## This role is to be assumed by step 4 Lambda function from the target account
-resource "aws_iam_role" "step_4_lambda" {
-  provider           = aws.intermediate
-  name               = "rds_snapshots_replicator_step_4_lambda_${var.name}"
-  assume_role_policy = data.aws_iam_policy_document.step_4_lambda_assume_role_policy.json
-}
-
-data "aws_iam_policy_document" "step_4_lambda_permissions" {
-  provider = aws.intermediate
-
-  statement {
-    sid    = "AllowDeleteSnapshots"
-    effect = "Allow"
-    actions = [
-      "rds:DeleteDBClusterSnapshot",
-      "rds:DescribeDBClusterSnapshots",
-      "rds:DeleteDBSnapshot",
-      "rds:DescribeDBSnapshots"
-    ]
-    resources = concat(local.source_snapshot_arns, local.intermediate_snapshot_arns)
-  }
-
-  statement {
-    sid    = "AllowDescribeAndTagSnapshots"
-    effect = "Allow"
-    actions = [
-      "rds:DescribeDBClusterSnapshots",
-      "rds:DescribeDBSnapshots",
-      "rds:ListTagsForResource",
-      "rds:AddTagsToResource"
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_iam_role_policy" "cleanup_lambda" {
-  provider = aws.intermediate
-  role     = aws_iam_role.step_4_lambda.name
-  policy   = data.aws_iam_policy_document.step_4_lambda_permissions.json
-}
-
 ## IAM resources on the target account
 
 data "aws_iam_policy_document" "target_lambda_assume_role_policy" {
@@ -276,13 +223,6 @@ data "aws_iam_policy_document" "target_lambda_permissions" {
       values   = [true]
       variable = "kms:GrantIsForAWSResource"
     }
-  }
-
-  statement {
-    sid       = "AllowAssumeStep4Role"
-    effect    = "Allow"
-    actions   = ["sts:AssumeRole"]
-    resources = [aws_iam_role.step_4_lambda.arn]
   }
 }
 

@@ -5,7 +5,6 @@ import os
 
 target_account_id = os.environ['TARGET_ACCOUNT_ID']
 target_account_iam_role_arn = os.environ['TARGET_ACCOUNT_IAM_ROLE']
-source_account_iam_role_arn = os.environ['SOURCE_ACCOUNT_IAM_ROLE']
 target_region = os.environ['TARGET_REGION']
 target_account_kms_key_arn = os.environ['TARGET_ACCOUNT_KMS_KEY_ARN']
 instances = os.environ['RDS_INSTANCE_IDS']
@@ -14,6 +13,10 @@ replication_type = os.environ['TYPE']
 source_region = os.environ['SOURCE_REGION']
 retention_period = os.environ['RETENTION_PERIOD']
 is_cluster = os.environ['IS_CLUSTER'] == 'true'
+
+# Safe period in days to wait for considering a snapshot too old.
+# After retention_period + safe_period, old intermediate and source snapshots will be deleted
+safe_period = 2
 
 
 def share_snapshot(rds, snapshot):
@@ -67,10 +70,6 @@ def copy_snapshot(snapshot, rds, source_region):
         {
             'Key': 'created_by',
             'Value': setup_name
-        },
-        {
-            'Key': 'replicating',
-            'Value': 'false'
         }
     ]
 
@@ -95,42 +94,24 @@ def copy_snapshot(snapshot, rds, source_region):
         raise Exception("Could not issue copy command: %s" % e)
 
 
-def match_tags(snapshot, replication_status='false'):
+def match_tags(snapshot):
     """Checks if the snapshot is meant for this lambda"""
 
-    tags = snapshot['TagList']
-
     try:
-        for tag1 in tags:
+        for tag1 in snapshot['TagList']:
             if tag1['Key'] == 'created_by' and tag1['Value'] == setup_name:
-                for tag2 in tags:
-                    if tag2['Key'].lower() == 'replicating' and tag2['Value'].lower() == replication_status:
-                        return True
+                return True
     except Exception:
         return False
 
     return False
 
 
-def snapshot_set_replicating_tag(rds, snapshot_arn, value):
-    """Sets replicating=true Tag on snapshot"""
-
-    rds.add_tags_to_resource(
-        ResourceName=snapshot_arn,
-        Tags=[
-            {
-                'Key': 'replicating',
-                'Value': value
-            }
-        ]
-    )
-
-
-def delete_old_snapshot(rds, snapshot):
-    """Removes snapshots alder than retention_period"""
+def delete_old_snapshot(rds, snapshot, older_than):
+    """Removes snapshots older than retention_period"""
 
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
-    if create_ts < (datetime.datetime.now() - datetime.timedelta(days=int(retention_period))) and match_tags(snapshot, 'finished'):
+    if create_ts < (datetime.datetime.now() - datetime.timedelta(days=int(older_than))) and match_tags(snapshot):
         if is_cluster:
             delete_snapshot(rds, snapshot['DBClusterSnapshotIdentifier'])
         else:
@@ -195,11 +176,11 @@ def match_cluster_snapshots(rds):
     return snapshots
 
 
-def cleanup_snapshots(event, context):
-    """Lambda entry point for the cleanup snapshots"""
-
+def cleanup_snapshots(older_than):
+    """Common function for removing old snapshots"""
+    
     print('Lambda function start: going to clean up snapshots older than ' +
-          retention_period + ' days for the RDS instances ' + instances)
+          older_than + ' days for the RDS instances ' + instances)
 
     rds = boto3.client('rds')
 
@@ -211,7 +192,7 @@ def cleanup_snapshots(event, context):
 
             for page in page_iterator:
                 for snapshot in page['DBClusterSnapshots']:
-                    delete_old_snapshot(rds, snapshot)
+                    delete_old_snapshot(rds, snapshot, older_than)
         else:
             paginator = rds.get_paginator('describe_db_snapshots')
             page_iterator = paginator.paginate(
@@ -219,23 +200,26 @@ def cleanup_snapshots(event, context):
 
             for page in page_iterator:
                 for snapshot in page['DBSnapshots']:
-                    delete_old_snapshot(rds, snapshot)
+                    delete_old_snapshot(rds, snapshot, older_than)
 
+def cleanup_intermediate_snapshots(event, context):
+    """Lambda entry point for the cleanup intermediate snapshots"""
+
+    cleanup_snapshots(retention_period + safe_period)
+
+def cleanup_final_snapshots(event, context):
+    """Lambda entry point for the cleanup final snapshots"""
+
+    cleanup_snapshots(retention_period)
 
 def replicate_snapshot_cross_account(rds, snapshot):
     """Replicates (share&copy) a snapshot across accounts"""
 
-    snapshot_arn = snapshot['DBClusterSnapshotArn'] if is_cluster else snapshot['DBSnapshotArn']
     snapshot_id = snapshot['DBClusterSnapshotIdentifier'] if is_cluster else snapshot['DBSnapshotIdentifier']
-
-    # Delete initial snapshot in source account, source region
-    source_region_rds = boto3.client('rds', region_name=source_region)
-    delete_snapshot(source_region_rds, snapshot_id)
 
     print('Replicating snapshot ' + snapshot_id +
           ' to AWS account ' + target_account_id)
 
-    snapshot_set_replicating_tag(rds, snapshot_arn, 'true')
     share_snapshot(rds, snapshot)
     target_account_rds = get_assumed_role_rds_client(
         target_account_iam_role_arn, target_region)
@@ -284,10 +268,6 @@ def create_snapshots(event, context):
         {
             'Key': 'created_by',
             'Value': setup_name
-        },
-        {
-            'Key': 'replicating',
-            'Value': 'false'
         }
     ]
 
@@ -309,27 +289,3 @@ def create_snapshots(event, context):
                 )
         except botocore.exceptions.ClientError as e:
             raise Exception("Could not issue create command: %s" % e)
-
-
-def delete_intermediate_snapshot(event, context):
-    """Lambda entry point for cleaning up the 2nd intermediate snapshot (STEP4)"""
-
-    rds = boto3.client('rds', region_name=target_region)
-    source_rds = get_assumed_role_rds_client(
-        source_account_iam_role_arn, target_region)
-
-    # CRON based, used for step 4 (cluster)
-    if is_cluster:
-        snapshots = match_cluster_snapshots(rds)
-        for snapshot in snapshots:
-            snapshot_set_replicating_tag(
-                rds, snapshot['DBClusterSnapshotArn'], 'finished')
-            delete_snapshot(
-                source_rds, snapshot['DBClusterSnapshotIdentifier'])
-    # EVENT based, used for step 4 (instance)
-    else:
-        snapshot = match_snapshot_event(rds, event)
-        if snapshot:
-            snapshot_set_replicating_tag(
-                rds, snapshot['DBSnapshotArn'], 'finished')
-            delete_snapshot(source_rds, snapshot['DBSnapshotIdentifier'])

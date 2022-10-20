@@ -56,7 +56,6 @@ locals {
   lambda_default_environment_variables = {
     TARGET_ACCOUNT_ID          = data.aws_caller_identity.target.account_id
     TARGET_ACCOUNT_IAM_ROLE    = aws_iam_role.target_lambda.arn
-    SOURCE_ACCOUNT_IAM_ROLE    = aws_iam_role.step_4_lambda.arn
     TARGET_REGION              = data.aws_region.target.name
     TARGET_ACCOUNT_KMS_KEY_ARN = data.aws_kms_key.target_key.arn
     RDS_INSTANCE_IDS           = join(",", var.rds_instance_ids)
@@ -111,21 +110,6 @@ EOF
     "EventCategories": ["notification"],
     "SourceType": ["SNAPSHOT"],
     "EventID": ["RDS-EVENT-0060"]
-  }
-}
-EOF
-
-  invoke_step_4_lambda_event_pattern_instance = <<EOF
-{
-  "source": ["aws.rds"],
-  "detail-type": ["RDS DB Snapshot Event"],
-  "region": ["${data.aws_region.intermediate.name}"],
-  "detail": {
-    "SourceIdentifier": ${jsonencode(local.event_rule_pattern)},
-    "Message": [{"prefix": "Finished copy of snapshot "}],
-    "EventCategories": ["notification"],
-    "SourceType": ["SNAPSHOT"],
-    "EventID": ["RDS-EVENT-0197"]
   }
 }
 EOF
