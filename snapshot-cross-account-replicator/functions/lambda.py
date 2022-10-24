@@ -205,7 +205,7 @@ def cleanup_snapshots(older_than):
 def cleanup_intermediate_snapshots(event, context):
     """Lambda entry point for the cleanup intermediate snapshots"""
 
-    cleanup_snapshots(retention_period + safe_period)
+    cleanup_snapshots(safe_period)
 
 def cleanup_final_snapshots(event, context):
     """Lambda entry point for the cleanup final snapshots"""
