@@ -14,10 +14,10 @@ variable "rds_instance_ids" {
   type        = list(string)
 }
 
-variable "snapshot_schedule_expression" {
-  description = "Snapshot frequency specified as a CloudWatch schedule expression. Can either be a `rate()` or `cron()` expression. Check the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) on how to compose such expression."
-  type        = string
-  default     = "cron(0 */6 * * ? *)"
+variable "snapshot_schedule_period" {
+  description = "Snapshot frequency specified in hours"
+  type        = number
+  default     = 6
 }
 
 variable "retention_period" {
@@ -29,10 +29,4 @@ variable "retention_period" {
 variable "target_account_kms_key_id" {
   description = "KMS key to use to encrypt replicated RDS snapshots in the target AWS account"
   type        = string
-}
-
-variable "lambda_monitoring_metric_period" {
-  description = "The metric period to use for the Lambdas CloudWatch alerts for monitoring. This should be equal or higher than the snapshoting period"
-  type        = number
-  default     = 21600 # 6 hours
 }

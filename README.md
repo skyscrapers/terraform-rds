@@ -278,12 +278,12 @@ data "aws_caller_identity" "source" {
 module "rds_replication" {
   source = "github.com/skyscrapers/terraform-rds//snapshot-cross-account-replicator?ref=6.1.0"
 
-  name                         = "AuroraReplicator"
-  is_aurora_cluster            = true
-  rds_instance_ids             = var.rds_cluster_ids
-  snapshot_schedule_expression = "cron(0 */12 * * ? *)"
-  retention_period             = 4
-  target_account_kms_key_id    = aws_kms_key.rds_target.id
+  name                      = "AuroraReplicator"
+  is_aurora_cluster         = true
+  rds_instance_ids          = var.rds_cluster_ids
+  snapshot_schedule_period  = 12
+  retention_period          = 4
+  target_account_kms_key_id = aws_kms_key.rds_target.id
 
   providers = {
     aws.source       = aws.source

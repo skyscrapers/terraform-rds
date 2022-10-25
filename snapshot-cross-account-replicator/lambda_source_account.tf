@@ -20,7 +20,7 @@ resource "aws_lambda_function" "step_1" {
 resource "aws_cloudwatch_event_rule" "invoke_step_1_lambda" {
   provider            = aws.source
   description         = "Triggers the lambda function ${aws_lambda_function.step_1.function_name}"
-  schedule_expression = var.snapshot_schedule_expression
+  schedule_expression = "rate(${var.snapshot_schedule_period} hours)"
 }
 
 resource "aws_cloudwatch_event_target" "invoke_step_1_lambda" {
