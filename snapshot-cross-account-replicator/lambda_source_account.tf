@@ -135,7 +135,7 @@ resource "aws_lambda_permission" "invoke_step_3_lambda" {
 
 resource "aws_lambda_function" "cleanup_source" {
   provider         = aws.source
-  function_name    = "rds-snapshots-replicator-cleanup-source-${var.name}"
+  function_name    = "rds-snapshots-replicator-cleanup-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.cleanup_intermediate_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
@@ -176,7 +176,7 @@ resource "aws_lambda_permission" "invoke_cleanup_source_lambda" {
 
 resource "aws_lambda_function" "cleanup_intermediate" {
   provider         = aws.intermediate
-  function_name    = "rds-snapshots-replicator-cleanup-intermediate-${var.name}"
+  function_name    = "rds-snapshots-replicator-cleanup-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.cleanup_intermediate_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
