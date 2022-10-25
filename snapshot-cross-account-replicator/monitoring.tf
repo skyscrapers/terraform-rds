@@ -142,7 +142,7 @@ module "cleanup_source_lambda_monitoring" {
 module "cleanup_intermediate_lambda_monitoring" {
   source                                     = "github.com/skyscrapers/terraform-cloudwatch//lambda_function?ref=2.0.1"
   lambda_function                            = aws_lambda_function.cleanup_intermediate.function_name
-  sns_topic_arn                              = aws_sns_topic.source_region_topic.arn
+  sns_topic_arn                              = aws_sns_topic.target_region_topic.arn
   lambda_invocation_error_threshold          = 2
   lambda_invocation_error_period             = var.lambda_monitoring_metric_period
   lambda_invocation_error_evaluation_periods = 1
