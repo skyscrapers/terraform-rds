@@ -11,7 +11,7 @@ instances = os.environ['RDS_INSTANCE_IDS']
 setup_name = os.environ['SETUP_NAME']
 replication_type = os.environ['TYPE']
 source_region = os.environ['SOURCE_REGION']
-retention_period = os.environ['RETENTION_PERIOD']
+retention_period = int(os.environ['RETENTION_PERIOD'])
 is_cluster = os.environ['IS_CLUSTER'] == 'true'
 
 # Safe period in days to wait for considering a snapshot too old.
@@ -111,7 +111,7 @@ def delete_old_snapshot(rds, snapshot, older_than):
     """Removes snapshots older than retention_period"""
 
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
-    if create_ts < (datetime.datetime.now() - datetime.timedelta(days=int(older_than))) and match_tags(snapshot):
+    if create_ts < (datetime.datetime.now() - datetime.timedelta(days=older_than)) and match_tags(snapshot):
         if is_cluster:
             delete_snapshot(rds, snapshot['DBClusterSnapshotIdentifier'])
         else:
@@ -180,7 +180,7 @@ def cleanup_snapshots(older_than):
     """Common function for removing old snapshots"""
     
     print('Lambda function start: going to clean up snapshots older than ' +
-          older_than + ' days for the RDS instances ' + instances)
+          str(older_than) + ' days for the RDS instances ' + instances)
 
     rds = boto3.client('rds')
 
