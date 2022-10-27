@@ -110,6 +110,9 @@ def match_tags(snapshot):
 def delete_old_snapshot(rds, snapshot, older_than):
     """Removes snapshots older than retention_period"""
 
+    if 'SnapshotCreateTime' not in snapshot:
+        return # Means that the snapshot is being created
+
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
     if create_ts < (datetime.datetime.now() - datetime.timedelta(days=older_than)) and match_tags(snapshot):
         if is_cluster:
