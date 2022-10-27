@@ -3,7 +3,7 @@
 
 resource "aws_lambda_function" "step_1" {
   provider         = aws.source
-  function_name    = "rds-snapshots-replicator-step-1-${var.name}"
+  function_name    = "rds-snapshots-repl-step-1-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.create_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
@@ -43,7 +43,7 @@ resource "aws_lambda_permission" "invoke_step_1_lambda" {
 
 resource "aws_lambda_function" "step_2" {
   provider         = aws.source
-  function_name    = "rds-snapshots-replicator-step-2-${var.name}"
+  function_name    = "rds-snapshots-repl-step-2-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.replicate_snapshot"
   filename         = data.archive_file.lambda_zip.output_path
@@ -88,7 +88,7 @@ resource "aws_lambda_permission" "invoke_step_2_lambda" {
 
 resource "aws_lambda_function" "step_3" {
   provider         = aws.intermediate
-  function_name    = "rds-snapshots-replicator-step-3-${var.name}"
+  function_name    = "rds-snapshots-repl-step-3-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.replicate_snapshot"
   filename         = data.archive_file.lambda_zip.output_path
@@ -135,7 +135,7 @@ resource "aws_lambda_permission" "invoke_step_3_lambda" {
 
 resource "aws_lambda_function" "cleanup_source" {
   provider         = aws.source
-  function_name    = "rds-snapshots-replicator-cleanup-${var.name}"
+  function_name    = "rds-snapshots-repl-cleanup-source-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.cleanup_intermediate_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
@@ -176,7 +176,7 @@ resource "aws_lambda_permission" "invoke_cleanup_source_lambda" {
 
 resource "aws_lambda_function" "cleanup_intermediate" {
   provider         = aws.intermediate
-  function_name    = "rds-snapshots-replicator-cleanup-${var.name}"
+  function_name    = "rds-snapshots-repl-cleanup-int-${var.name}"
   role             = aws_iam_role.source_lambda.arn
   handler          = "lambda.cleanup_intermediate_snapshots"
   filename         = data.archive_file.lambda_zip.output_path

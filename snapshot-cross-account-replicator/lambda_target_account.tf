@@ -4,7 +4,7 @@
 
 resource "aws_lambda_function" "cleanup_target" {
   provider         = aws.target
-  function_name    = "rds-snapshots-replicator-cleanup-${var.name}"
+  function_name    = "rds-snapshots-repl-cleanup-target-${var.name}"
   role             = aws_iam_role.target_lambda.arn
   handler          = "lambda.cleanup_final_snapshots"
   filename         = data.archive_file.lambda_zip.output_path
