@@ -111,7 +111,7 @@ def delete_old_snapshot(rds, snapshot, older_than):
     """Removes snapshots older than retention_period"""
 
     if 'SnapshotCreateTime' not in snapshot:
-        return # Means that the snapshot is being created
+        return  # Means that the snapshot is being created
 
     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
     if create_ts < (datetime.datetime.now() - datetime.timedelta(days=older_than)) and match_tags(snapshot):
@@ -181,7 +181,7 @@ def match_cluster_snapshots(rds):
 
 def cleanup_snapshots(older_than):
     """Common function for removing old snapshots"""
-    
+
     print('Lambda function start: going to clean up snapshots older than ' +
           str(older_than) + ' days for the RDS instances ' + instances)
 
@@ -205,27 +205,52 @@ def cleanup_snapshots(older_than):
                 for snapshot in page['DBSnapshots']:
                     delete_old_snapshot(rds, snapshot, older_than)
 
+
 def cleanup_intermediate_snapshots(event, context):
     """Lambda entry point for the cleanup intermediate snapshots"""
 
     cleanup_snapshots(safe_period)
+
 
 def cleanup_final_snapshots(event, context):
     """Lambda entry point for the cleanup final snapshots"""
 
     cleanup_snapshots(retention_period)
 
-def replicate_snapshot_cross_account(rds, snapshot):
+
+def snapshot_exists(rds, snapshot_id):
+    """Checks if the provided snapshot already exists"""
+
+    try:
+        if is_cluster:
+            rds.describe_db_cluster_snapshots(
+                DBClusterSnapshotIdentifier=snapshot_id, SnapshotType='manual')
+        else:
+            rds.describe_db_snapshots(
+                DBSnapshotIdentifier=snapshot_id, SnapshotType='manual')
+    except rds.exceptions.DBClusterSnapshotNotFoundFault:
+        return False
+    except rds.exceptions.DBSnapshotNotFoundFault:
+        return False
+    else:
+        return True
+
+
+def replicate_snapshot_cross_account(rds, target_account_rds, snapshot):
     """Replicates (share&copy) a snapshot across accounts"""
 
     snapshot_id = snapshot['DBClusterSnapshotIdentifier'] if is_cluster else snapshot['DBSnapshotIdentifier']
+
+    # Check if snapshot_id is already present in the destination
+    if snapshot_exists(target_account_rds, snapshot_id):
+        print('Skipping snapshot ' + snapshot_id +
+              ' since it is already present in AWS account ' + target_account_id)
+        return
 
     print('Replicating snapshot ' + snapshot_id +
           ' to AWS account ' + target_account_id)
 
     share_snapshot(rds, snapshot)
-    target_account_rds = get_assumed_role_rds_client(
-        target_account_iam_role_arn, target_region)
     copy_snapshot(snapshot, target_account_rds, target_region)
 
 
@@ -241,7 +266,8 @@ def replicate_snapshot(event, context):
     if is_cluster and replication_type == 'cross-account':
         snapshots = match_cluster_snapshots(rds)
         for snapshot in snapshots:
-            replicate_snapshot_cross_account(rds, snapshot)
+            replicate_snapshot_cross_account(rds, get_assumed_role_rds_client(
+                target_account_iam_role_arn, target_region), snapshot)
     # EVENT based, used for step 2 (instance and cluster) and step 3 (instance)
     else:
         snapshot = match_snapshot_event(rds, event)
@@ -257,7 +283,8 @@ def replicate_snapshot(event, context):
                     'rds', region_name=target_region)
                 copy_snapshot(snapshot, target_region_rds, source_region)
             elif replication_type == 'cross-account':
-                replicate_snapshot_cross_account(rds, snapshot)
+                replicate_snapshot_cross_account(rds, get_assumed_role_rds_client(
+                    target_account_iam_role_arn, target_region), snapshot)
 
 
 def create_snapshots(event, context):
