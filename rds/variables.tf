@@ -138,6 +138,12 @@ variable "name" {
   default     = ""
 }
 
+variable "subnet_group_name_override" {
+  type        = string
+  description = "Override the name of the created subnet group"
+  default     = null
+}
+
 variable "monitoring_interval" {
   description = "The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. Valid Values: 0, 1, 5, 10, 15, 30, 60."
   default     = "0"
