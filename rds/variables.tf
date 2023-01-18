@@ -187,3 +187,9 @@ variable "extra_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "deletion_protection" {
+  description = "If the DB instance should have deletion protection enabled. The database can't be deleted when this value is set to true"
+  type        = bool
+  default     = false
+}
