@@ -86,6 +86,7 @@ resource "aws_db_instance" "rds" {
   performance_insights_kms_key_id       = var.performance_insights_kms_key_id
   deletion_protection                   = var.deletion_protection
   publicly_accessible                   = var.publicly_accessible
+  maintenance_window                    = var.maintenance_window
 
   tags = merge({
     Name        = length(var.name) == 0 ? "${var.project}-${var.environment}${var.tag}-rds${var.number}" : var.name

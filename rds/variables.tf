@@ -199,3 +199,9 @@ variable "publicly_accessible" {
   type        = bool
   default     = false
 }
+
+variable "maintenance_window" {
+  description = "The window to perform maintenance in. Syntax: \"ddd:hh24:mi-ddd:hh24:mi\". Eg: \"Mon:00:00-Mon:03:00\""
+  type        = string
+  default     = null
+}
