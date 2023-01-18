@@ -193,3 +193,9 @@ variable "deletion_protection" {
   type        = bool
   default     = false
 }
+
+variable "publicly_accessible" {
+  description = "Bool to control if instance is publicly accessible"
+  type        = bool
+  default     = false
+}
