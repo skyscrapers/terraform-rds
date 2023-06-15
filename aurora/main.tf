@@ -90,7 +90,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   engine_version          = var.engine_version
 
   tags = {
-    Name        = "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}"
+    Name        = var.rds_instance_name_overrides == null ? "${var.project}-${var.environment}${var.tag}-aurora${format("%02d", count.index + 1)}" : var.rds_instance_name_overrides[count.index]
     Environment = var.environment
     Project     = var.project
   }
