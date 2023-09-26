@@ -85,6 +85,7 @@ No modules.
 | <a name="output_rds_address"></a> [rds\_address](#output\_rds\_address)                                        | The hostname of the RDS instance          |
 | <a name="output_rds_arn"></a> [rds\_arn](#output\_rds\_arn)                                                    | The arn of the RDS instance               |
 | <a name="output_rds_id"></a> [rds\_id](#output\_rds\_id)                                                       | The id of the RDS instance                |
+| <a name="output_rds_identifier"></a> [rds\_identifier](#output\_rds\_identifier)                               | The identifier of the RDS instance        |
 | <a name="output_rds_port"></a> [rds\_port](#output\_rds\_port)                                                 | The port of the RDS instance              |
 | <a name="output_rds_sg_id"></a> [rds\_sg\_id](#output\_rds\_sg\_id)                                            | The security group id of the RDS instance |
 
