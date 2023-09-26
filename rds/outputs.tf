@@ -10,7 +10,7 @@ output "rds_address" {
 
 output "rds_id" {
   description = "The id of the RDS instance"
-  value       = aws_db_instance.rds.resource_id
+  value       = aws_db_instance.rds.id
 }
 
 output "rds_identifier" {
