@@ -82,7 +82,7 @@ resource "aws_db_instance" "rds" {
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
   enabled_cloudwatch_logs_exports       = var.enabled_cloudwatch_logs_exports
   performance_insights_enabled          = var.performance_insights_enabled
-  performance_insights_retention_period = var.performance_insights_retention_period
+  performance_insights_retention_period = var.performance_insights_enabled ? var.performance_insights_retention_period : null
   performance_insights_kms_key_id       = var.performance_insights_kms_key_id
   deletion_protection                   = var.deletion_protection
   publicly_accessible                   = var.publicly_accessible
