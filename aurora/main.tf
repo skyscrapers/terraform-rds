@@ -53,6 +53,7 @@ resource "aws_rds_cluster" "aurora" {
   availability_zones              = data.aws_availability_zones.available.names
   db_subnet_group_name            = aws_db_subnet_group.aurora.id
   vpc_security_group_ids          = [aws_security_group.sg_aurora.id]
+  storage_type                    = var.storage_type
   storage_encrypted               = var.storage_encrypted
   apply_immediately               = var.apply_immediately
   db_cluster_parameter_group_name = var.cluster_parameter_group_name
