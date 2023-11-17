@@ -44,6 +44,11 @@ variable "apply_immediately" {
   default     = true
 }
 
+variable "storage_type" {
+  description = "Determine storage type for your Aurora RDS. Valid values for Single-AZ: aurora, \"\" (default, both refer to Aurora Standard), aurora-iopt1 (Aurora I/O Optimized). Valid values for Multi-AZ: io1 (default)."
+  default     = null
+}
+
 variable "storage_encrypted" {
   description = "Encrypt RDS storage"
   default     = true
