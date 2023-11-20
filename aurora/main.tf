@@ -55,7 +55,6 @@ resource "aws_rds_cluster" "aurora" {
   vpc_security_group_ids          = [aws_security_group.sg_aurora.id]
   storage_type                    = var.storage_type
   storage_encrypted               = var.storage_encrypted
-  storage_type                    = var.storage_type
   apply_immediately               = var.apply_immediately
   db_cluster_parameter_group_name = var.cluster_parameter_group_name
   engine                          = var.engine
