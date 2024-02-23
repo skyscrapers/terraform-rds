@@ -439,7 +439,7 @@ Create an RDS proxy and configure IAM role to use for reading AWS Secrets to acc
 
 | Name                         | Description                                                                                           | Type           | Default | Required |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------- | -------------- | ------- | :------: |
-| db_instance_identifier       | ID of the database instance to set as the proxy target                                                | `any`          | n/a     |   yes    |
+| db_cluster_identifier       | ID of the database instance to set as the proxy target                                                | `any`          | n/a     |   yes    |
 | db_secret_arns               | AWS Secret Manager ARNs to use to access the database credentials                                     | `list`         | n/a     |   yes    |
 | engine                       | RDS engine: MYSQL or POSTGRES                                                                         | `any`          | n/a     |   yes    |
 | environment                  | The current environment                                                                               | `any`          | n/a     |   yes    |
@@ -465,7 +465,7 @@ module "rds_proxy" {
   environment                = terraform.workspace
   engine                     = "MYSQL"
   security_groups            = ["sg-aaaaa", "sg-bbbb"]
-  db_instance_identifier     = module.rds_database.rds_id
+  db_cluster_identifier     = module.rds_database.rds_id
   db_secret_arns             = [aws_secretsmanager_secret.db_user_rw.arn, aws_secretsmanager_secret.db_user_ro.arn]
 }  
 ```
