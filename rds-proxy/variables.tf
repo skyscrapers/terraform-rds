@@ -23,11 +23,11 @@ variable "engine" {
 
 variable "db_secret_arns" {
   description = "AWS Secret Manager ARNs to use to access the database credentials"
-  type        = list
+  type        = list(any)
 }
 
-variable "db_instance_identifier" {
-  description = "ID of the database instance to set as the proxy target"
+variable "db_cluster_identifier" {
+  description = "ID of the database cluster to set as the proxy target"
 }
 
 variable "proxy_connection_timeout" {
