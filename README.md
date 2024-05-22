@@ -439,7 +439,7 @@ Create an RDS proxy and configure IAM role to use for reading AWS Secrets to acc
 
 | Name                         | Description                                                                                           | Type           | Default | Required |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------- | -------------- | ------- | :------: |
-| db_cluster_identifier       | ID of the database instance to set as the proxy target                                                | `any`          | n/a     |   yes    |
+| db_cluster_identifier        | ID of the database instance to set as the proxy target                                                | `any`          | n/a     |   yes    |
 | db_secret_arns               | AWS Secret Manager ARNs to use to access the database credentials                                     | `list`         | n/a     |   yes    |
 | engine                       | RDS engine: MYSQL or POSTGRES                                                                         | `any`          | n/a     |   yes    |
 | environment                  | The current environment                                                                               | `any`          | n/a     |   yes    |
@@ -448,6 +448,9 @@ Create an RDS proxy and configure IAM role to use for reading AWS Secrets to acc
 | subnets                      | Subnets to deploy in                                                                                  | `list(string)` | n/a     |   yes    |
 | proxy_connection_timeout     | The number of seconds for a proxy to wait for a connection to become available in the connection pool | `number`       | `120`   |    no    |
 | proxy_max_connection_percent | The maximum size of the connection pool for each target in a target group                             | `number`       | `100`   |    no    |
+| idle_client_timeout          | The number of seconds that a connection to the proxy can be inactive before the proxy disconnects it. | `number`       | `1800`  |    no    |
+| debug_logging                | Whether the proxy includes detailed information about SQL statements in its logs.                     | `bool`         | `false` |    no    |
+| reader_endpoint              | Whether to include an extra reader endpoint.                                                          | `bool`         | `false` |    no    |
 
 ### Outputs
 

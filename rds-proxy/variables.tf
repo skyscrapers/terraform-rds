@@ -47,3 +47,21 @@ variable "extra_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "idle_client_timeout" {
+  description = "The number of seconds that a connection to the proxy can be inactive before the proxy disconnects it. You can set this value higher or lower than the connection timeout limit for the associated database."
+  type        = number
+  default     = 1800
+}
+
+variable "debug_logging" {
+  description = "Whether the proxy includes detailed information about SQL statements in its logs. This information helps you to debug issues involving SQL behavior or the performance and scalability of the proxy connections."
+  type        = bool
+  default     = false
+}
+
+variable "reader_endpoint" {
+  description = "Whether to include an extra reader endpoint."
+  type        = bool
+  default     = false
+}
