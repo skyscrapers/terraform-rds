@@ -3,7 +3,8 @@ terraform {
 
   required_providers {
     aws = {
-      version = "~> 3.61"
+      version = ">= 3.61"
+
       configuration_aliases = [
         aws.source,
         aws.intermediate,
