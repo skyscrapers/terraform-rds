@@ -179,13 +179,12 @@ def match_cluster_snapshots(rds):
     return snapshots
 
 
-def cleanup_snapshots(older_than):
+def cleanup_snapshots(older_than, region):
     """Common function for removing old snapshots"""
 
-    print('Lambda function start: going to clean up snapshots older than ' +
-          str(older_than) + ' days for the RDS instances ' + instances)
+    print('Lambda function start: going to clean up snapshots older than ' + str(older_than) + ' days for the RDS instances ' + instances + ' in region ' + region)
 
-    rds = boto3.client('rds')
+    rds = boto3.client('rds', region_name=region)
 
     for instance in instances.split(','):
         if is_cluster:
@@ -209,13 +208,13 @@ def cleanup_snapshots(older_than):
 def cleanup_intermediate_snapshots(event, context):
     """Lambda entry point for the cleanup intermediate snapshots"""
 
-    cleanup_snapshots(safe_period)
+    cleanup_snapshots(safe_period, source_region)
 
 
 def cleanup_final_snapshots(event, context):
     """Lambda entry point for the cleanup final snapshots"""
 
-    cleanup_snapshots(retention_period)
+    cleanup_snapshots(retention_period, target_region)
 
 
 def snapshot_exists(rds, snapshot_id):
