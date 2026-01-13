@@ -19,6 +19,12 @@ variable "instance_size_override" {
   default     = []
 }
 
+variable "deletion_protection" {
+  description = "Enable deletion protection"
+  type = bool
+  default = false
+}
+
 variable "instance_promotion_tiers" {
   description = "Set promotion tier for each instance in the cluster. The size of the list must be equal to `var.amount_of_instances`. If ommitted or set to [], the default of 0 will be used."
   type        = list(number)

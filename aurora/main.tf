@@ -62,6 +62,7 @@ resource "aws_rds_cluster" "aurora" {
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   performance_insights_enabled    = var.performance_insights_enabled
   snapshot_identifier             = var.snapshot_identifier
+  deletion_protection             = var.deletion_protection
 
   tags = merge({
     Name        = "${var.project}-${var.environment}${var.tag}-aurora"
